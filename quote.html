@@ -5,94 +5,143 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quote Generator — OnlyDwarfs</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #0D0D1A; color: #EFEFEF;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    min-height: 100vh; padding: 20px 16px 40px;
-  }
-  .header { text-align: center; margin-bottom: 28px; }
-  .header h1 { font-size: 18px; font-weight: 700; color: #C9A84C; letter-spacing: 2px; text-transform: uppercase; }
-  .header p { font-size: 12px; color: #666; margin-top: 4px; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:#0D0D1A; color:#EFEFEF; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:20px 16px 48px; }
 
-  .card { background: #161628; border-radius: 14px; padding: 20px; margin-bottom: 16px; border: 1px solid #222240; }
-  .card-title { font-size: 11px; font-weight: 700; color: #C9A84C; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-  .card-title .auto-badge { font-size: 9px; background: #C9A84C22; color: #C9A84C; padding: 2px 7px; border-radius: 99px; letter-spacing: 0.5px; font-weight: 600; }
+/* ── HEADER ── */
+.header { text-align:center; margin-bottom:24px; }
+.header h1 { font-size:18px; font-weight:700; color:#C9A84C; letter-spacing:2px; text-transform:uppercase; }
+.header p { font-size:12px; color:#555; margin-top:4px; }
 
-  .field { margin-bottom: 14px; }
-  .field:last-child { margin-bottom: 0; }
-  label { display: block; font-size: 11px; color: #666; margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+/* ── CARDS ── */
+.card { background:#161628; border-radius:14px; padding:18px; margin-bottom:14px; border:1px solid #1E1E38; }
+.card-title { font-size:10px; font-weight:700; color:#C9A84C; letter-spacing:1.8px; text-transform:uppercase; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; }
+.badge { font-size:9px; background:#C9A84C1A; color:#C9A84C88; padding:2px 8px; border-radius:99px; letter-spacing:0.3px; }
 
-  input[type="text"], input[type="date"], input[type="number"], select, textarea {
-    width: 100%; background: #0D0D1A; border: 1px solid #2A2A4A; border-radius: 8px;
-    color: #EFEFEF; font-size: 15px; padding: 11px 13px; outline: none;
-    transition: border-color 0.2s; -webkit-appearance: none; font-family: inherit;
-  }
-  input:focus, select:focus, textarea:focus { border-color: #C9A84C; }
-  /* Editable rate fields glow slightly to show they're adjustable */
-  .rate-field input { border-color: #2A3A4A; color: #A8D4F5; }
-  .rate-field input:focus { border-color: #C9A84C; color: #EFEFEF; }
-  .rate-field label { color: #4A7A9A; }
+/* ── FIELDS ── */
+.field { margin-bottom:12px; }
+.field:last-child { margin-bottom:0; }
+.field > label { display:block; font-size:10px; font-weight:700; color:#555; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:5px; }
+.row-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
 
-  select option { background: #161628; }
-  textarea { resize: none; height: 80px; }
-  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+/* ── BASE INPUT ── */
+.inp {
+  width:100%; background:#0C0C1E; border:1.5px solid #1E1E38; border-radius:10px;
+  color:#EFEFEF; font-size:15px; padding:12px 14px; outline:none;
+  transition:border-color .2s,background .2s; -webkit-appearance:none; font-family:inherit;
+  cursor:pointer;
+}
+.inp:focus { border-color:#C9A84C44; background:#0F0F22; }
+.inp.filled { border-color:#C9A84C33; color:#EFEFEF; }
+.inp::placeholder { color:#333; }
+select.inp option { background:#161628; }
 
-  /* Location toggle */
-  .toggle-group { display: flex; background: #0D0D1A; border: 1px solid #2A2A4A; border-radius: 8px; overflow: hidden; }
-  .toggle-group input[type="radio"] { display: none; }
-  .toggle-group label { flex: 1; text-align: center; padding: 11px 8px; font-size: 13px; font-weight: 600; color: #666; cursor: pointer; margin: 0; letter-spacing: 0; text-transform: none; transition: all 0.2s; }
-  .toggle-group input[type="radio"]:checked + label { background: #C9A84C; color: #0D0D1A; }
+/* ── SEARCH INPUT with icon ── */
+.search-wrap { position:relative; }
+.search-wrap .inp { padding-left:38px; }
+.search-wrap .s-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:15px; pointer-events:none; opacity:0.4; }
+.search-wrap .clear-btn { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#444; font-size:18px; cursor:pointer; padding:4px; display:none; line-height:1; }
+.search-wrap .clear-btn.show { display:block; }
 
-  /* Counter */
-  .counter { display: flex; align-items: center; background: #0D0D1A; border: 1px solid #2A2A4A; border-radius: 8px; overflow: hidden; }
-  .counter button { background: none; border: none; color: #C9A84C; font-size: 22px; font-weight: 700; padding: 8px 16px; cursor: pointer; line-height: 1; flex-shrink: 0; }
-  .counter-val { flex: 1; text-align: center; font-size: 18px; font-weight: 700; color: #EFEFEF; }
+/* ── DROPDOWN LIST ── */
+.dropdown { position:absolute; top:calc(100% + 4px); left:0; right:0; background:#1A1A30; border:1.5px solid #2A2A48; border-radius:10px; z-index:100; max-height:200px; overflow-y:auto; display:none; box-shadow:0 8px 32px #00000066; }
+.dropdown.open { display:block; }
+.dropdown-item { padding:11px 14px; font-size:14px; cursor:pointer; border-bottom:1px solid #1E1E38; transition:background .1s; }
+.dropdown-item:last-child { border-bottom:none; }
+.dropdown-item:active, .dropdown-item.focused { background:#222240; color:#C9A84C; }
+.dropdown-item .sub { font-size:11px; color:#555; margin-top:1px; }
+.dropdown-empty { padding:14px; font-size:13px; color:#444; text-align:center; }
 
-  /* Input with prefix $ */
-  .input-prefix { position: relative; }
-  .input-prefix span { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #666; font-size: 15px; pointer-events: none; }
-  .input-prefix input { padding-left: 24px; }
+/* ── DATE PICKER ── */
+.date-display { display:flex; align-items:center; gap:10px; }
+.date-icon { font-size:18px; opacity:0.5; }
+.date-text { flex:1; font-size:15px; color:#555; }
+.date-text.set { color:#EFEFEF; }
 
-  /* Add-ons */
-  .addon-row { display: grid; grid-template-columns: 1fr 110px 36px; gap: 8px; align-items: center; margin-bottom: 8px; }
-  .addon-remove { background: #2A1A1A; border: 1px solid #4A2A2A; border-radius: 8px; color: #E74C3C; font-size: 18px; font-weight: 700; cursor: pointer; height: 40px; display: flex; align-items: center; justify-content: center; }
-  .btn-add-addon { background: none; border: 1px dashed #2A2A4A; border-radius: 8px; color: #555; font-size: 13px; padding: 10px; width: 100%; cursor: pointer; margin-top: 4px; transition: all 0.2s; }
-  .btn-add-addon:active { border-color: #C9A84C44; color: #C9A84C; }
+.cal-overlay { position:fixed; inset:0; background:#000000BB; z-index:200; display:none; align-items:flex-end; justify-content:center; padding:0; }
+.cal-overlay.open { display:flex; }
+.cal-sheet { background:#161628; border-radius:20px 20px 0 0; width:100%; max-width:480px; padding:20px; padding-bottom:32px; }
+.cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.cal-header h3 { font-size:16px; font-weight:700; color:#EFEFEF; }
+.cal-nav { background:none; border:none; color:#C9A84C; font-size:22px; padding:4px 10px; cursor:pointer; line-height:1; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.cal-day-label { text-align:center; font-size:10px; font-weight:700; color:#444; padding:6px 0; text-transform:uppercase; }
+.cal-day { text-align:center; padding:10px 4px; font-size:14px; border-radius:8px; cursor:pointer; transition:all .15s; min-height:38px; display:flex; align-items:center; justify-content:center; }
+.cal-day:empty { background:transparent; cursor:default; }
+.cal-day.other { color:#2A2A44; cursor:default; }
+.cal-day.today { color:#C9A84C; font-weight:700; }
+.cal-day.selected { background:#C9A84C; color:#0D0D1A; font-weight:700; border-radius:8px; }
+.cal-day.past { color:#2A2A44; cursor:default; }
+.cal-day:not(.other):not(.past):not(.selected):active { background:#222240; }
+.cal-close { width:100%; padding:13px; background:#222240; border:none; border-radius:10px; color:#EFEFEF; font-size:14px; font-weight:600; cursor:pointer; margin-top:14px; }
 
-  /* Divider */
-  hr { border: none; border-top: 1px solid #1A1A30; margin: 14px 0; }
+/* ── TOGGLE ── */
+.toggle-row { display:flex; background:#0C0C1E; border:1.5px solid #1E1E38; border-radius:10px; overflow:hidden; }
+.toggle-row input[type=radio] { display:none; }
+.toggle-row label { flex:1; text-align:center; padding:12px 8px; font-size:13px; font-weight:600; color:#444; cursor:pointer; margin:0; transition:all .2s; }
+.toggle-row input[type=radio]:checked + label { background:#C9A84C; color:#0D0D1A; }
 
-  /* Pricing */
-  #pricing-preview { display: none; }
-  .price-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #1A1A30; font-size: 14px; gap: 8px; }
-  .price-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .price-row .pl { color: #777; flex: 1; }
-  .price-row .pv { font-weight: 700; color: #EFEFEF; white-space: nowrap; }
-  .price-row.total { padding-top: 12px; }
-  .price-row.total .pl { color: #EFEFEF; font-weight: 700; font-size: 15px; }
-  .price-row.total .pv { color: #C9A84C; font-size: 20px; }
-  .price-row.deposit .pv { color: #9B59B6; }
-  .price-row.internal .pl { color: #444; font-size: 12px; }
-  .price-row.internal .pv { color: #444; font-size: 12px; font-weight: 500; }
+/* ── COUNTER ── */
+.counter { display:flex; align-items:center; background:#0C0C1E; border:1.5px solid #1E1E38; border-radius:10px; overflow:hidden; }
+.counter button { background:none; border:none; color:#C9A84C; font-size:24px; padding:8px 16px; cursor:pointer; line-height:1; flex-shrink:0; }
+.counter-val { flex:1; text-align:center; font-size:18px; font-weight:700; }
 
-  /* Buttons */
-  .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
-  .btn:active { opacity: 0.8; }
-  .btn-gold { background: #C9A84C; color: #0D0D1A; margin-bottom: 16px; }
-  .btn-copy { background: #1A2A3A; color: #EFEFEF; border: 1px solid #2A3A4A; margin-top: 12px; }
-  .btn-copy.copied { background: #1A4A2A; border-color: #27AE60; color: #27AE60; }
+/* ── COLLAPSIBLE RATES ── */
+.rates-toggle { display:flex; align-items:center; justify-content:space-between; cursor:pointer; padding:4px 0; user-select:none; }
+.rates-toggle span { font-size:13px; color:#666; font-weight:500; }
+.rates-toggle .arrow { font-size:12px; color:#444; transition:transform .2s; }
+.rates-toggle.open .arrow { transform:rotate(180deg); }
+.rates-body { display:none; margin-top:14px; }
+.rates-body.open { display:block; }
 
-  .warning { background: #2A1A0A; border-left: 3px solid #C9A84C; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #C9A84C88; margin-bottom: 16px; line-height: 1.5; }
-  .email-box { background: #0D0D1A; border: 1px solid #2A2A4A; border-radius: 8px; padding: 14px; font-size: 13px; line-height: 1.7; color: #EFEFEF; white-space: pre-wrap; word-break: break-word; }
-  .reset-link { text-align: center; margin-top: 16px; }
-  .reset-link a { color: #444; font-size: 13px; text-decoration: none; }
+.rate-field label { color:#3A5A7A; }
+.rate-field .inp { color:#7AABCC; border-color:#1E3048; }
+.rate-field .inp:focus { border-color:#C9A84C44; color:#EFEFEF; }
 
-  #output-section { display: none; }
+.inp-prefix { position:relative; }
+.inp-prefix .pre { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:#444; font-size:15px; pointer-events:none; }
+.inp-prefix .inp { padding-left:24px; }
 
-  /* Rates section hidden until type selected */
-  #rates-card { display: none; }
+/* ── ADD-ONS ── */
+.addon-row { display:grid; grid-template-columns:1fr 100px 36px; gap:8px; align-items:center; margin-bottom:8px; }
+.addon-remove { background:#1E0A0A; border:1.5px solid #3A1A1A; border-radius:8px; color:#C0392B; font-size:18px; cursor:pointer; height:40px; display:flex; align-items:center; justify-content:center; }
+.btn-addon { background:none; border:1.5px dashed #222240; border-radius:8px; color:#444; font-size:13px; padding:10px; width:100%; cursor:pointer; margin-top:4px; }
+.btn-addon:active { border-color:#C9A84C44; color:#C9A84C; }
+
+/* ── PRICING PREVIEW ── */
+#pricing-preview { display:none; }
+.price-row { display:flex; justify-content:space-between; align-items:baseline; padding:8px 0; border-bottom:1px solid #1A1A30; font-size:14px; gap:8px; }
+.price-row:last-child { border-bottom:none; padding-bottom:0; }
+.price-row .pl { color:#666; flex:1; }
+.price-row .pv { font-weight:700; color:#EFEFEF; white-space:nowrap; }
+.price-row.total { padding-top:12px; }
+.price-row.total .pl { color:#EFEFEF; font-weight:700; font-size:15px; }
+.price-row.total .pv { color:#C9A84C; font-size:20px; }
+.price-row.dep .pv { color:#9B59B6; }
+.price-row.int .pl,.price-row.int .pv { color:#333; font-size:12px; }
+.price-row.int .pv { font-weight:500; }
+
+/* ── BUTTONS ── */
+.btn { width:100%; padding:15px; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; transition:opacity .15s; }
+.btn:active { opacity:.8; }
+.btn-gold { background:#C9A84C; color:#0D0D1A; margin-bottom:14px; }
+.btn-outline { background:#161628; color:#EFEFEF; border:1.5px solid #2A2A48; }
+.btn-copy { background:#1A2A3A; color:#EFEFEF; border:1.5px solid #2A3A4A; margin-top:12px; }
+.btn-copy.copied { background:#1A4A2A; border-color:#27AE60; color:#27AE60; }
+
+/* ── OUTPUT ── */
+#output-section { display:none; }
+.email-box { background:#0C0C1E; border:1.5px solid #1E1E38; border-radius:10px; padding:14px; font-size:13px; line-height:1.75; color:#EFEFEF; white-space:pre-wrap; word-break:break-word; }
+.reset-link { text-align:center; margin-top:16px; }
+.reset-link a { color:#333; font-size:13px; text-decoration:none; }
+
+.warning { background:#1E1000; border-left:3px solid #C9A84C88; border-radius:8px; padding:11px 13px; font-size:11px; color:#C9A84C77; margin-bottom:14px; line-height:1.5; }
+hr { border:none; border-top:1px solid #1A1A30; margin:12px 0; }
+
+/* ── OVERLAY BACKDROP for dropdowns ── */
+.backdrop { position:fixed; inset:0; z-index:50; display:none; }
+.backdrop.show { display:block; }
 </style>
 </head>
 <body>
@@ -102,34 +151,74 @@
   <p>OnlyDwarfs Entertainment</p>
 </div>
 
+<!-- BACKDROP -->
+<div class="backdrop" id="backdrop" onclick="closeAllDropdowns()"></div>
+
+<!-- CALENDAR OVERLAY -->
+<div class="cal-overlay" id="cal-overlay" onclick="calOverlayClick(event)">
+  <div class="cal-sheet">
+    <div class="cal-header">
+      <button class="cal-nav" onclick="calNav(-1)">‹</button>
+      <h3 id="cal-month-label"></h3>
+      <button class="cal-nav" onclick="calNav(1)">›</button>
+    </div>
+    <div class="cal-grid" id="cal-day-labels"></div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <button class="cal-close" onclick="closeCalendar()">Done</button>
+  </div>
+</div>
+
+<!-- ═══════ FORM ═══════ -->
 <div id="form-section">
 
   <div class="warning">⚠️ Check talent roster for nearby performers before sending.</div>
 
-  <!-- CLIENT -->
+  <!-- CLIENT INFO -->
   <div class="card">
     <div class="card-title">Client Info</div>
+
     <div class="field">
       <label>Client Name</label>
-      <input type="text" id="client-name" placeholder="John Smith" autocomplete="off">
+      <input class="inp" type="text" id="client-name" placeholder="Full name" autocomplete="off">
     </div>
+
     <div class="row-2">
-      <div class="field">
-        <label>City</label>
-        <input type="text" id="client-city" placeholder="Las Vegas" autocomplete="off">
-      </div>
+      <!-- STATE SEARCH -->
       <div class="field">
         <label>State</label>
-        <input type="text" id="client-state" placeholder="NV" autocomplete="off" maxlength="20">
+        <div class="search-wrap" id="state-wrap" style="position:relative">
+          <span class="s-icon">📍</span>
+          <input class="inp" type="text" id="state-input" placeholder="Search state..." autocomplete="off" oninput="filterStates()" onfocus="openDropdown('state')" onkeydown="ddKeydown(event,'state')">
+          <button class="clear-btn" id="state-clear" onclick="clearField('state')">×</button>
+          <div class="dropdown" id="state-dropdown"></div>
+        </div>
+      </div>
+
+      <!-- CITY SEARCH -->
+      <div class="field">
+        <label>City</label>
+        <div class="search-wrap" id="city-wrap" style="position:relative">
+          <span class="s-icon">🏙</span>
+          <input class="inp" type="text" id="city-input" placeholder="Search city..." autocomplete="off" oninput="filterCities()" onfocus="openDropdown('city')" onkeydown="ddKeydown(event,'city')">
+          <button class="clear-btn" id="city-clear" onclick="clearField('city')">×</button>
+          <div class="dropdown" id="city-dropdown"></div>
+        </div>
       </div>
     </div>
+
     <div class="field">
       <label>Event Type</label>
-      <input type="text" id="event-type" placeholder="Bachelor party, birthday, corporate..." autocomplete="off">
+      <input class="inp" type="text" id="event-type" placeholder="Bachelor party, birthday, corporate..." autocomplete="off">
     </div>
+
+    <!-- DATE PICKER -->
     <div class="field">
       <label>Event Date</label>
-      <input type="date" id="event-date">
+      <div class="inp date-display" onclick="openCalendar()" style="cursor:pointer">
+        <span class="date-icon">📅</span>
+        <span class="date-text" id="date-display-text">Tap to pick a date</span>
+      </div>
+      <input type="hidden" id="event-date">
     </div>
   </div>
 
@@ -139,8 +228,8 @@
 
     <div class="field">
       <label>Type</label>
-      <select id="ent-type" onchange="onEntTypeChange()">
-        <option value="">— Select —</option>
+      <select class="inp" id="ent-type" onchange="onEntTypeChange()">
+        <option value="">— Select entertainment type —</option>
         <optgroup label="Standard">
           <option value="character">Character / Party Appearance</option>
           <option value="female">Female Stripper / Adult Entertainment</option>
@@ -158,12 +247,12 @@
 
     <div class="field" id="custom-label-field" style="display:none">
       <label>Custom Type Label</label>
-      <input type="text" id="custom-type-label" placeholder="e.g. Stilt Walker, Magician..." autocomplete="off">
+      <input class="inp" type="text" id="custom-type-label" placeholder="e.g. Stilt Walker, Magician..." autocomplete="off">
     </div>
 
     <div class="field">
       <label>Location</label>
-      <div class="toggle-group">
+      <div class="toggle-row">
         <input type="radio" name="location" id="loc-local" value="local" checked onchange="onLocationChange()">
         <label for="loc-local">In-State (Local)</label>
         <input type="radio" name="location" id="loc-oos" value="oos" onchange="onLocationChange()">
@@ -191,73 +280,11 @@
     </div>
   </div>
 
-  <!-- RATES — auto-filled, all editable -->
-  <div class="card" id="rates-card">
-    <div class="card-title">
-      Rates
-      <span class="auto-badge">auto-filled · tap to edit</span>
-    </div>
-
-    <div class="row-2">
-      <div class="field rate-field">
-        <label>Talent Base Rate</label>
-        <div class="input-prefix">
-          <span>$</span>
-          <input type="number" id="r-talent-base" min="0" oninput="updatePricingPreview()">
-        </div>
-      </div>
-      <div class="field rate-field">
-        <label>Client Base Rate</label>
-        <div class="input-prefix">
-          <span>$</span>
-          <input type="number" id="r-client-base" min="0" oninput="updatePricingPreview()">
-        </div>
-      </div>
-    </div>
-
-    <div class="row-3">
-      <div class="field rate-field">
-        <label>Extra Hr (Talent)</label>
-        <div class="input-prefix">
-          <span>$</span>
-          <input type="number" id="r-extra-talent" min="0" value="150" oninput="updatePricingPreview()">
-        </div>
-      </div>
-      <div class="field rate-field">
-        <label>Extra Hr (Client)</label>
-        <div class="input-prefix">
-          <span>$</span>
-          <input type="number" id="r-extra-client" min="0" value="180" oninput="updatePricingPreview()">
-        </div>
-      </div>
-      <div class="field rate-field">
-        <label>Travel Fee</label>
-        <div class="input-prefix">
-          <span>$</span>
-          <input type="number" id="r-travel" min="0" value="0" oninput="updatePricingPreview()">
-        </div>
-      </div>
-    </div>
-
-    <hr>
-
-    <div class="row-2">
-      <div class="field rate-field">
-        <label>Deposit %</label>
-        <input type="number" id="r-deposit-pct" min="0" max="100" value="50" oninput="updatePricingPreview()" style="color:#9B59B6">
-      </div>
-      <div class="field rate-field">
-        <label>Booking Fee %</label>
-        <input type="number" id="r-booking-fee" min="0" max="100" value="20" oninput="updatePricingPreview()" style="color:#9B59B6">
-      </div>
-    </div>
-  </div>
-
   <!-- ADD-ONS -->
   <div class="card">
     <div class="card-title">Add-Ons & Extra Charges</div>
     <div id="addon-list"></div>
-    <button class="btn-add-addon" onclick="addAddon()">+ Add line item</button>
+    <button class="btn-addon" onclick="addAddon()">+ Add line item</button>
   </div>
 
   <!-- PRICING PREVIEW -->
@@ -266,17 +293,62 @@
     <div id="pricing-rows"></div>
   </div>
 
+  <!-- CUSTOM RATES (collapsed) -->
+  <div class="card" id="rates-card" style="display:none">
+    <div class="rates-toggle" id="rates-toggle" onclick="toggleRates()">
+      <span>⚙️ Customize Rates</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="rates-body" id="rates-body">
+      <div class="row-2" style="margin-top:0">
+        <div class="field rate-field">
+          <label>Talent Base ($)</label>
+          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-talent-base" min="0" oninput="updatePricingPreview()"></div>
+        </div>
+        <div class="field rate-field">
+          <label>Client Base ($)</label>
+          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-client-base" min="0" oninput="updatePricingPreview()"></div>
+        </div>
+      </div>
+      <div class="row-3">
+        <div class="field rate-field">
+          <label>+Hr Talent</label>
+          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-extra-talent" min="0" value="150" oninput="updatePricingPreview()"></div>
+        </div>
+        <div class="field rate-field">
+          <label>+Hr Client</label>
+          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-extra-client" min="0" value="180" oninput="updatePricingPreview()"></div>
+        </div>
+        <div class="field rate-field">
+          <label>Travel Fee</label>
+          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-travel" min="0" value="0" oninput="updatePricingPreview()"></div>
+        </div>
+      </div>
+      <hr>
+      <div class="row-2">
+        <div class="field rate-field">
+          <label>Deposit %</label>
+          <input class="inp" type="number" id="r-deposit-pct" min="0" max="100" value="50" oninput="updatePricingPreview()">
+        </div>
+        <div class="field rate-field">
+          <label>Booking Fee %</label>
+          <input class="inp" type="number" id="r-booking-fee" min="0" max="100" value="20" oninput="updatePricingPreview()">
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- NOTES -->
   <div class="card">
     <div class="card-title">Notes (optional)</div>
-    <textarea id="notes" placeholder="Special requests, context for the email..."></textarea>
+    <textarea class="inp" id="notes" placeholder="Special requests, context..." style="height:75px;resize:none"></textarea>
   </div>
 
   <button class="btn btn-gold" onclick="generateQuote()">Generate Quote →</button>
 
-</div>
+</div><!-- /form-section -->
 
-<!-- OUTPUT -->
+<!-- ═══════ OUTPUT ═══════ -->
 <div id="output-section">
   <div class="card">
     <div class="card-title">💰 Final Pricing</div>
@@ -291,209 +363,404 @@
 </div>
 
 <script>
-  let performers = 1;
-  let duration = 2;
+// ═══════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════
+const STATES = [
+  'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut',
+  'Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa',
+  'Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan',
+  'Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada',
+  'New Hampshire','New Jersey','New Mexico','New York','North Carolina',
+  'North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island',
+  'South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont',
+  'Virginia','Washington','West Virginia','Wisconsin','Wyoming',
+  'Washington D.C.','Puerto Rico'
+];
 
-  const DEFAULTS = {
-    character: { local: { talent: 500,  client: 600,  travel: 0   }, oos: { talent: 1000, client: 1200, travel: 200 } },
-    female:    { local: { talent: 1000, client: 1200, travel: 0   }, oos: { talent: 1000, client: 1400, travel: 200 } },
-    male:      { local: { talent: 800,  client: 960,  travel: 0   }, oos: { talent: 800,  client: 1160, travel: 200 } },
-    tossing:   { local: { talent: 600,  client: 720,  travel: 0   }, oos: { talent: 1000, client: 1200, travel: 200 } },
-    promo:     { local: { talent: 500,  client: 600,  travel: 0   }, oos: { talent: 1000, client: 1200, travel: 200 } },
-    corporate: { local: { talent: 800,  client: 960,  travel: 0   }, oos: { talent: 1200, client: 1440, travel: 200 } },
-    film:      { local: { talent: 1000, client: 1200, travel: 0   }, oos: { talent: 1500, client: 1800, travel: 200 } },
-    custom:    { local: { talent: 0,    client: 0,    travel: 0   }, oos: { talent: 0,    client: 0,    travel: 200 } },
-  };
+const CITIES = {
+  'Alabama':['Birmingham','Montgomery','Huntsville','Mobile','Tuscaloosa','Hoover'],
+  'Alaska':['Anchorage','Fairbanks','Juneau','Sitka','Ketchikan'],
+  'Arizona':['Phoenix','Tucson','Scottsdale','Mesa','Chandler','Tempe','Flagstaff'],
+  'Arkansas':['Little Rock','Fort Smith','Fayetteville','Springdale','Jonesboro'],
+  'California':['Los Angeles','San Francisco','San Diego','San Jose','Sacramento','Fresno','Long Beach','Oakland','Bakersfield','Anaheim','Santa Ana','Riverside','Stockton','Irvine','Chula Vista'],
+  'Colorado':['Denver','Colorado Springs','Aurora','Fort Collins','Lakewood','Boulder','Pueblo'],
+  'Connecticut':['Bridgeport','New Haven','Hartford','Stamford','Waterbury'],
+  'Delaware':['Wilmington','Dover','Newark'],
+  'Florida':['Miami','Jacksonville','Tampa','Orlando','St. Petersburg','Hialeah','Tallahassee','Fort Lauderdale','Port St. Lucie','Cape Coral','Pembroke Pines','Hollywood','Miramar','Gainesville','Coral Springs','Miami Beach','Boca Raton','Sarasota'],
+  'Georgia':['Atlanta','Columbus','Savannah','Augusta','Athens','Macon','Roswell','Albany'],
+  'Hawaii':['Honolulu','Hilo','Kailua','Pearl City','Waipahu','Kaneohe'],
+  'Idaho':['Boise','Meridian','Nampa','Idaho Falls','Pocatello','Coeur d\'Alene'],
+  'Illinois':['Chicago','Aurora','Rockford','Joliet','Naperville','Springfield','Peoria','Elgin'],
+  'Indiana':['Indianapolis','Fort Wayne','Evansville','South Bend','Carmel','Bloomington','Fishers'],
+  'Iowa':['Des Moines','Cedar Rapids','Davenport','Sioux City','Iowa City','Waterloo'],
+  'Kansas':['Wichita','Overland Park','Kansas City','Olathe','Topeka','Lawrence'],
+  'Kentucky':['Louisville','Lexington','Bowling Green','Owensboro','Covington'],
+  'Louisiana':['New Orleans','Baton Rouge','Shreveport','Metairie','Lafayette','Lake Charles'],
+  'Maine':['Portland','Lewiston','Bangor','Augusta'],
+  'Maryland':['Baltimore','Frederick','Rockville','Gaithersburg','Bowie','Hagerstown','Annapolis'],
+  'Massachusetts':['Boston','Worcester','Springfield','Cambridge','Lowell','Brockton','New Bedford','Providence'],
+  'Michigan':['Detroit','Grand Rapids','Warren','Sterling Heights','Lansing','Ann Arbor','Flint','Dearborn'],
+  'Minnesota':['Minneapolis','Saint Paul','Rochester','Duluth','Brooklyn Park','Plymouth','Bloomington'],
+  'Mississippi':['Jackson','Gulfport','Southaven','Hattiesburg','Biloxi','Meridian'],
+  'Missouri':['Kansas City','St. Louis','Springfield','Columbia','Independence','Lee\'s Summit'],
+  'Montana':['Billings','Missoula','Great Falls','Bozeman','Butte','Helena'],
+  'Nebraska':['Omaha','Lincoln','Bellevue','Grand Island','Kearney'],
+  'Nevada':['Las Vegas','Henderson','Reno','North Las Vegas','Sparks','Carson City'],
+  'New Hampshire':['Manchester','Nashua','Concord','Derry','Dover'],
+  'New Jersey':['Newark','Jersey City','Paterson','Elizabeth','Edison','Trenton','Camden','Atlantic City'],
+  'New Mexico':['Albuquerque','Las Cruces','Rio Rancho','Santa Fe','Roswell'],
+  'New York':['New York City','Buffalo','Rochester','Yonkers','Syracuse','Albany','New Rochelle','Mount Vernon','Schenectady','Utica'],
+  'North Carolina':['Charlotte','Raleigh','Greensboro','Durham','Winston-Salem','Fayetteville','Cary','Wilmington','Asheville'],
+  'North Dakota':['Fargo','Bismarck','Grand Forks','Minot'],
+  'Ohio':['Columbus','Cleveland','Cincinnati','Toledo','Akron','Dayton','Parma','Canton'],
+  'Oklahoma':['Oklahoma City','Tulsa','Norman','Broken Arrow','Lawton','Edmond'],
+  'Oregon':['Portland','Eugene','Salem','Gresham','Hillsboro','Bend','Beaverton'],
+  'Pennsylvania':['Philadelphia','Pittsburgh','Allentown','Erie','Reading','Scranton','Bethlehem','Lancaster'],
+  'Rhode Island':['Providence','Cranston','Warwick','Pawtucket','East Providence'],
+  'South Carolina':['Columbia','Charleston','North Charleston','Mount Pleasant','Rock Hill','Greenville','Summerville','Spartanburg'],
+  'South Dakota':['Sioux Falls','Rapid City','Aberdeen','Brookings'],
+  'Tennessee':['Nashville','Memphis','Knoxville','Chattanooga','Clarksville','Murfreesboro','Jackson'],
+  'Texas':['Houston','San Antonio','Dallas','Austin','Fort Worth','El Paso','Arlington','Corpus Christi','Plano','Laredo','Lubbock','Garland','Irving','Amarillo','Grand Prairie','McKinney','Frisco','Killeen'],
+  'Utah':['Salt Lake City','West Valley City','Provo','West Jordan','Orem','Sandy','Ogden','St. George'],
+  'Vermont':['Burlington','South Burlington','Rutland','Barre','Montpelier'],
+  'Virginia':['Virginia Beach','Norfolk','Chesapeake','Richmond','Newport News','Alexandria','Hampton','Roanoke'],
+  'Washington':['Seattle','Spokane','Tacoma','Vancouver','Bellevue','Kirkland','Renton','Bellingham'],
+  'Washington D.C.':['Washington D.C.'],
+  'West Virginia':['Charleston','Huntington','Morgantown','Parkersburg'],
+  'Wisconsin':['Milwaukee','Madison','Green Bay','Kenosha','Racine','Appleton'],
+  'Wyoming':['Cheyenne','Casper','Laramie','Gillette','Rock Springs'],
+  'Puerto Rico':['San Juan','Bayamón','Carolina','Ponce','Caguas'],
+};
 
-  const TYPE_LABELS = {
-    character: 'Character / Party Appearance', female: 'Female Entertainer',
-    male: 'Male Entertainer', tossing: 'Dwarf Tossing', promo: 'Promotional Appearance',
-    corporate: 'Corporate Event', film: 'Film / Commercial', custom: 'Custom Entertainment',
-  };
+const DEFAULTS = {
+  character:{ local:{talent:500,client:600},   oos:{talent:1000,client:1200} },
+  female:   { local:{talent:1000,client:1200},  oos:{talent:1000,client:1400} },
+  male:     { local:{talent:800,client:960},    oos:{talent:800,client:1160}  },
+  tossing:  { local:{talent:600,client:720},    oos:{talent:1000,client:1200} },
+  promo:    { local:{talent:500,client:600},    oos:{talent:1000,client:1200} },
+  corporate:{ local:{talent:800,client:960},    oos:{talent:1200,client:1440} },
+  film:     { local:{talent:1000,client:1200},  oos:{talent:1500,client:1800} },
+  custom:   { local:{talent:0,client:0},        oos:{talent:0,client:0}       },
+};
 
-  function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
-  function fmt(n) { return '$' + Number(n).toLocaleString(); }
+const TYPE_LABELS = {
+  character:'Character / Party Appearance', female:'Female Entertainer',
+  male:'Male Entertainer', tossing:'Dwarf Tossing', promo:'Promotional Appearance',
+  corporate:'Corporate Event', film:'Film / Commercial', custom:'Custom Entertainment',
+};
 
-  function changePerformers(d) {
-    performers = Math.max(1, Math.min(10, performers + d));
-    document.getElementById('performer-count').textContent = performers;
-    updatePricingPreview();
+// ═══════════════════════════════════════
+//  STATE / COUNTER
+// ═══════════════════════════════════════
+let performers=1, duration=2;
+let selectedState='', selectedCity='';
+let calYear, calMonth, selectedDate=null;
+let ddFocusIdx = { state:-1, city:-1 };
+
+function changePerformers(d){ performers=Math.max(1,Math.min(10,performers+d)); document.getElementById('performer-count').textContent=performers; updatePricingPreview(); }
+function changeDuration(d){ duration=Math.max(0.5,Math.min(12,parseFloat((duration+d).toFixed(1)))); document.getElementById('duration-val').textContent=duration; updatePricingPreview(); }
+
+// ═══════════════════════════════════════
+//  DROPDOWN: STATE
+// ═══════════════════════════════════════
+function openDropdown(which){
+  closeAllDropdowns();
+  document.getElementById('backdrop').classList.add('show');
+  filterStates();
+  if(which==='city') filterCities();
+  setTimeout(()=>{ document.getElementById(which+'-dropdown').classList.add('open'); },10);
+}
+
+function closeAllDropdowns(){
+  document.querySelectorAll('.dropdown').forEach(d=>d.classList.remove('open'));
+  document.getElementById('backdrop').classList.remove('show');
+  ddFocusIdx={state:-1,city:-1};
+}
+
+function filterStates(){
+  const q=document.getElementById('state-input').value.toLowerCase().trim();
+  const dd=document.getElementById('state-dropdown');
+  const matches=STATES.filter(s=>s.toLowerCase().includes(q));
+  dd.innerHTML = matches.length
+    ? matches.map(s=>`<div class="dropdown-item" onclick="selectState('${s}')">${highlight(s,q)}</div>`).join('')
+    : `<div class="dropdown-empty">No results</div>`;
+  dd.classList.add('open');
+  document.getElementById('state-clear').classList.toggle('show', q.length>0);
+}
+
+function selectState(state){
+  selectedState=state;
+  document.getElementById('state-input').value=state;
+  document.getElementById('state-input').classList.add('filled');
+  document.getElementById('state-clear').classList.add('show');
+  closeAllDropdowns();
+  // Reset city
+  selectedCity='';
+  document.getElementById('city-input').value='';
+  document.getElementById('city-input').classList.remove('filled');
+  document.getElementById('city-clear').classList.remove('show');
+}
+
+// ═══════════════════════════════════════
+//  DROPDOWN: CITY
+// ═══════════════════════════════════════
+function filterCities(){
+  const q=document.getElementById('city-input').value.toLowerCase().trim();
+  const dd=document.getElementById('city-dropdown');
+  const pool = selectedState && CITIES[selectedState] ? CITIES[selectedState] : Object.values(CITIES).flat();
+  const matches = q ? pool.filter(c=>c.toLowerCase().includes(q)) : (selectedState && CITIES[selectedState] ? CITIES[selectedState] : []);
+  dd.innerHTML = matches.length
+    ? matches.slice(0,12).map(c=>`<div class="dropdown-item" onclick="selectCity('${c.replace(/'/g,"\\'")}')"><span>${highlight(c,q)}</span></div>`).join('')
+    : `<div class="dropdown-empty">${q?'No results':'Select a state first'}</div>`;
+  dd.classList.add('open');
+  document.getElementById('city-clear').classList.toggle('show', document.getElementById('city-input').value.length>0);
+}
+
+function selectCity(city){
+  selectedCity=city;
+  document.getElementById('city-input').value=city;
+  document.getElementById('city-input').classList.add('filled');
+  document.getElementById('city-clear').classList.add('show');
+  closeAllDropdowns();
+}
+
+function clearField(which){
+  document.getElementById(which+'-input').value='';
+  document.getElementById(which+'-input').classList.remove('filled');
+  document.getElementById(which+'-clear').classList.remove('show');
+  if(which==='state'){ selectedState=''; selectedCity=''; document.getElementById('city-input').value=''; document.getElementById('city-input').classList.remove('filled'); }
+  if(which==='city') selectedCity='';
+}
+
+function highlight(text, q){
+  if(!q) return text;
+  return text.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<strong>$1</strong>');
+}
+
+// keyboard nav
+function ddKeydown(e,which){
+  const dd=document.getElementById(which+'-dropdown');
+  const items=dd.querySelectorAll('.dropdown-item');
+  if(!items.length) return;
+  if(e.key==='ArrowDown'){ ddFocusIdx[which]=Math.min(ddFocusIdx[which]+1,items.length-1); }
+  else if(e.key==='ArrowUp'){ ddFocusIdx[which]=Math.max(ddFocusIdx[which]-1,0); }
+  else if(e.key==='Enter' && ddFocusIdx[which]>=0){ items[ddFocusIdx[which]].click(); return; }
+  else if(e.key==='Escape'){ closeAllDropdowns(); return; }
+  items.forEach((el,i)=>el.classList.toggle('focused',i===ddFocusIdx[which]));
+  if(ddFocusIdx[which]>=0) items[ddFocusIdx[which]].scrollIntoView({block:'nearest'});
+}
+
+// ═══════════════════════════════════════
+//  CALENDAR
+// ═══════════════════════════════════════
+function openCalendar(){
+  const now=new Date();
+  calYear=selectedDate?selectedDate.getFullYear():now.getFullYear();
+  calMonth=selectedDate?selectedDate.getMonth():now.getMonth();
+  renderCalendar();
+  document.getElementById('cal-overlay').classList.add('open');
+}
+function closeCalendar(){ document.getElementById('cal-overlay').classList.remove('open'); }
+function calOverlayClick(e){ if(e.target===document.getElementById('cal-overlay')) closeCalendar(); }
+function calNav(d){ calMonth+=d; if(calMonth>11){calMonth=0;calYear++;} if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+
+function renderCalendar(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent=`${months[calMonth]} ${calYear}`;
+  const labelsEl=document.getElementById('cal-day-labels');
+  labelsEl.innerHTML=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-day-label">${d}</div>`).join('');
+  const gridEl=document.getElementById('cal-grid');
+  const today=new Date(); today.setHours(0,0,0,0);
+  const first=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+  let html='';
+  for(let i=0;i<first;i++){ html+=`<div class="cal-day other">${daysInPrev-first+1+i}</div>`; }
+  for(let d=1;d<=daysInMonth;d++){
+    const date=new Date(calYear,calMonth,d);
+    const isPast=date<today;
+    const isToday=date.getTime()===today.getTime();
+    const isSel=selectedDate&&date.getTime()===selectedDate.getTime();
+    let cls='cal-day';
+    if(isPast) cls+=' past';
+    else if(isSel) cls+=' selected';
+    else if(isToday) cls+=' today';
+    const handler=isPast?'':`onclick="selectDate(${calYear},${calMonth},${d})"`;
+    html+=`<div class="${cls}" ${handler}>${d}</div>`;
   }
-  function changeDuration(d) {
-    duration = Math.max(0.5, Math.min(12, parseFloat((duration + d).toFixed(1))));
-    document.getElementById('duration-val').textContent = duration;
-    updatePricingPreview();
-  }
+  gridEl.innerHTML=html;
+}
 
-  function fillRates(type, local) {
-    if (!DEFAULTS[type]) return;
-    const loc = local ? 'local' : 'oos';
-    const d = DEFAULTS[type][loc];
-    document.getElementById('r-talent-base').value = d.talent || '';
-    document.getElementById('r-client-base').value = d.client || '';
-    document.getElementById('r-travel').value = d.travel || 0;
-  }
+function selectDate(y,m,d){
+  selectedDate=new Date(y,m,d);
+  document.getElementById('event-date').value=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  const label=selectedDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  const el=document.getElementById('date-display-text');
+  el.textContent=label; el.classList.add('set');
+  renderCalendar();
+  setTimeout(closeCalendar,180);
+}
 
-  function onEntTypeChange() {
-    const type = document.getElementById('ent-type').value;
-    const local = document.querySelector('input[name="location"]:checked').value === 'local';
-    document.getElementById('custom-label-field').style.display = type === 'custom' ? 'block' : 'none';
-    if (type) {
-      document.getElementById('rates-card').style.display = 'block';
-      fillRates(type, local);
-    } else {
-      document.getElementById('rates-card').style.display = 'none';
+// ═══════════════════════════════════════
+//  ENTERTAINMENT TYPE
+// ═══════════════════════════════════════
+function onEntTypeChange(){
+  const type=document.getElementById('ent-type').value;
+  const local=document.querySelector('input[name="location"]:checked').value==='local';
+  document.getElementById('custom-label-field').style.display=type==='custom'?'block':'none';
+  if(type){
+    document.getElementById('rates-card').style.display='block';
+    fillRates(type,local);
+    if(type==='custom'){
+      // Auto-open rates for custom
+      document.getElementById('rates-toggle').classList.add('open');
+      document.getElementById('rates-body').classList.add('open');
     }
-    updatePricingPreview();
+  } else {
+    document.getElementById('rates-card').style.display='none';
   }
+  updatePricingPreview();
+}
 
-  function onLocationChange() {
-    const type = document.getElementById('ent-type').value;
-    const local = document.querySelector('input[name="location"]:checked').value === 'local';
-    if (type) fillRates(type, local);
-    updatePricingPreview();
-  }
+function onLocationChange(){
+  const type=document.getElementById('ent-type').value;
+  const local=document.querySelector('input[name="location"]:checked').value==='local';
+  if(type) fillRates(type,local);
+  updatePricingPreview();
+}
 
-  function getAddons() {
-    return [...document.querySelectorAll('.addon-row')].map(row => ({
-      label: row.querySelector('.addon-label').value.trim() || 'Add-on',
-      amount: parseFloat(row.querySelector('.addon-amount').value) || 0,
-    })).filter(a => a.amount > 0 || a.label !== 'Add-on');
-  }
+function fillRates(type,local){
+  if(!DEFAULTS[type]) return;
+  const loc=local?'local':'oos';
+  const d=DEFAULTS[type][loc];
+  document.getElementById('r-talent-base').value=d.talent||'';
+  document.getElementById('r-client-base').value=d.client||'';
+  document.getElementById('r-travel').value=local?0:200;
+}
 
-  function calcPricing() {
-    const talentBase = v('r-talent-base');
-    const clientBase = v('r-client-base');
-    const extraTalentHr = v('r-extra-talent');
-    const extraClientHr = v('r-extra-client');
-    const travel = v('r-travel');
-    const depositPct = v('r-deposit-pct') / 100;
-    const bookingFeePct = v('r-booking-fee') / 100;
+function toggleRates(){
+  const t=document.getElementById('rates-toggle');
+  const b=document.getElementById('rates-body');
+  t.classList.toggle('open');
+  b.classList.toggle('open');
+}
 
-    if (!clientBase) return null;
+// ═══════════════════════════════════════
+//  PRICING
+// ═══════════════════════════════════════
+function vn(id){ return parseFloat(document.getElementById(id).value)||0; }
+function fmt(n){ return '$'+Number(n).toLocaleString(); }
 
-    const extraHrs = Math.max(0, duration - 2);
-    const extraTalentCost = Math.round(extraHrs * extraTalentHr);
-    const extraClientCost = Math.round(extraHrs * extraClientHr);
+function getAddons(){
+  return [...document.querySelectorAll('.addon-row')].map(r=>({
+    label:r.querySelector('.addon-label').value.trim()||'Add-on',
+    amount:parseFloat(r.querySelector('.addon-amount').value)||0
+  })).filter(a=>a.amount>0);
+}
 
-    const perTalent = talentBase + extraTalentCost;
-    const perClient = clientBase + extraClientCost;
+function calcPricing(){
+  const clientBase=vn('r-client-base');
+  const talentBase=vn('r-talent-base');
+  if(!clientBase) return null;
+  const extraHrs=Math.max(0,duration-2);
+  const extraClient=Math.round(extraHrs*vn('r-extra-client'));
+  const extraTalent=Math.round(extraHrs*vn('r-extra-talent'));
+  const travel=vn('r-travel');
+  const depositPct=vn('r-deposit-pct')/100;
+  const feePct=vn('r-booking-fee')/100;
+  const addons=getAddons();
+  const addonTotal=addons.reduce((s,a)=>s+a.amount,0);
+  const perClient=clientBase+extraClient;
+  const perTalent=talentBase+extraTalent;
+  const subtotal=perClient*performers;
+  const total=subtotal+travel+addonTotal;
+  const deposit=Math.round(total*depositPct);
+  return { clientBase,talentBase,extraHrs,extraClient,extraTalent,travel,addons,addonTotal,perClient,perTalent,subtotal,total,deposit,balance:total-deposit,feePct,depositPct };
+}
 
-    const addons = getAddons();
-    const addonTotal = addons.reduce((s, a) => s + a.amount, 0);
+function buildPricingHTML(p){
+  let h='';
+  h+=`<div class="price-row"><span class="pl">Base rate (per performer)</span><span class="pv">${fmt(p.clientBase)}</span></div>`;
+  if(p.extraHrs>0) h+=`<div class="price-row"><span class="pl">+${p.extraHrs}hr extra × ${fmt(vn('r-extra-client'))}</span><span class="pv">+${fmt(p.extraClient)}</span></div>`;
+  if(performers>1) h+=`<div class="price-row"><span class="pl">${performers} performers × ${fmt(p.perClient)}</span><span class="pv">${fmt(p.subtotal)}</span></div>`;
+  if(p.travel>0) h+=`<div class="price-row"><span class="pl">Travel fee</span><span class="pv">+${fmt(p.travel)}</span></div>`;
+  p.addons.forEach(a=>{ h+=`<div class="price-row"><span class="pl">${a.label}</span><span class="pv">+${fmt(a.amount)}</span></div>`; });
+  h+=`<div class="price-row total"><span class="pl">Client Total</span><span class="pv">${fmt(p.total)}</span></div>`;
+  h+=`<div class="price-row dep"><span class="pl">Deposit (${Math.round(p.depositPct*100)}%)</span><span class="pv">${fmt(p.deposit)}</span></div>`;
+  h+=`<div class="price-row dep"><span class="pl">Balance (day-of)</span><span class="pv">${fmt(p.balance)}</span></div>`;
+  h+=`<div class="price-row int"><span class="pl">Talent payout</span><span class="pv">${fmt(p.perTalent*performers)}</span></div>`;
+  h+=`<div class="price-row int"><span class="pl">Your cut (${Math.round(p.feePct*100)}%)</span><span class="pv">${fmt(Math.round(p.total*p.feePct))}</span></div>`;
+  return h;
+}
 
-    const subtotal = perClient * performers;
-    const total = subtotal + travel + addonTotal;
-    const deposit = Math.round(total * depositPct);
-    const balance = total - deposit;
-    const yourCut = Math.round(total * bookingFeePct) * performers;
-    const talentPayout = perTalent * performers;
+function updatePricingPreview(){
+  const p=calcPricing();
+  const el=document.getElementById('pricing-preview');
+  if(!p){ el.style.display='none'; return; }
+  el.style.display='block';
+  document.getElementById('pricing-rows').innerHTML=buildPricingHTML(p);
+}
 
-    return { talentBase, clientBase, extraHrs, extraTalentCost, extraClientCost,
-             perTalent, perClient, addons, addonTotal, subtotal, travel,
-             total, deposit, balance, yourCut, talentPayout, depositPct, bookingFeePct };
-  }
+function addAddon(){
+  const list=document.getElementById('addon-list');
+  const row=document.createElement('div');
+  row.className='addon-row';
+  row.innerHTML=`<input class="inp" type="text" class="addon-label" placeholder="e.g. Costume fee" oninput="updatePricingPreview()"><div class="inp-prefix"><span class="pre">$</span><input class="inp addon-amount" type="number" placeholder="0" min="0" style="padding-left:24px" oninput="updatePricingPreview()"></div><button class="addon-remove" onclick="this.closest('.addon-row').remove();updatePricingPreview()">×</button>`;
+  list.appendChild(row);
+}
 
-  function buildPricingHTML(p) {
-    let html = '';
-    html += `<div class="price-row"><span class="pl">Base rate (per performer)</span><span class="pv">${fmt(p.clientBase)}</span></div>`;
-    if (p.extraHrs > 0) html += `<div class="price-row"><span class="pl">+${p.extraHrs}hr × ${fmt(v('r-extra-client'))}/hr</span><span class="pv">+${fmt(p.extraClientCost)}</span></div>`;
-    if (performers > 1) html += `<div class="price-row"><span class="pl">${performers} performers × ${fmt(p.perClient)}</span><span class="pv">${fmt(p.subtotal)}</span></div>`;
-    if (p.travel > 0) html += `<div class="price-row"><span class="pl">Travel fee</span><span class="pv">+${fmt(p.travel)}</span></div>`;
-    p.addons.forEach(a => { html += `<div class="price-row"><span class="pl">${a.label}</span><span class="pv">+${fmt(a.amount)}</span></div>`; });
-    html += `<div class="price-row total"><span class="pl">Client Total</span><span class="pv">${fmt(p.total)}</span></div>`;
-    html += `<div class="price-row deposit"><span class="pl">Deposit (${Math.round(p.depositPct*100)}% upfront)</span><span class="pv">${fmt(p.deposit)}</span></div>`;
-    html += `<div class="price-row deposit"><span class="pl">Balance (due day-of)</span><span class="pv">${fmt(p.balance)}</span></div>`;
-    html += `<div class="price-row internal"><span class="pl">Talent payout (internal)</span><span class="pv">${fmt(p.talentPayout)}</span></div>`;
-    html += `<div class="price-row internal"><span class="pl">Your booking fee (${Math.round(p.bookingFeePct*100)}%)</span><span class="pv">${fmt(p.yourCut)}</span></div>`;
-    return html;
-  }
+// ═══════════════════════════════════════
+//  GENERATE
+// ═══════════════════════════════════════
+function generateQuote(){
+  const name=document.getElementById('client-name').value.trim();
+  const city=document.getElementById('city-input').value.trim()||selectedCity;
+  const state=document.getElementById('state-input').value.trim()||selectedState;
+  const evtType=document.getElementById('event-type').value.trim();
+  const evtDate=document.getElementById('event-date').value;
+  const entType=document.getElementById('ent-type').value;
+  const notes=document.getElementById('notes').value.trim();
+  const local=document.querySelector('input[name="location"]:checked').value==='local';
+  if(!name||!entType){ alert('Fill in client name and entertainment type.'); return; }
+  const p=calcPricing();
+  if(!p||!p.clientBase){ alert('Select an entertainment type so rates can be calculated.'); return; }
+  let entLabel=TYPE_LABELS[entType]||'Entertainment';
+  if(entType==='custom'){ const cl=document.getElementById('custom-type-label').value.trim(); if(cl) entLabel=cl; }
+  const dateStr=evtDate?new Date(evtDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'[DATE TBD]';
+  const firstName=(name.match(/^(\S+)/)||[,'there'])[1];
+  const locationStr=[city,state].filter(Boolean).join(', ');
+  const performerStr=performers===1?'1 performer':`${performers} performers`;
+  const durationStr=duration===1?'1 hour':`${duration} hours`;
+  let email=`Hi ${firstName},\n\nThanks for reaching out to OnlyDwarfs Entertainment!\n\n`;
+  if(evtType) email+=`We'd love to help make your ${evtType} unforgettable${locationStr?' in '+locationStr:''}.\n\n`;
+  email+=`Here's what we've put together:\n\n`;
+  email+=`• Entertainment: ${entLabel}\n• Performers: ${performerStr}\n• Duration: ${durationStr}\n• Date: ${dateStr}\n`;
+  if(!local) email+=`• Travel: Out of state (included)\n`;
+  p.addons.forEach(a=>{ email+=`• ${a.label}: ${fmt(a.amount)}\n`; });
+  email+=`\nTotal: ${fmt(p.total)}\nTo confirm, we require a ${Math.round(p.depositPct*100)}% deposit of ${fmt(p.deposit)} upfront, with the remaining ${fmt(p.balance)} due before the performer arrives.\n\n`;
+  if(notes) email+=`${notes}\n\n`;
+  email+=`Reply here and we'll get everything locked in!\n\nRyder Warbrick\nOnlyDwarfs Entertainment\nryderwarbrick@onlydwarfs.com`;
+  document.getElementById('output-pricing').innerHTML=buildPricingHTML(p);
+  document.getElementById('email-draft').textContent=email;
+  document.getElementById('form-section').style.display='none';
+  document.getElementById('output-section').style.display='block';
+  window.scrollTo(0,0);
+  window._generatedEmail=email;
+}
 
-  function updatePricingPreview() {
-    const p = calcPricing();
-    const preview = document.getElementById('pricing-preview');
-    if (!p) { preview.style.display = 'none'; return; }
-    preview.style.display = 'block';
-    document.getElementById('pricing-rows').innerHTML = buildPricingHTML(p);
-  }
-
-  function addAddon() {
-    const list = document.getElementById('addon-list');
-    const row = document.createElement('div');
-    row.className = 'addon-row';
-    row.innerHTML = `
-      <input type="text" class="addon-label" placeholder="Costume fee, hotel..." oninput="updatePricingPreview()">
-      <div class="input-prefix"><span>$</span><input type="number" class="addon-amount" placeholder="0" min="0" style="padding-left:24px" oninput="updatePricingPreview()"></div>
-      <button class="addon-remove" onclick="this.closest('.addon-row').remove();updatePricingPreview()">×</button>`;
-    list.appendChild(row);
-  }
-
-  function generateQuote() {
-    const name    = document.getElementById('client-name').value.trim();
-    const city    = document.getElementById('client-city').value.trim();
-    const state   = document.getElementById('client-state').value.trim();
-    const evtType = document.getElementById('event-type').value.trim();
-    const evtDate = document.getElementById('event-date').value;
-    const entType = document.getElementById('ent-type').value;
-    const notes   = document.getElementById('notes').value.trim();
-    const local   = document.querySelector('input[name="location"]:checked').value === 'local';
-
-    if (!name || !entType) { alert('Fill in client name and entertainment type.'); return; }
-    const p = calcPricing();
-    if (!p || !p.clientBase) { alert('Enter a client rate in the Rates section.'); return; }
-
-    let entLabel = TYPE_LABELS[entType] || 'Entertainment';
-    if (entType === 'custom') {
-      const cl = document.getElementById('custom-type-label').value.trim();
-      if (cl) entLabel = cl;
-    }
-
-    const dateStr = evtDate
-      ? new Date(evtDate + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' })
-      : '[DATE TBD]';
-
-    const firstName = (name.match(/^(\S+)/) || [,'there'])[1];
-    const locationStr = [city, state].filter(Boolean).join(', ');
-    const performerStr = performers === 1 ? '1 performer' : `${performers} performers`;
-    const durationStr = duration === 1 ? '1 hour' : `${duration} hours`;
-
-    let email = `Hi ${firstName},\n\nThanks for reaching out to OnlyDwarfs Entertainment!\n\n`;
-    if (evtType) email += `We'd love to help make your ${evtType} unforgettable${locationStr ? ' in ' + locationStr : ''}.\n\n`;
-    email += `Here's what we've put together:\n\n`;
-    email += `• Entertainment: ${entLabel}\n`;
-    email += `• Performers: ${performerStr}\n`;
-    email += `• Duration: ${durationStr}\n`;
-    email += `• Date: ${dateStr}\n`;
-    if (!local) email += `• Travel: Out of state (included)\n`;
-    p.addons.forEach(a => { email += `• ${a.label}: ${fmt(a.amount)}\n`; });
-    email += `\nTotal: ${fmt(p.total)}\n`;
-    email += `To confirm your booking we require a ${Math.round(p.depositPct*100)}% deposit of ${fmt(p.deposit)} upfront, with the remaining ${fmt(p.balance)} due before the performer arrives.\n\n`;
-    if (notes) email += `${notes}\n\n`;
-    email += `Reply here and we'll get everything locked in!\n\n`;
-    email += `Ryder Warbrick\nOnlyDwarfs Entertainment\nryderwarbrick@onlydwarfs.com`;
-
-    document.getElementById('output-pricing').innerHTML = buildPricingHTML(p);
-    document.getElementById('email-draft').textContent = email;
-    document.getElementById('form-section').style.display = 'none';
-    document.getElementById('output-section').style.display = 'block';
-    window.scrollTo(0, 0);
-    window._generatedEmail = email;
-  }
-
-  function copyEmail() {
-    navigator.clipboard.writeText(window._generatedEmail || '').then(() => {
-      const btn = document.getElementById('copy-btn');
-      btn.textContent = '✓ Copied!';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = 'Copy Email'; btn.classList.remove('copied'); }, 2000);
-    });
-  }
-
-  function resetForm() {
-    document.getElementById('form-section').style.display = 'block';
-    document.getElementById('output-section').style.display = 'none';
-    window.scrollTo(0, 0);
-  }
+function copyEmail(){
+  navigator.clipboard.writeText(window._generatedEmail||'').then(()=>{
+    const btn=document.getElementById('copy-btn');
+    btn.textContent='✓ Copied!'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='Copy Email'; btn.classList.remove('copied'); },2000);
+  });
+}
+function resetForm(){
+  document.getElementById('form-section').style.display='block';
+  document.getElementById('output-section').style.display='none';
+  window.scrollTo(0,0);
+}
 </script>
 </body>
 </html>
