@@ -236,6 +236,8 @@
   </div>
 </div>
 
+<a href="https://onlydwarfs.github.io/quote.html" style="display:block;background:#161628;border:1px solid #C9A84C44;border-radius:10px;padding:14px 16px;text-align:center;text-decoration:none;color:#C9A84C;font-size:13px;font-weight:700;letter-spacing:0.5px;margin-bottom:12px;">⚡ Generate a Quote →</a>
+
 <div class="stamp" id="stamp">Last updated: April 16, 2026</div>
 
 <script>
@@ -255,13 +257,4 @@
   function updateCountdown() {
     const now = new Date();
     document.getElementById('days-left').textContent = Math.max(0,Math.ceil((pilot-now)/86400000));
-    const pct = Math.min(100,Math.max(0,((now-promoStart)/(pilot-promoStart))*100));
-    document.getElementById('pfill').style.width = pct.toFixed(1)+'%';
-    document.getElementById('ppct').textContent = Math.round(pct)+'% of promo window used';
-  }
-  updateCountdown(); setInterval(updateCountdown,60000);
-
-  function toggle(el) { el.classList.toggle('done'); }
-</script>
-</body>
-</html>
+    const pct = Math.min(100,Math.max(0,((now-promoStart)/(pilot-promoStart))*100
