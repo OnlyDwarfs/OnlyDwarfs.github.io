@@ -121,6 +121,10 @@ select.inp option { background:#161628; }
 .price-row.dep .pv { color:#9B59B6; }
 .price-row.int .pl,.price-row.int .pv { color:#333; font-size:12px; }
 .price-row.int .pv { font-weight:500; }
+.price-row.cut .pl { color:#2ECC71; font-size:13px; font-weight:700; }
+.price-row.cut .pv { color:#2ECC71; font-size:16px; font-weight:800; }
+.price-row.cut .pl { color:#27AE60; font-size:13px; font-weight:600; }
+.price-row.cut .pv { color:#27AE60; font-size:15px; font-weight:700; }
 
 /* ── BUTTONS ── */
 .btn { width:100%; padding:15px; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; transition:opacity .15s; }
@@ -704,10 +708,10 @@ function buildPricingHTML(p){
   if(p.travel>0) h+=`<div class="price-row"><span class="pl">Travel fee</span><span class="pv">+${fmt(p.travel)}</span></div>`;
   p.addons.forEach(a=>{ h+=`<div class="price-row"><span class="pl">${a.label}</span><span class="pv">+${fmt(a.amount)}</span></div>`; });
   h+=`<div class="price-row total"><span class="pl">Client Total</span><span class="pv">${fmt(p.total)}</span></div>`;
+  h+=`<div class="price-row cut"><span class="pl">⚡ Your booking fee (${Math.round(p.feePct*100)}%)</span><span class="pv">${fmt(p.yourCutPer*performers)}</span></div>`;
   h+=`<div class="price-row dep"><span class="pl">Deposit (${Math.round(p.depositPct*100)}%)</span><span class="pv">${fmt(p.deposit)}</span></div>`;
   h+=`<div class="price-row dep"><span class="pl">Balance (day-of)</span><span class="pv">${fmt(p.balance)}</span></div>`;
   h+=`<div class="price-row int"><span class="pl">Talent payout</span><span class="pv">${fmt(p.perTalent*performers)}</span></div>`;
-  h+=`<div class="price-row int"><span class="pl">Your cut</span><span class="pv">${fmt(p.yourCutPer*performers)}</span></div>`;
   return h;
 }
 
