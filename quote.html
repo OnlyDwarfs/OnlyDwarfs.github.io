@@ -303,7 +303,7 @@ hr { border:none; border-top:1px solid #1A1A30; margin:12px 0; }
       <div class="row-2" style="margin-top:0">
         <div class="field rate-field">
           <label>Talent Base ($)</label>
-          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-talent-base" min="0" oninput="updatePricingPreview()"></div>
+          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-talent-base" min="0" oninput="autoUpdateClientRates()"></div>
         </div>
         <div class="field rate-field">
           <label>Client Base ($)</label>
@@ -313,7 +313,7 @@ hr { border:none; border-top:1px solid #1A1A30; margin:12px 0; }
       <div class="row-3">
         <div class="field rate-field">
           <label>+Hr Talent</label>
-          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-extra-talent" min="0" value="150" oninput="updatePricingPreview()"></div>
+          <div class="inp-prefix"><span class="pre">$</span><input class="inp" type="number" id="r-extra-talent" min="0" value="150" oninput="autoUpdateClientRates()"></div>
         </div>
         <div class="field rate-field">
           <label>+Hr Client</label>
@@ -332,7 +332,7 @@ hr { border:none; border-top:1px solid #1A1A30; margin:12px 0; }
         </div>
         <div class="field rate-field">
           <label>Booking Fee %</label>
-          <input class="inp" type="number" id="r-booking-fee" min="0" max="100" value="20" oninput="updatePricingPreview()">
+          <input class="inp" type="number" id="r-booking-fee" min="0" max="100" value="20" oninput="autoUpdateClientRates()">
         </div>
       </div>
     </div>
@@ -659,30 +659,47 @@ function getAddons(){
   })).filter(a=>a.amount>0);
 }
 
-function calcPricing(){
-  const clientBase=vn('r-client-base');
+// Auto-update client rate fields when talent rate or fee % changes
+function autoUpdateClientRates(){
   const talentBase=vn('r-talent-base');
-  if(!clientBase) return null;
-  const extraHrs=Math.max(0,duration-2);
-  const extraClient=Math.round(extraHrs*vn('r-extra-client'));
-  const extraTalent=Math.round(extraHrs*vn('r-extra-talent'));
+  const extraTalent=vn('r-extra-talent');
+  const fee=vn('r-booking-fee')/100;
+  if(talentBase>0) document.getElementById('r-client-base').value=Math.round(talentBase*(1+fee));
+  document.getElementById('r-extra-client').value=Math.round(extraTalent*(1+fee));
+  updatePricingPreview();
+}
+
+function calcPricing(){
+  const talentBase=vn('r-talent-base');
+  if(!talentBase) return null;
+  const feePct=vn('r-booking-fee')/100;
+  const extraTalentHr=vn('r-extra-talent');
   const travel=vn('r-travel');
   const depositPct=vn('r-deposit-pct')/100;
-  const feePct=vn('r-booking-fee')/100;
+  const extraHrs=Math.max(0,duration-2);
+  // Talent totals
+  const extraTalent=Math.round(extraHrs*extraTalentHr);
+  const perTalent=talentBase+extraTalent;
+  // Client = talent total + fee% on top of the whole talent total
+  const perClient=Math.round(perTalent*(1+feePct));
+  const yourCutPer=perClient-perTalent;
   const addons=getAddons();
   const addonTotal=addons.reduce((s,a)=>s+a.amount,0);
-  const perClient=clientBase+extraClient;
-  const perTalent=talentBase+extraTalent;
   const subtotal=perClient*performers;
   const total=subtotal+travel+addonTotal;
   const deposit=Math.round(total*depositPct);
-  return { clientBase,talentBase,extraHrs,extraClient,extraTalent,travel,addons,addonTotal,perClient,perTalent,subtotal,total,deposit,balance:total-deposit,feePct,depositPct };
+  return { talentBase,feePct,extraHrs,extraTalent,extraTalentHr,perTalent,perClient,yourCutPer,
+           travel,addons,addonTotal,subtotal,total,deposit,balance:total-deposit,depositPct };
 }
 
 function buildPricingHTML(p){
   let h='';
-  h+=`<div class="price-row"><span class="pl">Base rate (per performer)</span><span class="pv">${fmt(p.clientBase)}</span></div>`;
-  if(p.extraHrs>0) h+=`<div class="price-row"><span class="pl">+${p.extraHrs}hr extra × ${fmt(vn('r-extra-client'))}</span><span class="pv">+${fmt(p.extraClient)}</span></div>`;
+  // Per-performer breakdown
+  h+=`<div class="price-row"><span class="pl">Talent base (per performer)</span><span class="pv">${fmt(p.talentBase)}</span></div>`;
+  if(p.extraHrs>0) h+=`<div class="price-row"><span class="pl">+${p.extraHrs}hr × ${fmt(p.extraTalentHr)} talent</span><span class="pv">+${fmt(p.extraTalent)}</span></div>`;
+  h+=`<div class="price-row"><span class="pl">Talent total (per performer)</span><span class="pv">${fmt(p.perTalent)}</span></div>`;
+  h+=`<div class="price-row"><span class="pl">+ ${Math.round(p.feePct*100)}% booking fee</span><span class="pv">+${fmt(p.yourCutPer)}</span></div>`;
+  h+=`<div class="price-row"><span class="pl">Client rate (per performer)</span><span class="pv" style="color:#A8D4F5">${fmt(p.perClient)}</span></div>`;
   if(performers>1) h+=`<div class="price-row"><span class="pl">${performers} performers × ${fmt(p.perClient)}</span><span class="pv">${fmt(p.subtotal)}</span></div>`;
   if(p.travel>0) h+=`<div class="price-row"><span class="pl">Travel fee</span><span class="pv">+${fmt(p.travel)}</span></div>`;
   p.addons.forEach(a=>{ h+=`<div class="price-row"><span class="pl">${a.label}</span><span class="pv">+${fmt(a.amount)}</span></div>`; });
@@ -690,7 +707,7 @@ function buildPricingHTML(p){
   h+=`<div class="price-row dep"><span class="pl">Deposit (${Math.round(p.depositPct*100)}%)</span><span class="pv">${fmt(p.deposit)}</span></div>`;
   h+=`<div class="price-row dep"><span class="pl">Balance (day-of)</span><span class="pv">${fmt(p.balance)}</span></div>`;
   h+=`<div class="price-row int"><span class="pl">Talent payout</span><span class="pv">${fmt(p.perTalent*performers)}</span></div>`;
-  h+=`<div class="price-row int"><span class="pl">Your cut (${Math.round(p.feePct*100)}%)</span><span class="pv">${fmt(Math.round(p.total*p.feePct))}</span></div>`;
+  h+=`<div class="price-row int"><span class="pl">Your cut</span><span class="pv">${fmt(p.yourCutPer*performers)}</span></div>`;
   return h;
 }
 
