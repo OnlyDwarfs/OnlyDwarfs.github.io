@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quote Generator — OnlyDwarfs</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0D0D1A;
+    color: #EFEFEF;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #C9A84C;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .header p {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+  }
+
+  .card {
+    background: #161628;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #222240;
+  }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #C9A84C;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: #0D0D1A;
+    border: 1px solid #2A2A4A;
+    border-radius: 8px;
+    color: #EFEFEF;
+    font-size: 15px;
+    padding: 11px 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #C9A84C;
+  }
+  select option { background: #161628; }
+  textarea { resize: none; height: 80px; }
+
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Toggle */
+  .toggle-group {
+    display: flex;
+    background: #0D0D1A;
+    border: 1px solid #2A2A4A;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .toggle-group input[type="radio"] { display: none; }
+  .toggle-group label {
+    flex: 1;
+    text-align: center;
+    padding: 11px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    margin: 0;
+    letter-spacing: 0;
+    text-transform: none;
+    transition: all 0.2s;
+  }
+  .toggle-group input[type="radio"]:checked + label {
+    background: #C9A84C;
+    color: #0D0D1A;
+  }
+
+  /* Performer counter */
+  .counter {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: #0D0D1A;
+    border: 1px solid #2A2A4A;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .counter button {
+    background: none;
+    border: none;
+    color: #C9A84C;
+    font-size: 22px;
+    font-weight: 700;
+    padding: 8px 18px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .counter-val {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #EFEFEF;
+  }
+
+  /* Pricing preview */
+  #pricing-preview {
+    display: none;
+  }
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #222240;
+    font-size: 14px;
+  }
+  .price-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .price-row .label { color: #888; }
+  .price-row .value { font-weight: 700; color: #EFEFEF; }
+  .price-row.total .label { color: #EFEFEF; font-weight: 700; }
+  .price-row.total .value { color: #C9A84C; font-size: 18px; }
+  .price-row.deposit .value { color: #7B2FBE; }
+
+  /* Output */
+  #output-section { display: none; }
+
+  .email-box {
+    background: #0D0D1A;
+    border: 1px solid #2A2A4A;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #EFEFEF;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 120px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+  }
+  .btn:active { opacity: 0.8; }
+  .btn-gold {
+    background: #C9A84C;
+    color: #0D0D1A;
+    margin-bottom: 16px;
+  }
+  .btn-copy {
+    background: #1A2A3A;
+    color: #EFEFEF;
+    border: 1px solid #2A2A4A;
+    margin-top: 12px;
+  }
+  .btn-copy.copied {
+    background: #1A4A2A;
+    border-color: #27AE60;
+    color: #27AE60;
+  }
+
+  .warning {
+    background: #2A1A0A;
+    border: 1px solid #C9A84C44;
+    border-left: 3px solid #C9A84C;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #C9A84C;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .reset-link {
+    text-align: center;
+    margin-top: 16px;
+  }
+  .reset-link a {
+    color: #555;
+    font-size: 13px;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚡ Quote Generator</h1>
+  <p>OnlyDwarfs Entertainment</p>
+</div>
+
+<!-- FORM -->
+<div id="form-section">
+
+  <div class="warning">
+    ⚠️ Check the talent roster for nearby performers before sending any quote.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Client Info</div>
+    <div class="field">
+      <label>Client Name</label>
+      <input type="text" id="client-name" placeholder="John Smith" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Event Type</label>
+      <input type="text" id="event-type" placeholder="Bachelor party, birthday, corporate..." autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Event Date</label>
+      <input type="date" id="event-date">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Entertainment</div>
+    <div class="field">
+      <label>Entertainment Type</label>
+      <select id="ent-type">
+        <option value="">— Select —</option>
+        <option value="character">Character / Party Appearance</option>
+        <option value="female">Female Stripper / Adult</option>
+        <option value="male">Male Stripper / Adult</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Location</label>
+      <div class="toggle-group">
+        <input type="radio" name="location" id="loc-local" value="local" checked>
+        <label for="loc-local">In-State (Local)</label>
+        <input type="radio" name="location" id="loc-oos" value="oos">
+        <label for="loc-oos">Out of State</label>
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>Performers</label>
+        <div class="counter">
+          <button onclick="changePerformers(-1)">−</button>
+          <div class="counter-val" id="performer-count">1</div>
+          <button onclick="changePerformers(1)">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Duration (hrs)</label>
+        <div class="counter">
+          <button onclick="changeDuration(-0.5)">−</button>
+          <div class="counter-val" id="duration-val">2</div>
+          <button onclick="changeDuration(0.5)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="pricing-preview">
+    <div class="card-title">Pricing Breakdown</div>
+    <div id="pricing-rows"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Notes (optional)</div>
+    <div class="field">
+      <textarea id="notes" placeholder="Any special requests, specific requirements, or context for the email..."></textarea>
+    </div>
+  </div>
+
+  <button class="btn btn-gold" onclick="generateQuote()">Generate Quote →</button>
+
+</div>
+
+<!-- OUTPUT -->
+<div id="output-section">
+
+  <div class="card">
+    <div class="card-title">💰 Pricing Summary</div>
+    <div id="output-pricing"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📧 Email Draft</div>
+    <div class="email-box" id="email-draft"></div>
+    <button class="btn btn-copy" id="copy-btn" onclick="copyEmail()">Copy Email</button>
+  </div>
+
+  <div class="reset-link">
+    <a href="#" onclick="resetForm()">← Start a new quote</a>
+  </div>
+
+</div>
+
+<script>
+  let performers = 1;
+  let duration = 2;
+
+  function changePerformers(d) {
+    performers = Math.max(1, Math.min(10, performers + d));
+    document.getElementById('performer-count').textContent = performers;
+    updatePricingPreview();
+  }
+
+  function changeDuration(d) {
+    duration = Math.max(1, Math.min(12, parseFloat((duration + d).toFixed(1))));
+    document.getElementById('duration-val').textContent = duration;
+    updatePricingPreview();
+  }
+
+  // Update pricing preview as user fills form
+  ['ent-type', 'loc-local', 'loc-oos'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', updatePricingPreview);
+  });
+
+  function getBaseRate() {
+    const type = document.getElementById('ent-type').value;
+    const local = document.querySelector('input[name="location"]:checked').value === 'local';
+
+    const rates = {
+      character: { local: { talent: 500, client: 600, travel: 0 },
+                   oos:   { talent: 1000, client: 1200, travel: 200 } },
+      female:    { local: { talent: 1000, client: 1200, travel: 0 },
+                   oos:   { talent: 1000, client: 1400, travel: 200 } },
+      male:      { local: { talent: 800, client: 960, travel: 0 },
+                   oos:   { talent: 800, client: 1160, travel: 200 } },
+    };
+
+    if (!rates[type]) return null;
+    return local ? rates[type].local : rates[type].oos;
+  }
+
+  function calcPricing() {
+    const rate = getBaseRate();
+    if (!rate) return null;
+
+    const extraHrs = Math.max(0, duration - 2);
+    const extraClientCost = Math.round(extraHrs * 180);
+    const extraTalentCost = Math.round(extraHrs * 150);
+
+    const local = document.querySelector('input[name="location"]:checked').value === 'local';
+    const travelFee = local ? 0 : 200;
+
+    // Per-performer client cost
+    const perPerformerBase = rate.client + extraClientCost;
+
+    // Booking fee % based on group size
+    const feeNote = performers >= 5 ? 'Reduced % (custom — negotiate)' : '20% per performer';
+
+    // Total
+    const subtotal = perPerformerBase * performers;
+    const total = subtotal + travelFee;
+    const deposit = Math.round(total * 0.5);
+
+    return {
+      perPerformerBase,
+      extraHrs,
+      extraClientCost,
+      travelFee,
+      subtotal,
+      total,
+      deposit,
+      feeNote,
+      talentPerPerformer: rate.talent + extraTalentCost,
+    };
+  }
+
+  function fmt(n) {
+    return '$' + n.toLocaleString();
+  }
+
+  function updatePricingPreview() {
+    const p = calcPricing();
+    const preview = document.getElementById('pricing-preview');
+    if (!p) { preview.style.display = 'none'; return; }
+    preview.style.display = 'block';
+
+    const rows = [];
+    rows.push(`<div class="price-row"><span class="label">Base rate (per performer)</span><span class="value">${fmt(getBaseRate().client)}</span></div>`);
+    if (p.extraHrs > 0) rows.push(`<div class="price-row"><span class="label">Extra ${p.extraHrs}hr × $180</span><span class="value">+${fmt(p.extraClientCost)}</span></div>`);
+    if (performers > 1) rows.push(`<div class="price-row"><span class="label">${performers} performers</span><span class="value">${fmt(p.perPerformerBase)} × ${performers}</span></div>`);
+    if (p.travelFee > 0) rows.push(`<div class="price-row"><span class="label">Travel fee</span><span class="value">+${fmt(p.travelFee)}</span></div>`);
+    rows.push(`<div class="price-row total"><span class="label">Total (client pays)</span><span class="value">${fmt(p.total)}</span></div>`);
+    rows.push(`<div class="price-row deposit"><span class="label">Deposit (50% upfront)</span><span class="value">${fmt(p.deposit)}</span></div>`);
+
+    document.getElementById('pricing-rows').innerHTML = rows.join('');
+  }
+
+  function generateQuote() {
+    const name     = document.getElementById('client-name').value.trim();
+    const evtType  = document.getElementById('event-type').value.trim();
+    const evtDate  = document.getElementById('event-date').value;
+    const entType  = document.getElementById('ent-type').value;
+    const notes    = document.getElementById('notes').value.trim();
+    const local    = document.querySelector('input[name="location"]:checked').value === 'local';
+
+    if (!name || !entType) {
+      alert('Fill in at least the client name and entertainment type.');
+      return;
+    }
+
+    const p = calcPricing();
+    if (!p) { alert('Select an entertainment type.'); return; }
+
+    const typeLabels = {
+      character: 'Character / Party Appearance',
+      female: 'Female Entertainer',
+      male: 'Male Entertainer'
+    };
+
+    const dateStr = evtDate
+      ? new Date(evtDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+      : '[DATE TBD]';
+
+    const performerStr = performers === 1 ? '1 performer' : `${performers} performers`;
+    const durationStr = duration === 1 ? '1 hour' : `${duration} hours`;
+
+    // Build email
+    const firstNameMatch = name.match(/^(\S+)/);
+    const firstName = firstNameMatch ? firstNameMatch[1] : name;
+
+    let email = `Hi ${firstName},\n\nThanks for reaching out to OnlyDwarfs Entertainment!\n\n`;
+
+    if (evtType) email += `We'd love to help make your ${evtType} an unforgettable experience.\n\n`;
+
+    email += `Here's a quick overview of what we've put together for you:\n\n`;
+    email += `• Entertainment: ${typeLabels[entType]}\n`;
+    email += `• Performers: ${performerStr}\n`;
+    email += `• Duration: ${durationStr}\n`;
+    email += `• Date: ${dateStr}\n`;
+    if (!local) email += `• Travel: Out of state (travel fee included)\n`;
+    email += '\n';
+
+    email += `Total Investment: ${fmt(p.total)}\n`;
+    email += `To confirm your booking, we require a 50% deposit of ${fmt(p.deposit)} upfront, with the remaining balance due before the performer arrives.\n\n`;
+
+    if (notes) email += `Additional notes: ${notes}\n\n`;
+
+    email += `To move forward or if you have any questions, just reply to this email and we'll get everything locked in for you.\n\n`;
+    email += `Looking forward to working with you!\n\n`;
+    email += `Ryder Warbrick\nOnlyDwarfs Entertainment\nryderwarbrick@onlydwarfs.com`;
+
+    // Build pricing summary
+    const pricingRows = [];
+    pricingRows.push(`<div class="price-row"><span class="label">Base (per performer)</span><span class="value">${fmt(getBaseRate().client)}</span></div>`);
+    if (p.extraHrs > 0) pricingRows.push(`<div class="price-row"><span class="label">Extra ${p.extraHrs}hr × $180</span><span class="value">+${fmt(p.extraClientCost)}</span></div>`);
+    if (performers > 1) pricingRows.push(`<div class="price-row"><span class="label">${performers} performers × ${fmt(p.perPerformerBase)}</span><span class="value">${fmt(p.perPerformerBase * performers)}</span></div>`);
+    if (p.travelFee > 0) pricingRows.push(`<div class="price-row"><span class="label">Travel fee</span><span class="value">+${fmt(p.travelFee)}</span></div>`);
+    pricingRows.push(`<div class="price-row total"><span class="label">Client Total</span><span class="value">${fmt(p.total)}</span></div>`);
+    pricingRows.push(`<div class="price-row deposit"><span class="label">Deposit (50%)</span><span class="value">${fmt(p.deposit)}</span></div>`);
+    pricingRows.push(`<div class="price-row"><span class="label">Your talent cost (internal)</span><span class="value" style="color:#888">${fmt(p.talentPerPerformer * performers)}</span></div>`);
+
+    document.getElementById('output-pricing').innerHTML = pricingRows.join('');
+    document.getElementById('email-draft').textContent = email;
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('output-section').style.display = 'block';
+    window.scrollTo(0, 0);
+    window._generatedEmail = email;
+  }
+
+  function copyEmail() {
+    const text = window._generatedEmail || document.getElementById('email-draft').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy Email';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  function resetForm() {
+    document.getElementById('form-section').style.display = 'block';
+    document.getElementById('output-section').style.display = 'none';
+    window.scrollTo(0, 0);
+  }
+
+  // Initialize pricing preview
+  document.getElementById('ent-type').addEventListener('change', updatePricingPreview);
+</script>
+</body>
+</html>
