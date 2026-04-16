@@ -745,7 +745,7 @@ function generateQuote(){
   const local=document.querySelector('input[name="location"]:checked').value==='local';
   if(!name||!entType){ alert('Fill in client name and entertainment type.'); return; }
   const p=calcPricing();
-  if(!p||!p.clientBase){ alert('Select an entertainment type so rates can be calculated.'); return; }
+  if(!p){ alert('Open \'Customize Rates\' and enter a talent rate to continue.'); return; }
   let entLabel=TYPE_LABELS[entType]||'Entertainment';
   if(entType==='custom'){ const cl=document.getElementById('custom-type-label').value.trim(); if(cl) entLabel=cl; }
   const dateStr=evtDate?new Date(evtDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'[DATE TBD]';
