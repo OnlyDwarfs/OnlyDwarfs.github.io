@@ -727,7 +727,7 @@ function addAddon(){
   const list=document.getElementById('addon-list');
   const row=document.createElement('div');
   row.className='addon-row';
-  row.innerHTML=`<input class="inp" type="text" class="addon-label" placeholder="e.g. Costume fee" oninput="updatePricingPreview()"><div class="inp-prefix"><span class="pre">$</span><input class="inp addon-amount" type="number" placeholder="0" min="0" style="padding-left:24px" oninput="updatePricingPreview()"></div><button class="addon-remove" onclick="this.closest('.addon-row').remove();updatePricingPreview()">×</button>`;
+  row.innerHTML=`<input class="inp addon-label" type="text" placeholder="e.g. Costume fee" oninput="updatePricingPreview()"><div class="inp-prefix"><span class="pre">$</span><input class="inp addon-amount" type="number" placeholder="0" min="0" style="padding-left:24px" oninput="updatePricingPreview()"></div><button class="addon-remove" onclick="this.closest('.addon-row').remove();updatePricingPreview()">×</button>`;
   list.appendChild(row);
 }
 
