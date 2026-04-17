@@ -650,4 +650,11 @@
       const isOpen = item.classList.contains('open');
       // Close all
       document.querySelectorAll('.faq-item.open').forEach(el => {
-        el.clas
+        el.classList.remove('open');
+    });
+    if (!isOpen) item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>
