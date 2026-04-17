@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OnlyDwarfs CRM — Pipeline</title>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --card: #161616;
+    --card2: #1e1e1e;
+    --border: #2a2a2a;
+    --border2: #333;
+    --text: #f0f0f0;
+    --muted: #888;
+    --purple: #9b59f5;
+    --purple-dim: rgba(155,89,245,0.15);
+    --purple-glow: rgba(155,89,245,0.3);
+    --green: #2ecc71;
+    --green-dim: rgba(46,204,113,0.15);
+    --blue: #3498db;
+    --blue-dim: rgba(52,152,219,0.15);
+    --orange: #f39c12;
+    --orange-dim: rgba(243,156,18,0.15);
+    --red: #e74c3c;
+    --red-dim: rgba(231,76,60,0.15);
+    --gold: #f1c40f;
+    --gold-dim: rgba(241,196,15,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; background: var(--card); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .logo { font-size: 15px; font-weight: 700; color: var(--purple); letter-spacing: 0.5px; }
+  .logo span { color: var(--text); }
+  .page-title { font-size: 15px; color: var(--muted); }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-primary { background: var(--purple); color: #fff; }
+  .btn-primary:hover { background: #8040e0; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
+  .btn-ghost:hover { background: var(--card2); color: var(--text); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+
+  .refresh-info { font-size: 12px; color: var(--muted); }
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 5px; }
+
+  /* FILTER BAR */
+  .filterbar {
+    display: flex; align-items: center; gap: 10px; padding: 12px 24px;
+    background: var(--card); border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 300px; }
+  .search-wrap input { width: 100%; padding: 8px 12px 8px 34px; background: var(--bg); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 13px; outline: none; }
+  .search-wrap input:focus { border-color: var(--purple); }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; }
+  .filter-select { padding: 8px 12px; background: var(--bg); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 13px; outline: none; cursor: pointer; }
+  .filter-select:focus { border-color: var(--purple); }
+  .total-badge { font-size: 12px; color: var(--muted); margin-left: auto; }
+  .total-badge strong { color: var(--text); }
+
+  /* BOARD */
+  .board-wrap { overflow-x: auto; padding: 20px 24px 40px; }
+  .board { display: flex; gap: 14px; min-width: max-content; align-items: flex-start; }
+
+  /* COLUMN */
+  .col { width: 280px; background: var(--card); border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; }
+  .col-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .col-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+  .stage-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .stage-new .stage-dot { background: var(--blue); }
+  .stage-new .col-header { border-top: 3px solid var(--blue); border-radius: 12px 12px 0 0; }
+  .stage-contacted .stage-dot { background: var(--orange); }
+  .stage-contacted .col-header { border-top: 3px solid var(--orange); border-radius: 12px 12px 0 0; }
+  .stage-quoted .stage-dot { background: var(--purple); }
+  .stage-quoted .col-header { border-top: 3px solid var(--purple); border-radius: 12px 12px 0 0; }
+  .stage-booked .stage-dot { background: var(--green); }
+  .stage-booked .col-header { border-top: 3px solid var(--green); border-radius: 12px 12px 0 0; }
+  .stage-completed .stage-dot { background: var(--gold); }
+  .stage-completed .col-header { border-top: 3px solid var(--gold); border-radius: 12px 12px 0 0; }
+
+  .col-count { font-size: 12px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+  .stage-new .col-count { background: var(--blue-dim); color: var(--blue); }
+  .stage-contacted .col-count { background: var(--orange-dim); color: var(--orange); }
+  .stage-quoted .col-count { background: var(--purple-dim); color: var(--purple); }
+  .stage-booked .col-count { background: var(--green-dim); color: var(--green); }
+  .stage-completed .col-count { background: var(--gold-dim); color: var(--gold); }
+
+  .col-cards { padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+
+  /* LEAD CARD */
+  .lead-card {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .lead-card:hover { border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .lead-card.urgent { border-left: 3px solid var(--red); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+  .lead-name { font-size: 14px; font-weight: 700; line-height: 1.2; }
+  .lead-id { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .source-badge { font-size: 10px; padding: 2px 7px; border-radius: 20px; white-space: nowrap; font-weight: 600; flex-shrink: 0; }
+  .source-website { background: var(--blue-dim); color: var(--blue); }
+  .source-referral { background: var(--green-dim); color: var(--green); }
+  .source-instagram { background: rgba(225,48,108,0.15); color: #e1306c; }
+  .source-other { background: rgba(150,150,150,0.15); color: var(--muted); }
+
+  .card-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .card-row .icon { font-size: 11px; width: 14px; text-align: center; }
+  .card-row strong { color: var(--text); }
+
+  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+  .tag { font-size: 11px; padding: 2px 7px; border-radius: 20px; background: var(--border); color: var(--muted); }
+
+  .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--border); }
+  .card-date { font-size: 11px; color: var(--muted); }
+  .card-actions { display: flex; gap: 5px; }
+
+  /* empty state */
+  .col-empty { text-align: center; padding: 24px 12px; color: var(--muted); font-size: 12px; }
+
+  /* MODAL */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal-backdrop.hidden { display: none; }
+  .modal { background: var(--card); border: 1px solid var(--border2); border-radius: 16px; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .modal-name { font-size: 20px; font-weight: 800; }
+  .modal-id { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1; flex-shrink: 0; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 20px 24px; }
+  .modal-section { margin-bottom: 20px; }
+  .modal-section h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 10px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .info-item label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 2px; }
+  .info-item span { font-size: 14px; color: var(--text); }
+
+  .details-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+  .notes-input { width: 100%; background: var(--bg); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 13px; font-family: inherit; resize: vertical; min-height: 80px; outline: none; }
+  .notes-input:focus { border-color: var(--purple); }
+
+  .stage-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .stage-btn { padding: 7px 14px; border-radius: 20px; border: 2px solid transparent; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; background: var(--card2); color: var(--muted); }
+  .stage-btn:hover { border-color: #555; color: var(--text); }
+  .stage-btn.active { border-color: currentColor; }
+  .stage-btn-new { color: var(--blue); }
+  .stage-btn-new.active { background: var(--blue-dim); }
+  .stage-btn-contacted { color: var(--orange); }
+  .stage-btn-contacted.active { background: var(--orange-dim); }
+  .stage-btn-quoted { color: var(--purple); }
+  .stage-btn-quoted.active { background: var(--purple-dim); }
+  .stage-btn-booked { color: var(--green); }
+  .stage-btn-booked.active { background: var(--green-dim); }
+  .stage-btn-completed { color: var(--gold); }
+  .stage-btn-completed.active { background: var(--gold-dim); }
+
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+
+  /* LOADING */
+  .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 24px; gap: 16px; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--card2); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 18px; font-size: 13px; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.25s; max-width: 300px; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error { border-left: 3px solid var(--red); }
+
+  /* STATS BAR */
+  .stats-bar { display: flex; gap: 16px; padding: 10px 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; align-items: center; }
+  .stat-val { font-size: 18px; font-weight: 800; color: var(--purple); }
+  .stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-sep { width: 1px; background: var(--border); align-self: stretch; }
+
+  @media (max-width: 600px) {
+    .topbar { padding: 12px 16px; }
+    .board-wrap { padding: 14px 12px 40px; }
+    .filterbar { padding: 10px 16px; }
+    .stats-bar { padding: 10px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">Only<span>Dwarfs</span></div>
+    <div class="page-title">/ Pipeline CRM</div>
+  </div>
+  <div class="topbar-right">
+    <span class="refresh-info"><span class="dot"></span><span id="last-refresh">Loading...</span></span>
+    <button class="btn btn-ghost btn-sm" onclick="loadLeads()">↻ Refresh</button>
+    <a href="quote.html" style="text-decoration:none"><button class="btn btn-ghost btn-sm">📋 Quote</button></a>
+    <a href="intake.html" style="text-decoration:none"><button class="btn btn-primary btn-sm">+ New Lead</button></a>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar" id="stats-bar">
+  <div class="stat"><div class="stat-val" id="stat-total">—</div><div class="stat-lbl">Total Leads</div></div>
+  <div class="stat-sep"></div>
+  <div class="stat"><div class="stat-val" id="stat-new" style="color:var(--blue)">—</div><div class="stat-lbl">New</div></div>
+  <div class="stat-sep"></div>
+  <div class="stat"><div class="stat-val" id="stat-booked" style="color:var(--green)">—</div><div class="stat-lbl">Booked</div></div>
+  <div class="stat-sep"></div>
+  <div class="stat"><div class="stat-val" id="stat-revenue" style="color:var(--gold)">—</div><div class="stat-lbl">This Month</div></div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filterbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search leads…" oninput="renderBoard()"/>
+  </div>
+  <select class="filter-select" id="filter-type" onchange="renderBoard()">
+    <option value="">All Types</option>
+    <option>Birthday Party</option>
+    <option>Corporate Event</option>
+    <option>Wedding</option>
+    <option>Bar/Club Event</option>
+    <option>Film / Commercial</option>
+    <option>Convention</option>
+    <option>Surprise Party</option>
+    <option>Other</option>
+  </select>
+  <select class="filter-select" id="filter-source" onchange="renderBoard()">
+    <option value="">All Sources</option>
+    <option>Website</option>
+    <option>Referral</option>
+    <option>Instagram</option>
+    <option>Other</option>
+  </select>
+  <div class="total-badge" id="total-badge">Loading…</div>
+</div>
+
+<!-- BOARD -->
+<div class="board-wrap" id="board-wrap">
+  <div class="loading">
+    <div class="spinner"></div>
+    <div style="color:var(--muted);font-size:13px">Loading pipeline…</div>
+  </div>
+</div>
+
+<!-- LEAD MODAL -->
+<div class="modal-backdrop hidden" id="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-name" id="modal-name">—</div>
+        <div class="modal-id" id="modal-id">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h4>Contact</h4>
+        <div class="info-grid">
+          <div class="info-item"><label>Email</label><span id="m-email">—</span></div>
+          <div class="info-item"><label>Phone</label><span id="m-phone">—</span></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>Event Details</h4>
+        <div class="info-grid">
+          <div class="info-item"><label>Type</label><span id="m-type">—</span></div>
+          <div class="info-item"><label>Date</label><span id="m-date">—</span></div>
+          <div class="info-item"><label>Location</label><span id="m-location">—</span></div>
+          <div class="info-item"><label>Headcount</label><span id="m-headcount">—</span></div>
+          <div class="info-item"><label>Source</label><span id="m-source">—</span></div>
+          <div class="info-item"><label>Submitted</label><span id="m-submitted">—</span></div>
+        </div>
+      </div>
+      <div class="modal-section" id="m-details-wrap">
+        <h4>Details / Notes from Client</h4>
+        <div class="details-box" id="m-details">—</div>
+      </div>
+      <div class="modal-section">
+        <h4>Stage</h4>
+        <div class="stage-btns">
+          <button class="stage-btn stage-btn-new" onclick="setStage('New')">● New</button>
+          <button class="stage-btn stage-btn-contacted" onclick="setStage('Contacted')">● Contacted</button>
+          <button class="stage-btn stage-btn-quoted" onclick="setStage('Quoted')">● Quoted</button>
+          <button class="stage-btn stage-btn-booked" onclick="setStage('Booked')">● Booked</button>
+          <button class="stage-btn stage-btn-completed" onclick="setStage('Completed')">● Completed</button>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>Your Notes</h4>
+        <textarea class="notes-input" id="m-notes" placeholder="Add notes about this lead — what was discussed, what they need, follow-up reminders…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a id="modal-quote-link" href="quote.html" target="_blank" style="text-decoration:none">
+        <button class="btn btn-ghost btn-sm">📋 Generate Quote</button>
+      </a>
+      <a id="modal-email-link" href="#" style="text-decoration:none">
+        <button class="btn btn-ghost btn-sm" id="modal-email-btn">✉️ Email</button>
+      </a>
+      <button class="btn btn-primary" onclick="saveModal()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────
+const SHEET_ID   = '1SbchSzeThe_PTSju7WQyPe8_0d54xaCfpnCVWZIwBV0';
+const SCRIPT_URL = 'APPS_SCRIPT_URL_HERE'; // ← paste your deployed Apps Script URL here
+const GVIZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
+
+// ── STATE ──────────────────────────────────────────────────────────
+let allLeads = [];
+let activeLeadId = null;
+
+const STAGES = ['New','Contacted','Quoted','Booked','Completed'];
+const STAGE_LABELS = { New:'New', Contacted:'Contacted', Quoted:'Quoted', Booked:'Booked', Completed:'Completed' };
+
+// ── LOAD DATA ──────────────────────────────────────────────────────
+async function loadLeads() {
+  try {
+    const resp = await fetch(GVIZ_URL + '&cb=' + Date.now());
+    const text = await resp.text();
+    // gviz returns: /*O_o*/\ngoogle.visualization.Query.setResponse({...});
+    const json = JSON.parse(text.replace(/^[^{]+/, '').replace(/\);?\s*$/, ''));
+    const rows = json.table.rows;
+    allLeads = rows.map(r => {
+      const c = r.c;
+      const v = (i) => (c[i] && c[i].v !== null && c[i].v !== undefined) ? String(c[i].v).trim() : '';
+      return {
+        id:        v(0),
+        name:      v(1),
+        email:     v(2),
+        phone:     v(3),
+        eventType: v(4),
+        eventDate: v(5),
+        location:  v(6),
+        headcount: v(7),
+        details:   v(8),
+        source:    v(9),
+        submitted: v(10),
+        stage:     v(11) || 'New',
+        notes:     v(12),
+        updated:   v(13),
+      };
+    }).filter(l => l.id || l.name); // skip blank rows
+
+    renderBoard();
+    renderStats();
+    document.getElementById('last-refresh').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  } catch(e) {
+    console.error('Failed to load leads:', e);
+    document.getElementById('board-wrap').innerHTML = `<div class="loading"><div style="color:var(--red);font-size:14px">⚠ Failed to load data<br><small style="color:var(--muted)">Make sure the sheet is shared publicly (View access)</small></div><button class="btn btn-ghost" style="margin-top:12px" onclick="loadLeads()">Try Again</button></div>`;
+    document.getElementById('last-refresh').textContent = 'Error loading';
+  }
+}
+
+// ── FILTER ─────────────────────────────────────────────────────────
+function getFilteredLeads() {
+  const q     = document.getElementById('search-input').value.toLowerCase();
+  const fType = document.getElementById('filter-type').value;
+  const fSrc  = document.getElementById('filter-source').value;
+  return allLeads.filter(l => {
+    if (q && !`${l.name} ${l.email} ${l.location} ${l.eventType}`.toLowerCase().includes(q)) return false;
+    if (fType && l.eventType !== fType) return false;
+    if (fSrc && l.source !== fSrc) return false;
+    return true;
+  });
+}
+
+// ── RENDER BOARD ──────────────────────────────────────────────────
+function renderBoard() {
+  const leads = getFilteredLeads();
+  document.getElementById('total-badge').innerHTML = `<strong>${leads.length}</strong> lead${leads.length !== 1 ? 's' : ''}`;
+
+  const wrap = document.getElementById('board-wrap');
+  wrap.innerHTML = '';
+
+  const board = document.createElement('div');
+  board.className = 'board';
+
+  STAGES.forEach(stage => {
+    const colLeads = leads.filter(l => (l.stage || 'New') === stage);
+    const col = buildColumn(stage, colLeads);
+    board.appendChild(col);
+  });
+
+  wrap.appendChild(board);
+}
+
+function buildColumn(stage, leads) {
+  const slug = stage.toLowerCase();
+  const col = document.createElement('div');
+  col.className = `col stage-${slug}`;
+
+  col.innerHTML = `
+    <div class="col-header">
+      <div class="col-title">
+        <span class="stage-dot"></span>
+        ${stage}
+      </div>
+      <span class="col-count">${leads.length}</span>
+    </div>
+    <div class="col-cards" id="col-${slug}"></div>
+  `;
+
+  const cardsDiv = col.querySelector('.col-cards');
+
+  if (leads.length === 0) {
+    cardsDiv.innerHTML = `<div class="col-empty">No leads in ${stage}</div>`;
+  } else {
+    leads.forEach(lead => {
+      cardsDiv.appendChild(buildCard(lead));
+    });
+  }
+
+  return col;
+}
+
+function buildCard(lead) {
+  const card = document.createElement('div');
+  card.className = 'lead-card';
+  card.onclick = () => openModal(lead.id);
+
+  const sourceClass = getSourceClass(lead.source);
+  const eventDateFmt = formatDate(lead.eventDate);
+  const submittedAgo = timeAgo(lead.submitted);
+
+  card.innerHTML = `
+    <div class="card-top">
+      <div>
+        <div class="lead-name">${esc(lead.name) || '(unnamed)'}</div>
+        <div class="lead-id">${esc(lead.id)}</div>
+      </div>
+      <span class="source-badge ${sourceClass}">${esc(lead.source) || 'Other'}</span>
+    </div>
+    ${lead.eventType ? `<div class="card-row"><span class="icon">🎉</span> <strong>${esc(lead.eventType)}</strong></div>` : ''}
+    ${lead.eventDate ? `<div class="card-row"><span class="icon">📅</span> ${eventDateFmt}</div>` : ''}
+    ${lead.location ? `<div class="card-row"><span class="icon">📍</span> ${esc(lead.location)}</div>` : ''}
+    ${lead.headcount ? `<div class="card-row"><span class="icon">👥</span> ${esc(lead.headcount)} guests</div>` : ''}
+    <div class="card-footer">
+      <span class="card-date">${submittedAgo}</span>
+      <div class="card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();quickStageForward('${esc(lead.id)}')">→</button>
+      </div>
+    </div>
+  `;
+
+  return card;
+}
+
+// ── STATS ─────────────────────────────────────────────────────────
+function renderStats() {
+  document.getElementById('stat-total').textContent = allLeads.length;
+  document.getElementById('stat-new').textContent = allLeads.filter(l => l.stage === 'New').length;
+  document.getElementById('stat-booked').textContent = allLeads.filter(l => l.stage === 'Booked').length;
+  // Month count
+  const now = new Date();
+  const thisMonth = allLeads.filter(l => {
+    const d = new Date(l.submitted);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).length;
+  document.getElementById('stat-revenue').textContent = thisMonth + ' leads';
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openModal(leadId) {
+  const lead = allLeads.find(l => l.id === leadId);
+  if (!lead) return;
+  activeLeadId = leadId;
+
+  document.getElementById('modal-name').textContent     = lead.name || '(unnamed)';
+  document.getElementById('modal-id').textContent       = lead.id + (lead.source ? '  ·  ' + lead.source : '');
+  document.getElementById('m-email').textContent        = lead.email || '—';
+  document.getElementById('m-phone').textContent        = lead.phone || '—';
+  document.getElementById('m-type').textContent         = lead.eventType || '—';
+  document.getElementById('m-date').textContent         = formatDate(lead.eventDate) || '—';
+  document.getElementById('m-location').textContent     = lead.location || '—';
+  document.getElementById('m-headcount').textContent    = lead.headcount ? lead.headcount + ' guests' : '—';
+  document.getElementById('m-source').textContent       = lead.source || '—';
+  document.getElementById('m-submitted').textContent    = lead.submitted || '—';
+  document.getElementById('m-details').textContent      = lead.details || '(none)';
+  document.getElementById('m-notes').value              = lead.notes || '';
+
+  // Stage buttons
+  document.querySelectorAll('.stage-btn').forEach(btn => {
+    btn.classList.remove('active');
+    const s = btn.textContent.replace('● ','').trim();
+    if (s === lead.stage) btn.classList.add('active');
+  });
+
+  // Email link
+  if (lead.email) {
+    const subject = encodeURIComponent('Your OnlyDwarfs Booking Inquiry');
+    const body = encodeURIComponent(`Hi ${lead.name},\n\nThank you for reaching out to OnlyDwarfs!\n\nWe'd love to discuss your upcoming ${lead.eventType || 'event'}${lead.eventDate ? ' on ' + lead.eventDate : ''}.\n\nPlease let me know a good time to connect.\n\nBest,\nRyder\nOnlyDwarfs Entertainment\n(702) xxx-xxxx`);
+    document.getElementById('modal-email-btn').onclick = () => window.open(`mailto:${lead.email}?subject=${subject}&body=${body}`);
+  }
+
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-backdrop').classList.add('hidden');
+  activeLeadId = null;
+}
+
+function setStage(stage) {
+  document.querySelectorAll('.stage-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.textContent.replace('● ','').trim() === stage) btn.classList.add('active');
+  });
+}
+
+async function saveModal() {
+  if (!activeLeadId) return;
+  const activeBtn = document.querySelector('.stage-btn.active');
+  const newStage = activeBtn ? activeBtn.textContent.replace('● ','').trim() : null;
+  const newNotes = document.getElementById('m-notes').value;
+
+  const lead = allLeads.find(l => l.id === activeLeadId);
+  if (!lead) return;
+
+  // Optimistic update
+  lead.stage = newStage || lead.stage;
+  lead.notes = newNotes;
+  renderBoard();
+  renderStats();
+  closeModalDirect();
+  showToast('Saving…', '');
+
+  if (SCRIPT_URL === 'APPS_SCRIPT_URL_HERE') {
+    showToast('⚠ Apps Script not deployed yet — changes saved locally only', 'error');
+    return;
+  }
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'updateLead', leadId: activeLeadId, stage: newStage, notes: newNotes }),
+      mode: 'no-cors'
+    });
+    showToast('✓ Lead updated', 'success');
+  } catch(e) {
+    showToast('⚠ Save failed — check connection', 'error');
+  }
+}
+
+// ── QUICK STAGE FORWARD ───────────────────────────────────────────
+async function quickStageForward(leadId) {
+  const lead = allLeads.find(l => l.id === leadId);
+  if (!lead) return;
+  const idx = STAGES.indexOf(lead.stage);
+  if (idx >= STAGES.length - 1) { showToast('Already at final stage', ''); return; }
+  const nextStage = STAGES[idx + 1];
+  lead.stage = nextStage;
+  renderBoard();
+  renderStats();
+  showToast(`→ Moved to ${nextStage}`, 'success');
+
+  if (SCRIPT_URL === 'APPS_SCRIPT_URL_HERE') return;
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'updateLead', leadId, stage: nextStage, notes: lead.notes }),
+      mode: 'no-cors'
+    });
+  } catch(e) {}
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getSourceClass(src) {
+  if (!src) return 'source-other';
+  const s = src.toLowerCase();
+  if (s.includes('web') || s.includes('site')) return 'source-website';
+  if (s.includes('ref')) return 'source-referral';
+  if (s.includes('insta') || s.includes('ig')) return 'source-instagram';
+  return 'source-other';
+}
+
+function formatDate(s) {
+  if (!s) return '';
+  // Handle Excel date serials (number)
+  if (/^\d+$/.test(s.trim())) {
+    const d = new Date(Date.UTC(1899,11,30) + parseInt(s) * 86400000);
+    return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  }
+  try {
+    const d = new Date(s);
+    if (!isNaN(d)) return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  } catch(e){}
+  return s;
+}
+
+function timeAgo(s) {
+  if (!s) return '';
+  try {
+    const d = new Date(s);
+    const diff = Date.now() - d.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    const days = Math.floor(hrs / 24);
+    return days + 'd ago';
+  } catch(e) { return s; }
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── KEYBOARD ──────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModalDirect();
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    document.getElementById('search-input').focus();
+    e.preventDefault();
+  }
+});
+
+// ── INIT ──────────────────────────────────────────────────────────
+loadLeads();
+setInterval(loadLeads, 90000); // auto-refresh every 90s
+</script>
+</body>
+</html>
