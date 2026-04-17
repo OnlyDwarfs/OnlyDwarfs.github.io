@@ -29,7 +29,15 @@ function getSheet() {
 
 function doPost(e) {
   try {
-    const data = JSON.parse(e.postData.contents);
+    // Support both hidden-form POST (e.parameter.data) and direct JSON POST (e.postData.contents)
+    let data;
+    if (e.parameter && e.parameter.data) {
+      data = JSON.parse(e.parameter.data);
+    } else if (e.postData && e.postData.contents) {
+      data = JSON.parse(e.postData.contents);
+    } else {
+      return out({ success: false, error: 'No data received' });
+    }
 
     if (data.action === 'newLead') {
       return handleNewLead(data);
@@ -132,16 +140,4 @@ function testNewLead() {
         action:    'newLead',
         name:      'Test User',
         email:     'test@example.com',
-        phone:     '(555) 555-0000',
-        eventType: 'Birthday Party',
-        eventDate: 'Jun 15, 2026',
-        location:  'Las Vegas, NV',
-        headcount: '50',
-        details:   'Testing the CRM integration.',
-        source:    'Website'
-      })
-    }
-  };
-  const result = doPost(fakePost);
-  Logger.log(result.getContent());
-}
+        pho
