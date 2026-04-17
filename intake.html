@@ -125,6 +125,12 @@
 </head>
 <body>
 
+<!-- Hidden form + iframe for CORS-free Apps Script submission -->
+<iframe name="hidden-iframe" style="display:none"></iframe>
+<form id="hidden-form" method="POST" target="hidden-iframe" style="display:none">
+  <input type="hidden" name="data" id="form-data-input"/>
+</form>
+
 <div class="hero">
   <div class="hero-logo">OnlyDwarfs Entertainment</div>
   <h1>Book <span>World-Class</span><br>Dwarf Entertainment</h1>
@@ -408,24 +414,13 @@ async function submitForm() {
     source:    'Website'
   };
 
-  if (SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec') {
-    try {
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload),
-        mode: 'no-cors'
-      });
-    } catch(e) {}
-  }
+  // Submit via hidden iframe form — avoids CORS redirect issues with Apps Script
+  const formEl = document.getElementById('hidden-form');
+  const dataEl = document.getElementById('form-data-input');
+  formEl.action = SCRIPT_URL;
+  dataEl.value = JSON.stringify(payload);
+  formEl.submit();
 
-  // Optimistic success after 600ms
+  // Optimistic success after 800ms
   setTimeout(() => {
-    document.getElementById('form-card').classList.add('submitted');
-    document.getElementById('success-state').classList.add('show');
-    window.scrollTo({top: 0, behavior: 'smooth'});
-  }, 600);
-}
-</script>
-</body>
-</html>
+    d
