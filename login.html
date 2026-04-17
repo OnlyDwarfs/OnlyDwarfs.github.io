@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OnlyDwarfs Empire</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#060C18;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+  .card{background:#0C1624;border:1px solid #1A2E48;border-radius:16px;padding:48px 40px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+  .logo{font-size:18px;font-weight:900;color:#fff;letter-spacing:0.5px;margin-bottom:8px;}
+  .logo span{color:#C9A84C;}
+  .sub{font-size:12px;color:#4A6480;margin-bottom:32px;}
+  label{font-size:12px;color:#6B8299;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:8px;}
+  input{width:100%;background:#060C18;border:1px solid #1A2E48;border-radius:8px;padding:12px 16px;color:#E2EAF4;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.15s;}
+  input:focus{border-color:#C9A84C;}
+  button{width:100%;background:#C9A84C;color:#060C18;font-weight:800;font-size:14px;font-family:'Inter',sans-serif;border:none;border-radius:8px;padding:13px;cursor:pointer;margin-top:20px;letter-spacing:0.3px;transition:opacity 0.15s;}
+  button:hover{opacity:0.88;}
+  .err{color:#EF4444;font-size:12px;margin-top:12px;display:none;text-align:center;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">ONLY<span>DWARFS</span> EMPIRE</div>
+  <div class="sub">Command Center Access</div>
+  <label for="pw">Password</label>
+  <input type="password" id="pw" placeholder="Enter password" autofocus onkeydown="if(event.key==='Enter')login()">
+  <button onclick="login()">Enter Empire &#8594;</button>
+  <div class="err" id="err">Incorrect password. Try again.</div>
+</div>
+<script>
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function login(){
+  const h=await sha256(document.getElementById('pw').value);
+  if(h==='d7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555'){localStorage.setItem('od_auth',h);window.location.href='/command.html';}
+  else{document.getElementById('err').style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}
+}
+</script>
+</body>
+</html>
