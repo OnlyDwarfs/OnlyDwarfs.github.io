@@ -180,6 +180,22 @@
   .stat-sep { width: 1px; background: var(--border); align-self: stretch; }
 
 
+
+  /* FOLLOW-UP SYSTEM */
+  .followup-banner { background: rgba(231,76,60,0.08); border-bottom: 1px solid rgba(231,76,60,0.25); padding: 10px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .followup-banner.hidden { display: none; }
+  .followup-count { font-size: 13px; font-weight: 700; color: var(--red); }
+  .followup-list { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+  .followup-chip { background: rgba(231,76,60,0.12); border: 1px solid rgba(231,76,60,0.3); border-radius: 20px; padding: 4px 12px; font-size: 12px; color: var(--red); cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+  .followup-chip:hover { background: rgba(231,76,60,0.22); }
+  .followup-dismiss { font-size: 12px; color: var(--muted); cursor: pointer; margin-left: auto; }
+  .followup-dismiss:hover { color: var(--text); }
+  .lead-card.stale-1d { border-left: 3px solid var(--orange); }
+  .lead-card.stale-2d { border-left: 3px solid var(--red); }
+  .stale-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 6px; }
+  .stale-badge.warn { background: rgba(243,156,18,0.15); color: var(--orange); }
+  .stale-badge.urgent { background: rgba(231,76,60,0.15); color: var(--red); }
+
   /* TABS */
   .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--card); }
   .tab-btn { padding: 12px 22px; font-size: 13px; font-weight: 700; color: var(--muted); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
@@ -253,6 +269,13 @@
 <div class="tab-nav">
   <button class="tab-btn active" onclick="switchTab('pipeline')">📋 Pipeline</button>
   <button class="tab-btn" onclick="switchTab('financials')">💰 Financials</button>
+</div>
+
+<!-- FOLLOW-UP BANNER -->
+<div class="followup-banner hidden" id="followup-banner">
+  <span class="followup-count" id="followup-count">0 leads need follow-up</span>
+  <div class="followup-list" id="followup-list"></div>
+  <span class="followup-dismiss" onclick="dismissFollowup()">Dismiss ✕</span>
 </div>
 
 <!-- FILTER BAR -->
@@ -491,7 +514,8 @@ function buildColumn(stage, leads) {
 
 function buildCard(lead) {
   const card = document.createElement('div');
-  card.className = 'lead-card';
+  const staleness = getStaleness(lead);
+  card.className = 'lead-card' + (staleness === 2 ? ' stale-2d' : staleness === 1 ? ' stale-1d' : '');
   card.onclick = () => openModal(lead.id);
 
   const sourceClass = getSourceClass(lead.source);
@@ -501,7 +525,7 @@ function buildCard(lead) {
   card.innerHTML = `
     <div class="card-top">
       <div>
-        <div class="lead-name">${esc(lead.name) || '(unnamed)'}</div>
+        <div class="lead-name">${esc(lead.name) || '(unnamed)'}${staleness === 2 ? '<span class="stale-badge urgent">URGENT</span>' : staleness === 1 ? '<span class="stale-badge warn">FOLLOW UP</span>' : ''}</div>
         <div class="lead-id">${esc(lead.id)}</div>
       </div>
       <span class="source-badge ${sourceClass}">${esc(lead.source) || 'Other'}</span>
@@ -535,6 +559,7 @@ function renderStats() {
   document.getElementById('stat-revenue').textContent = totalRevenue > 0 ? '$' + totalRevenue.toLocaleString() : '$0';
   document.getElementById('stat-pipeline').textContent = pipelineValue > 0 ? '$' + pipelineValue.toLocaleString() : '$0';
   renderFinancials();
+  renderFollowup();
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────
@@ -700,6 +725,46 @@ function showToast(msg, type) {
   t._timer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+
+
+// ── FOLLOW-UP SYSTEM ─────────────────────────────────────────────
+// Returns 0 = fine, 1 = follow up (>24h), 2 = urgent (>48h)
+function getStaleness(lead) {
+  if (!['New','Contacted'].includes(lead.stage)) return 0;
+  const ref = lead.updated || lead.submitted;
+  if (!ref) return 0;
+  const diffH = (Date.now() - new Date(ref).getTime()) / 3600000;
+  if (diffH >= 48) return 2;
+  if (diffH >= 24) return 1;
+  return 0;
+}
+
+function renderFollowup() {
+  const stale = allLeads.filter(l => getStaleness(l) > 0)
+    .sort((a, b) => getStaleness(b) - getStaleness(a));
+
+  const banner  = document.getElementById('followup-banner');
+  const countEl = document.getElementById('followup-count');
+  const listEl  = document.getElementById('followup-list');
+
+  if (stale.length === 0) {
+    banner.classList.add('hidden');
+    return;
+  }
+
+  banner.classList.remove('hidden');
+  countEl.textContent = stale.length + ' lead' + (stale.length > 1 ? 's' : '') + ' need follow-up';
+
+  listEl.innerHTML = stale.map(l => {
+    const urgency = getStaleness(l) === 2 ? '🔴' : '🟡';
+    const diffH = Math.round((Date.now() - new Date(l.updated || l.submitted).getTime()) / 3600000);
+    return `<span class="followup-chip" onclick="openModal('${esc(l.id)}')">${urgency} ${esc(l.name)} · ${diffH}h ago</span>`;
+  }).join('');
+}
+
+function dismissFollowup() {
+  document.getElementById('followup-banner').classList.add('hidden');
+}
 
 // ── TAB SWITCHING ────────────────────────────────────────────────
 function switchTab(tab) {
