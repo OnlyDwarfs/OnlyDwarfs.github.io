@@ -231,7 +231,7 @@
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────
-const SCRIPT_URL = 'APPS_SCRIPT_URL_HERE'; // ← paste deployed Apps Script URL here
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec'; // ← paste deployed Apps Script URL here
 
 // ── DATA ───────────────────────────────────────────────────────────
 const STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","Washington D.C.","Puerto Rico","International"];
@@ -408,7 +408,7 @@ async function submitForm() {
     source:    'Website'
   };
 
-  if (SCRIPT_URL !== 'APPS_SCRIPT_URL_HERE') {
+  if (SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec') {
     try {
       fetch(SCRIPT_URL, {
         method: 'POST',
