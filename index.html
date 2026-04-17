@@ -1,260 +1,715 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>OnlyDwarfs Empire</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-  :root {
-    --gold:#C9A84C; --gold-lt:#E8C66B;
-    --purple:#7C3AED; --purple-lt:#A78BFA;
-    --teal:#0EA5E9; --teal-lt:#38BDF8;
-    --red:#EF4444; --orange:#F97316; --green:#22C55E;
-    --bg:#060C18; --panel:#0C1624; --panel2:#111E30;
-    --border:#1A2E48; --text:#E2EAF4; --dim:#4A6480; --faint:#1E3050;
-  }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  html,body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
-  body { padding:16px; max-width:480px; margin:0 auto; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OnlyDwarfs Ã¢ÂÂ Dwarf Entertainment & Talent Booking</title>
+  <meta name="description" content="Book world-class dwarf entertainers for your event. Bachelor parties, Vegas nightlife, birthdays, corporate events. Get a quote in 24 hours.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* TOP BAR */
-  .topbar { display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; margin-bottom:14px; }
-  .brand h1 { font-size:15px; font-weight:900; color:var(--text); }
-  .brand h1 span { color:var(--gold); }
-  .brand p { font-size:9px; color:var(--dim); margin-top:2px; }
-  .clock { font-size:22px; font-weight:800; color:var(--gold); text-align:right; line-height:1; }
-  .clock-date { font-size:9px; color:var(--dim); text-align:right; margin-top:2px; }
+    :root {
+      --bg:        #080808;
+      --bg2:       #0f0f0f;
+      --bg3:       #161616;
+      --border:    #222;
+      --cyan:      #00c2e0;
+      --cyan-dim:  rgba(0,194,224,0.10);
+      --gold:      #f0a500;
+      --gold-dim:  rgba(240,165,0,0.10);
+      --pink:      #ff2d78;
+      --pink-dim:  rgba(255,45,120,0.10);
+      --text:      #ffffff;
+      --muted:     #888;
+      --muted2:    #444;
+      --radius:    12px;
+    }
 
-  /* COUNTDOWN */
-  .countdown { background:linear-gradient(135deg,rgba(40,12,80,0.95),rgba(22,6,50,0.95)); border:1px solid rgba(124,58,237,0.4); border-radius:14px; padding:16px; margin-bottom:12px; text-align:center; }
-  .cd-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--purple-lt); margin-bottom:6px; }
-  .cd-num { font-size:52px; font-weight:900; letter-spacing:-3px; color:#fff; line-height:1; }
-  .cd-unit { font-size:13px; font-weight:600; color:var(--purple-lt); margin-top:2px; }
-  .cd-sub { font-size:10px; color:var(--dim); margin-top:4px; }
-  .ptrack { background:rgba(255,255,255,0.07); border-radius:99px; height:4px; overflow:hidden; margin:10px auto 0; max-width:260px; }
-  .pfill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--purple),var(--purple-lt)); }
-  .plabels { display:flex; justify-content:space-between; font-size:8px; color:var(--faint); margin-top:3px; max-width:260px; margin-left:auto; margin-right:auto; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-  /* SECTION */
-  .section { margin-bottom:12px; }
-  .sect-hdr { display:flex; justify-content:space-between; align-items:center; border-radius:10px; padding:10px 14px; margin-bottom:8px; }
-  .sect-hdr.od { background:linear-gradient(135deg,rgba(22,50,80,0.95),rgba(12,28,50,0.95)); border:1px solid rgba(201,168,76,0.35); }
-  .sect-hdr.dd { background:linear-gradient(135deg,rgba(40,12,80,0.95),rgba(22,6,50,0.95)); border:1px solid rgba(124,58,237,0.35); }
-  .sect-hdr.life { background:linear-gradient(135deg,rgba(6,58,78,0.95),rgba(4,34,52,0.95)); border:1px solid rgba(14,165,233,0.3); }
-  .sect-name { font-size:12px; font-weight:800; }
-  .sect-hdr.od .sect-name { color:var(--gold); }
-  .sect-hdr.dd .sect-name { color:var(--purple-lt); }
-  .sect-hdr.life .sect-name { color:var(--teal-lt); }
-  .sect-badge { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:3px 9px; border-radius:99px; }
-  .sect-hdr.od .sect-badge { background:rgba(201,168,76,0.12); color:var(--gold-lt); }
-  .sect-hdr.dd .sect-badge { background:rgba(124,58,237,0.12); color:var(--purple-lt); }
-  .sect-hdr.life .sect-badge { background:rgba(14,165,233,0.12); color:var(--teal-lt); }
+    a { color: inherit; text-decoration: none; }
 
-  /* TASK BLOCKS */
-  .tblock { background:var(--panel); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; overflow:hidden; }
-  .tblock-hdr { display:flex; align-items:center; gap:7px; padding:8px 13px; border-bottom:1px solid var(--border); }
-  .tdot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-  .daily .tdot { background:var(--red); box-shadow:0 0 5px var(--red); }
-  .weekly .tdot { background:var(--orange); box-shadow:0 0 5px var(--orange); }
-  .tblock-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1.2px; }
-  .daily .tblock-label { color:var(--red); }
-  .weekly .tblock-label { color:var(--orange); }
-  .ti { display:flex; align-items:center; gap:10px; padding:10px 13px; cursor:pointer; transition:background 0.12s; border-bottom:1px solid rgba(26,46,72,0.4); }
-  .ti:last-child { border-bottom:none; }
-  .ti:active { background:var(--panel2); }
-  .ti.done { opacity:0.3; }
-  .ti.done .ti-text { text-decoration:line-through; }
-  .ti-chk { width:16px; height:16px; border-radius:4px; border:1.5px solid var(--faint); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.12s; }
-  .ti.done .ti-chk { background:var(--dim); border-color:var(--dim); }
-  .ti.done .ti-chk::after { content:'✓'; font-size:9px; color:#fff; font-weight:700; }
-  .ti-text { font-size:12px; color:var(--text); line-height:1.4; flex:1; }
-  .ti-tag { font-size:8px; font-weight:700; text-transform:uppercase; padding:2px 6px; border-radius:3px; flex-shrink:0; }
-  .tag-hot { background:rgba(239,68,68,0.18); color:var(--red); }
-  .tag-money { background:rgba(34,197,94,0.18); color:var(--green); }
-  .tag-promo { background:rgba(124,58,237,0.18); color:var(--purple-lt); }
-  .tag-track { background:rgba(249,115,22,0.18); color:var(--orange); }
-  .empty-state { padding:18px; text-align:center; color:var(--faint); font-size:11px; font-style:italic; }
+    /* Ã¢ÂÂÃ¢ÂÂ NAV Ã¢ÂÂÃ¢ÂÂ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
 
-  /* METRICS */
-  .metrics { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:12px; }
-  .metrics-ttl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--dim); padding-bottom:8px; border-bottom:1px solid var(--border); margin-bottom:10px; }
-  .metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .metric { display:flex; flex-direction:column; gap:2px; }
-  .m-lbl { font-size:10px; color:var(--dim); font-weight:500; }
-  .m-val { font-size:26px; font-weight:800; letter-spacing:-1px; line-height:1.1; }
-  .m-sub { font-size:9px; color:var(--faint); }
-  .mv-gold { color:var(--gold); }
-  .mv-green { color:var(--green); }
-  .mv-purple { color:var(--purple-lt); }
-  .mv-orange { color:var(--orange); }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--cyan); }
 
-  /* GOALS */
-  .goals { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:20px; }
-  .goals-ttl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--gold); padding-bottom:8px; border-bottom:1px solid var(--border); margin-bottom:10px; }
-  .goal { margin-bottom:10px; }
-  .goal:last-child { margin-bottom:0; }
-  .g-lbl { font-size:11px; color:var(--dim); font-weight:500; margin-bottom:4px; }
-  .g-bar { background:var(--border); border-radius:99px; height:6px; overflow:hidden; }
-  .g-fill { height:100%; border-radius:99px; }
-  .g-nums { display:flex; justify-content:space-between; font-size:9px; margin-top:3px; }
-  .g-cur { font-weight:700; }
-  .g-tgt { color:var(--faint); }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
 
-  .stamp { text-align:center; font-size:9px; color:var(--faint); padding-bottom:8px; }
-</style>
+    .nav-cta {
+      background: var(--cyan) !important;
+      color: #000 !important;
+      padding: 8px 20px !important;
+      border-radius: 50px !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
+      transition: opacity 0.15s !important;
+    }
+    .nav-cta:hover { opacity: 0.85 !important; color: #000 !important; }
+
+    /* Ã¢ÂÂÃ¢ÂÂ HERO Ã¢ÂÂÃ¢ÂÂ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,194,224,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(255,45,120,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(240,165,0,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; max-width: 820px; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cyan-dim);
+      border: 1px solid rgba(0,194,224,0.25);
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 50px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-size: clamp(52px, 9vw, 100px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -3px;
+      margin-bottom: 28px;
+    }
+
+    .accent-cyan  { color: var(--cyan); }
+    .accent-gold  { color: var(--gold); }
+    .accent-pink  { color: var(--pink); }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto 44px;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: #000;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 15px;
+      transition: all 0.15s;
+      box-shadow: 0 0 32px rgba(0,194,224,0.25);
+      display: inline-block;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 48px rgba(0,194,224,0.45);
+      color: #000;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 15px;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+      display: inline-block;
+    }
+    .btn-outline:hover {
+      border-color: #555;
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* Ã¢ÂÂÃ¢ÂÂ STATS BAR Ã¢ÂÂÃ¢ÂÂ */
+    .stats-bar {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 40px;
+      display: flex;
+      justify-content: center;
+      gap: 64px;
+      flex-wrap: wrap;
+      background: var(--bg2);
+    }
+
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--cyan);
+      display: block;
+      letter-spacing: -1px;
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Ã¢ÂÂÃ¢ÂÂ SHARED SECTION STYLES Ã¢ÂÂÃ¢ÂÂ */
+    section { padding: 88px 24px; }
+    .inner { max-width: 1080px; margin: 0 auto; }
+
+    .sec-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 14px;
+    }
+
+    .sec-title {
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+
+    .sec-sub {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 460px;
+      margin-bottom: 52px;
+      line-height: 1.75;
+    }
+
+    /* Ã¢ÂÂÃ¢ÂÂ SERVICES Ã¢ÂÂÃ¢ÂÂ */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+
+    .svc-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      transition: all 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+    }
+    .svc-card:hover {
+      border-color: rgba(0,194,224,0.4);
+      background: var(--cyan-dim);
+      transform: translateY(-3px);
+    }
+
+    .svc-icon { font-size: 30px; margin-bottom: 16px; display: block; }
+    .svc-name { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+    .svc-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+    /* Ã¢ÂÂÃ¢ÂÂ HOW IT WORKS Ã¢ÂÂÃ¢ÂÂ */
+    .dark-section { background: var(--bg2); }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 40px;
+    }
+
+    .step { text-align: center; }
+
+    .step-num {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--cyan-dim);
+      border: 2px solid rgba(0,194,224,0.25);
+      color: var(--cyan);
+      font-size: 22px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .step-title { font-size: 17px; font-weight: 800; margin-bottom: 10px; }
+    .step-desc  { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+    /* Ã¢ÂÂÃ¢ÂÂ TALENT PREVIEW Ã¢ÂÂÃ¢ÂÂ */
+    .talent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .talent-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .talent-card:hover {
+      border-color: rgba(0,194,224,0.35);
+      transform: translateY(-3px);
+    }
+
+    .talent-photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: linear-gradient(160deg, #111 0%, #1a1a2e 50%, #0d1b2a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: var(--muted2);
+      position: relative;
+    }
+
+    .talent-photo-label {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(0,0,0,0.6);
+      padding: 4px 10px;
+      border-radius: 50px;
+    }
+
+    .talent-info { padding: 14px 16px 16px; }
+    .talent-name { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+    .talent-spec { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+    .talent-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .talent-tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: var(--cyan-dim);
+      border: 1px solid rgba(0,194,224,0.2);
+      color: var(--cyan);
+    }
+
+    .text-center { text-align: center; }
+
+    /* Ã¢ÂÂÃ¢ÂÂ GALLERY Ã¢ÂÂÃ¢ÂÂ */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+    }
+
+    .gallery-item {
+      aspect-ratio: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--muted2);
+      font-size: 28px;
+      transition: border-color 0.2s;
+    }
+    .gallery-item:hover { border-color: #333; }
+    .gallery-item span { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+    /* Ã¢ÂÂÃ¢ÂÂ TALENT PORTAL TEASER Ã¢ÂÂÃ¢ÂÂ */
+    .portal-card {
+      background: linear-gradient(135deg, rgba(255,45,120,0.06) 0%, rgba(0,194,224,0.06) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 56px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .portal-left h2 {
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .portal-left p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 420px;
+      line-height: 1.7;
+    }
+
+    .btn-pink {
+      background: var(--pink);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 15px;
+      white-space: nowrap;
+      display: inline-block;
+      transition: all 0.15s;
+      box-shadow: 0 0 32px rgba(255,45,120,0.2);
+    }
+    .btn-pink:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 48px rgba(255,45,120,0.4);
+      color: #fff;
+    }
+
+    /* Ã¢ÂÂÃ¢ÂÂ FINAL CTA Ã¢ÂÂÃ¢ÂÂ */
+    .final-cta {
+      text-align: center;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+    }
+
+    .final-cta h2 {
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+      line-height: 1.05;
+    }
+
+    .final-cta p {
+      font-size: 17px;
+      color: var(--muted);
+      margin-bottom: 44px;
+    }
+
+    /* Ã¢ÂÂÃ¢ÂÂ FOOTER Ã¢ÂÂÃ¢ÂÂ */
+    footer {
+      padding: 40px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-logo { font-size: 17px; font-weight: 900; }
+    .footer-logo span { color: var(--cyan); }
+
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--muted); transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-copy { font-size: 12px; color: var(--muted2); }
+
+    /* Ã¢ÂÂÃ¢ÂÂ RESPONSIVE Ã¢ÂÂÃ¢ÂÂ */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links li:not(:last-child) { display: none; }
+      .stats-bar { gap: 28px; padding: 20px; }
+      .portal-card { padding: 36px 24px; text-align: center; justify-content: center; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">
-    <h1>ONLY<span>DWARFS</span> EMPIRE</h1>
-    <p>RYDER WARBRICK · COMMAND CENTER</p>
-  </div>
-  <div>
-    <div class="clock" id="clock">--:--</div>
-    <div class="clock-date" id="cdate"></div>
-  </div>
-</div>
+<!-- Ã¢ÂÂÃ¢ÂÂ NAV Ã¢ÂÂÃ¢ÂÂ -->
+<nav>
+  <div class="nav-logo">Only<span>Dwarfs</span></div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#talent">Browse Talent</a></li>
+    <li><a href="#gallery">Past Gigs</a></li>
+    <li><a href="/talent.html">For Talent</a></li>
+    <li><a href="/intake.html" class="nav-cta">Book Now</a></li>
+  </ul>
+</nav>
 
-<div class="countdown">
-  <div class="cd-label">🎭 DwarfDivas Pilot Countdown</div>
-  <div class="cd-num" id="days-left">--</div>
-  <div class="cd-unit">days to May 28</div>
-  <div class="cd-sub">Deja Vu Showgirls · Las Vegas</div>
-  <div class="ptrack"><div class="pfill" id="pfill" style="width:0%"></div></div>
-  <div class="plabels"><span>Tickets Live</span><span id="ppct">—</span><span>Show Day</span></div>
-</div>
-
-<!-- MR. ONLYDWARFS -->
-<div class="section">
-  <div class="sect-hdr od">
-    <div class="sect-name">⚡ MR. ONLYDWARFS</div>
-    <div class="sect-badge">Booking Engine</div>
-  </div>
-  <div class="tblock daily">
-    <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">Today</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Check CRM & respond to new leads</span><span class="ti-tag tag-hot">Now</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Follow up on 24hr+ unanswered leads</span><span class="ti-tag tag-money">$$$</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Send unsent quotes before noon</span><span class="ti-tag tag-money">$$$</span></div>
-  </div>
-  <div class="tblock weekly">
-    <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">This Week</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Push stuck quotes & negotiations</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Log closed bookings in dashboard</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Follow up on completed gigs</span></div>
-  </div>
-</div>
-
-<!-- MS. DWARFDIVAS -->
-<div class="section">
-  <div class="sect-hdr dd">
-    <div class="sect-name">🎭 MS. DWARFDIVAS</div>
-    <div class="sect-badge">Pilot Launch</div>
-  </div>
-  <div class="tblock daily">
-    <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">Today</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Post on 1+ platform w/ Eventbrite link</span><span class="ti-tag tag-promo">Promo</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Check Eventbrite & log ticket count</span><span class="ti-tag tag-track">Track</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">DM 3 Vegas influencers / bachelorette accts</span><span class="ti-tag tag-promo">Promo</span></div>
-  </div>
-  <div class="tblock weekly">
-    <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">This Week</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Lock promo strategy: channels & hook</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Contact Deja Vu re: their mailing list</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Confirm all 6 performers for May 28–29</span></div>
-  </div>
-</div>
-
-<!-- LIFE OS -->
-<div class="section">
-  <div class="sect-hdr life">
-    <div class="sect-name">🧠 LIFE OS</div>
-    <div class="sect-badge">Personal</div>
-  </div>
-  <div class="tblock daily">
-    <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">Today</span></div>
-    <div class="empty-state">＋ No tasks yet — tell Claude</div>
-  </div>
-  <div class="tblock weekly">
-    <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">This Week</span></div>
-    <div class="empty-state">＋ No tasks yet — tell Claude</div>
-  </div>
-</div>
-
-<!-- METRICS -->
-<div class="metrics">
-  <div class="metrics-ttl">Live Metrics</div>
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="m-lbl">🎟 Tickets Sold</div>
-      <div class="m-val mv-purple" id="ticket-count">—</div>
-      <div class="m-sub">Check Eventbrite daily</div>
-    </div>
-    <div class="metric">
-      <div class="m-lbl">💰 OD Monthly Rev</div>
-      <div class="m-val mv-gold">$—</div>
-      <div class="m-sub">Target: $5k–$8k/mo</div>
-    </div>
-    <div class="metric">
-      <div class="m-lbl">📋 Open Leads</div>
-      <div class="m-val mv-orange">—</div>
-      <div class="m-sub">Target: 0 unanswered</div>
-    </div>
-    <div class="metric">
-      <div class="m-lbl">🏦 Net Worth</div>
-      <div class="m-val mv-green">~$10k</div>
-      <div class="m-sub">Target: $1M by 25</div>
+<!-- Ã¢ÂÂÃ¢ÂÂ HERO Ã¢ÂÂÃ¢ÂÂ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Ã¢ÂÂ¡ The #1 Dwarf Entertainment Agency</div>
+    <h1>
+      The Only<br>
+      <span class="accent-cyan">Dwarfs</span> You'll<br>
+      Ever <span class="accent-gold">Need.</span>
+    </h1>
+    <p class="hero-sub">
+      Book world-class dwarf entertainers for any event. Bachelor parties, Vegas nightlife, birthdays, corporate Ã¢ÂÂ we show up and we deliver.
+    </p>
+    <div class="hero-actions">
+      <a href="/intake.html" class="btn-primary">Book a Performer Ã¢ÂÂ</a>
+      <a href="#talent" class="btn-outline">Browse Talent</a>
     </div>
   </div>
-</div>
+</section>
 
-<!-- GOALS -->
-<div class="goals">
-  <div class="goals-ttl">🏆 2026 Goals</div>
-  <div class="goal">
-    <div class="g-lbl">DwarfDivas Pilot Launch</div>
-    <div class="g-bar"><div class="g-fill" style="width:70%;background:#A855F7"></div></div>
-    <div class="g-nums"><span class="g-cur" style="color:#A855F7">70%</span><span class="g-tgt">May 28</span></div>
+<!-- Ã¢ÂÂÃ¢ÂÂ STATS Ã¢ÂÂÃ¢ÂÂ -->
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-num">500+</span>
+    <span class="stat-lbl">Bookings Done</span>
   </div>
-  <div class="goal">
-    <div class="g-lbl">OD Revenue $5k/month</div>
-    <div class="g-bar"><div class="g-fill" style="width:30%;background:var(--gold)"></div></div>
-    <div class="g-nums"><span class="g-cur" style="color:var(--gold)">~$2k now</span><span class="g-tgt">$5,000</span></div>
+  <div class="stat">
+    <span class="stat-num">Worldwide</span>
+    <span class="stat-lbl">We Travel Anywhere</span>
   </div>
-  <div class="goal">
-    <div class="g-lbl">DwarfDivas Running Weekly</div>
-    <div class="g-bar"><div class="g-fill" style="width:5%;background:#A855F7"></div></div>
-    <div class="g-nums"><span class="g-cur" style="color:#A855F7">Pending pilot</span><span class="g-tgt">Jun 2026</span></div>
+  <div class="stat">
+    <span class="stat-num">&lt;24hr</span>
+    <span class="stat-lbl">Response Time</span>
   </div>
-  <div class="goal">
-    <div class="g-lbl">Millionaire by 25</div>
-    <div class="g-bar"><div class="g-fill" style="width:1%;background:var(--green)"></div></div>
-    <div class="g-nums"><span class="g-cur" style="color:var(--green)">~$10k</span><span class="g-tgt">$1M · Jul 2031</span></div>
+  <div class="stat">
+    <span class="stat-num">100%</span>
+    <span class="stat-lbl">Show Rate</span>
   </div>
 </div>
 
-<a href="https://onlydwarfs.github.io/quote.html" style="display:block;background:#161628;border:1px solid #C9A84C44;border-radius:10px;padding:14px 16px;text-align:center;text-decoration:none;color:#C9A84C;font-size:13px;font-weight:700;letter-spacing:0.5px;margin-bottom:12px;">⚡ Generate a Quote →</a>
+<!-- Ã¢ÂÂÃ¢ÂÂ SERVICES Ã¢ÂÂÃ¢ÂÂ -->
+<section id="services">
+  <div class="inner">
+    <div class="sec-tag">What We Do</div>
+    <h2 class="sec-title">Every event.<br>Any vibe.</h2>
+    <p class="sec-sub">From Vegas pool parties to Fortune 500 events Ã¢ÂÂ if you need unforgettable entertainment, we have the talent for it.</p>
+    <div class="services-grid">
+      <a href="/intake.html" class="svc-card">
+        <span class="svc-icon">Ã°ÂÂÂ</span>
+        <div class="svc-name">Bachelor & Bachelorette</div>
+        <div class="svc-desc">The party nobody forgets. Dwarf performers that bring the energy and the chaos Ã¢ÂÂ Vegas or anywhere worldwide.</div>
+      </a>
+      <a href="/intake.html" class="svc-card">
+        <span class="svc-icon">Ã°ÂÂÂ</span>
+        <div class="svc-name">Birthday Parties</div>
+        <div class="svc-desc">Make the birthday person feel like royalty. Custom entrances, roasts, performances Ã¢ÂÂ whatever the moment calls for.</div>
+      </a>
+      <a href="/intake.html" class="svc-card">
+        <span class="svc-icon">Ã°ÂÂÂ¢</span>
+        <div class="svc-name">Corporate Events</div>
+        <div class="svc-desc">Branded performances, product launches, trade shows Ã¢ÂÂ entertainment that gets people talking long after the event.</div>
+      </a>
+      <a href="/intake.html" class="svc-card">
+        <span class="svc-icon">Ã°ÂÂÂ°</span>
+        <div class="svc-name">Vegas Nightlife</div>
+        <div class="svc-desc">Clubs, pool parties, bar crawls, VIP events Ã¢ÂÂ we know the Vegas scene and we always show up ready.</div>
+      </a>
+      <a href="/intake.html" class="svc-card">
+        <span class="svc-icon">Ã°ÂÂÂ¬</span>
+        <div class="svc-name">Film & Commercial</div>
+        <div class="svc-desc">Experienced performers for TV, film, commercials, and branded content. Professional on set, every time.</div>
+      </a>
+      <a href="/intake.html" class="svc-card">
+        <span class="svc-icon">Ã°ÂÂÂ­</span>
+        <div class="svc-name">Custom Events</div>
+        <div class="svc-desc">Themed parties, private events, promotions, one-of-a-kind experiences Ã¢ÂÂ if you can dream it, we can book it.</div>
+      </a>
+    </div>
+  </div>
+</section>
 
-<div class="stamp" id="stamp">Last updated: April 16, 2026</div>
+<!-- Ã¢ÂÂÃ¢ÂÂ HOW IT WORKS Ã¢ÂÂÃ¢ÂÂ -->
+<section class="dark-section" id="how">
+  <div class="inner">
+    <div class="sec-tag">The Process</div>
+    <h2 class="sec-title">Three steps<br>to booked.</h2>
+    <p class="sec-sub">We keep it simple. Tell us what you need and we handle everything else.</p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Submit Your Request</div>
+        <div class="step-desc">Fill out our quick booking form Ã¢ÂÂ event type, date, location, headcount. Takes 2 minutes.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">We Find Your Talent</div>
+        <div class="step-desc">We match you with the right performer and send a quote within 24 hours.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Show Up & Enjoy</div>
+        <div class="step-desc">We handle the logistics, contracts, and coordination. You just enjoy the show.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<script>
-  function updateClock() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2,'0');
-    const m = String(now.getMinutes()).padStart(2,'0');
-    document.getElementById('clock').textContent = h+':'+m;
-    const D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    document.getElementById('cdate').textContent = D[now.getDay()]+' · '+M[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
-  }
-  updateClock(); setInterval(updateClock,1000);
+<!-- Ã¢ÂÂÃ¢ÂÂ TALENT PREVIEW Ã¢ÂÂÃ¢ÂÂ -->
+<section id="talent">
+  <div class="inner">
+    <div class="sec-tag">The Roster</div>
+    <h2 class="sec-title">Meet the talent.</h2>
+    <p class="sec-sub">Performers, entertainers, and personalities ready to make your event legendary.</p>
+    <div class="talent-grid">
+      <div class="talent-card">
+        <div class="talent-photo">
+          Ã°ÂÂÂ¸
+          <div class="talent-photo-label">Coming Soon</div>
+        </div>
+        <div class="talent-info">
+          <div class="talent-name">Full Roster Dropping</div>
+          <div class="talent-spec">Performer profiles coming shortly</div>
+          <div class="talent-tags"><span class="talent-tag">Entertainment</span><span class="talent-tag">Vegas</span></div>
+        </div>
+      </div>
+      <div class="talent-card">
+        <div class="talent-photo">
+          Ã°ÂÂÂ¸
+          <div class="talent-photo-label">Coming Soon</div>
+        </div>
+        <div class="talent-info">
+          <div class="talent-name">Full Roster Dropping</div>
+          <div class="talent-spec">Performer profiles coming shortly</div>
+          <div class="talent-tags"><span class="talent-tag">Comedy</span><span class="talent-tag">Events</span></div>
+        </div>
+      </div>
+      <div class="talent-card">
+        <div class="talent-photo">
+          Ã°ÂÂÂ¸
+          <div class="talent-photo-label">Coming Soon</div>
+        </div>
+        <div class="talent-info">
+          <div class="talent-name">Full Roster Dropping</div>
+          <div class="talent-spec">Performer profiles coming shortly</div>
+          <div class="talent-tags"><span class="talent-tag">Parties</span><span class="talent-tag">Film</span></div>
+        </div>
+      </div>
+      <div class="talent-card">
+        <div class="talent-photo">
+          Ã°ÂÂÂ¸
+          <div class="talent-photo-label">Coming Soon</div>
+        </div>
+        <div class="talent-info">
+          <div class="talent-name">Full Roster Dropping</div>
+          <div class="talent-spec">Performer profiles coming shortly</div>
+          <div class="talent-tags"><span class="talent-tag">Corporate</span><span class="talent-tag">Worldwide</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center">
+      <a href="/talent.html" class="btn-outline">View All Talent Ã¢ÂÂ</a>
+    </div>
+  </div>
+</section>
 
-  const pilot = new Date('2026-05-28T20:00:00');
-  const promoStart = new Date('2026-04-12');
-  function updateCountdown() {
-    const now = new Date();
-    document.getElementById('days-left').textContent = Math.max(0,Math.ceil((pilot-now)/86400000));
-    const pct = Math.min(100,Math.max(0,((now-promoStart)/(pilot-promoStart))*100
+<!-- Ã¢ÂÂÃ¢ÂÂ GALLERY Ã¢ÂÂÃ¢ÂÂ -->
+<section id="gallery" class="dark-section">
+  <div class="inner">
+    <div class="sec-tag">Past Gigs</div>
+    <h2 class="sec-title">We've been busy.</h2>
+    <p class="sec-sub">500+ events and counting. Photos dropping soon.</p>
+    <div class="gallery-grid">
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+      <div class="gallery-item">Ã°ÂÂÂ·<span>Coming Soon</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Ã¢ÂÂÃ¢ÂÂ TALENT PORTAL TEASER Ã¢ÂÂÃ¢ÂÂ -->
+<section>
+  <div class="inner">
+    <div class="portal-card">
+      <div class="portal-left">
+        <h2>Are you a dwarf<br>performer? <span class="accent-pink">Get booked.</span></h2>
+        <p>Browse open gigs, set your own rates, and let clients come to you. Create a profile and start getting paid for what you do.</p>
+      </div>
+      <a href="/talent.html" class="btn-pink">Join the Roster Ã¢ÂÂ</a>
+    </div>
+  </div>
+</section>
+
+<!-- Ã¢ÂÂÃ¢ÂÂ FINAL CTA Ã¢ÂÂÃ¢ÂÂ -->
+<section class="final-cta">
+  <div class="inner">
+    <h2>Ready to<br><span class="accent-cyan">book?</span></h2>
+    <p>Tell us about your event. We'll get back to you within 24 hours Ã¢ÂÂ no commitment required.</p>
+    <a href="/intake.html" class="btn-primary" style="font-size:16px;padding:16px 44px;">Get a Free Quote Ã¢ÂÂ</a>
+  </div>
+</section>
+
+<!-- Ã¢ÂÂÃ¢ÂÂ FOOTER Ã¢ÂÂÃ¢ÂÂ -->
+<footer>
+  <div class="footer-logo">Only<span>Dwarfs</span></div>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#talent">Browse Talent</a>
+    <a href="/talent.html">For Talent</a>
+    <a href="/intake.html">Book Now</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+  </div>
+  <div class="footer-copy">ÃÂ© 2026 OnlyDwarfs Entertainment. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
