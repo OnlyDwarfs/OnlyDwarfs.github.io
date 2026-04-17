@@ -372,6 +372,14 @@
       footer { flex-direction: column; text-align: center; }
     }
   </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9HWJJNWGG2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9HWJJNWGG2');
+  </script>
 </head>
 <body>
 
@@ -642,17 +650,4 @@
       const isOpen = item.classList.contains('open');
       // Close all
       document.querySelectorAll('.faq-item.open').forEach(el => {
-        el.classList.remove('open');
-        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
-      });
-      // Open clicked if it was closed
-      if (!isOpen) {
-        item.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-</script>
-
-</body>
-</html>
+        el.clas
