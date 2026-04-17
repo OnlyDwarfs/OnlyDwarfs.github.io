@@ -191,7 +191,7 @@
           <label>Event Date <span>*</span></label>
           <div class="cal-wrap">
             <input class="inp" id="f-date" type="text" placeholder="Pick a date…" readonly
-              onclick="toggleCal()" style="cursor:pointer"/>
+              onclick="toggleCal(event)" style="cursor:pointer"/>
             <div class="cal-panel" id="cal-panel"></div>
           </div>
         </div>
@@ -219,7 +219,7 @@
           placeholder="What kind of performance are you envisioning? Any special requests, themes, or details we should know?"></textarea>
       </div>
 
-      <button class="submit-btn" id="submit-btn" onclick="submitForm()">
+      <button type="button" class="submit-btn" id="submit-btn" onclick="submitForm()">
         Request a Quote →
       </button>
       <div class="form-note">No commitment required. We'll reach out within 24 hours.</div>
@@ -312,7 +312,8 @@ function pickDropdown(type, val) {
 let calDate = new Date();
 let calSelected = null;
 
-function toggleCal() {
+function toggleCal(e) {
+  if (e) e.stopPropagation();
   const panel = document.getElementById('cal-panel');
   if (panel.classList.contains('open')) {
     panel.classList.remove('open');
@@ -374,9 +375,12 @@ function pickDate(y, m, d) {
 
 // Close calendar on outside click
 document.addEventListener('click', e => {
-  const wrap = document.querySelector('.cal-wrap');
-  if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('cal-panel').classList.remove('open');
+  const panel = document.getElementById('cal-panel');
+  if (panel && panel.classList.contains('open')) {
+    const wrap = document.querySelector('.cal-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      panel.classList.remove('open');
+    }
   }
 });
 
@@ -417,10 +421,4 @@ async function submitForm() {
   // Submit via hidden iframe form — avoids CORS redirect issues with Apps Script
   const formEl = document.getElementById('hidden-form');
   const dataEl = document.getElementById('form-data-input');
-  formEl.action = SCRIPT_URL;
-  dataEl.value = JSON.stringify(payload);
-  formEl.submit();
-
-  // Optimistic success after 800ms
-  setTimeout(() => {
-    d
+  formEl.action = 
