@@ -20,7 +20,8 @@ const COL = {
   SUBMITTED_AT: 10,  // K
   STAGE:        11,  // L
   NOTES:        12,  // M
-  LAST_UPDATED: 13   // N
+  LAST_UPDATED: 13,  // N
+  AMOUNT:       14   // O
 };
 
 function getSheet() {
@@ -71,7 +72,8 @@ function handleNewLead(data) {
     now,                           // Submitted At
     'New',                         // Stage (default)
     '',                            // Notes
-    now                            // Last Updated
+    now,                           // Last Updated
+    data.amount      || ''         // Booking Amount
   ]);
 
   // Optional: send email notification to Ryder
@@ -93,6 +95,9 @@ function handleUpdateLead(data) {
       }
       if (data.notes !== undefined && data.notes !== null) {
         sheet.getRange(row, COL.NOTES + 1).setValue(data.notes);
+      }
+      if (data.amount !== undefined && data.amount !== null) {
+        sheet.getRange(row, COL.AMOUNT + 1).setValue(data.amount);
       }
       sheet.getRange(row, COL.LAST_UPDATED + 1).setValue(now);
       return out({ success: true });
