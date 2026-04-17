@@ -179,6 +179,31 @@
   .stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
   .stat-sep { width: 1px; background: var(--border); align-self: stretch; }
 
+
+  /* TABS */
+  .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--card); }
+  .tab-btn { padding: 12px 22px; font-size: 13px; font-weight: 700; color: var(--muted); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* FINANCIALS */
+  .fin-wrap { padding: 20px 24px 40px; max-width: 1100px; }
+  .fin-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .fin-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 18px; }
+  .fin-card-val { font-size: 26px; font-weight: 900; margin-bottom: 4px; }
+  .fin-card-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .fin-card-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .fin-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 12px; margin-top: 24px; }
+  .fin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .fin-table th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .fin-table td { padding: 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .fin-table tr:hover td { background: var(--card2); }
+  .fin-table .amt { font-weight: 700; color: var(--green); }
+  .fin-table .pending { color: var(--orange); }
+  .fin-empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+
   @media (max-width: 600px) {
     .topbar { padding: 12px 16px; }
     .board-wrap { padding: 14px 12px 40px; }
@@ -219,11 +244,19 @@
   <div class="stat-sep"></div>
   <div class="stat"><div class="stat-val" id="stat-booked" style="color:var(--green)">—</div><div class="stat-lbl">Booked</div></div>
   <div class="stat-sep"></div>
-  <div class="stat"><div class="stat-val" id="stat-revenue" style="color:var(--gold)">—</div><div class="stat-lbl">This Month</div></div>
+  <div class="stat"><div class="stat-val" id="stat-revenue" style="color:var(--gold)">—</div><div class="stat-lbl">Revenue</div></div>
+  <div class="stat-sep"></div>
+  <div class="stat"><div class="stat-val" id="stat-pipeline" style="color:var(--green)">—</div><div class="stat-lbl">Pipeline</div></div>
+</div>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('pipeline')">📋 Pipeline</button>
+  <button class="tab-btn" onclick="switchTab('financials')">💰 Financials</button>
 </div>
 
 <!-- FILTER BAR -->
-<div class="filterbar">
+<div id="tab-pipeline" class="tab-pane active"><div class="filterbar">
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input type="text" id="search-input" placeholder="Search leads…" oninput="renderBoard()"/>
@@ -256,6 +289,19 @@
     <div style="color:var(--muted);font-size:13px">Loading pipeline…</div>
   </div>
 </div>
+
+</div><!-- /tab-pipeline -->
+
+<!-- FINANCIALS TAB -->
+<div id="tab-financials" class="tab-pane">
+  <div class="fin-wrap">
+    <div class="fin-cards" id="fin-cards"></div>
+    <div class="fin-section-title">Completed Bookings</div>
+    <table class="fin-table"><thead><tr><th>Lead</th><th>Event Type</th><th>Date</th><th>Location</th><th>Amount</th><th>Closed</th></tr></thead><tbody id="fin-completed"></tbody></table>
+    <div class="fin-section-title" style="margin-top:28px">Active Pipeline (Booked)</div>
+    <table class="fin-table"><thead><tr><th>Lead</th><th>Event Type</th><th>Date</th><th>Location</th><th>Est. Value</th><th>Stage</th></tr></thead><tbody id="fin-booked"></tbody></table>
+  </div>
+</div><!-- /tab-financials -->
 
 <!-- LEAD MODAL -->
 <div class="modal-backdrop hidden" id="modal-backdrop" onclick="closeModal(event)">
@@ -298,6 +344,14 @@
           <button class="stage-btn stage-btn-quoted" onclick="setStage('Quoted')">● Quoted</button>
           <button class="stage-btn stage-btn-booked" onclick="setStage('Booked')">● Booked</button>
           <button class="stage-btn stage-btn-completed" onclick="setStage('Completed')">● Completed</button>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>Booking Amount</h4>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:var(--muted);font-size:15px;">$</span>
+          <input type="number" id="m-amount" placeholder="0" min="0" style="background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;outline:none;width:160px;" onfocus="this.style.borderColor='var(--purple)'" onblur="this.style.borderColor='var(--border2)'">
+          <span style="color:var(--muted);font-size:12px;">Enter when quoted or booked</span>
         </div>
       </div>
       <div class="modal-section">
@@ -359,6 +413,7 @@ async function loadLeads() {
         stage:     v(11) || 'New',
         notes:     v(12),
         updated:   v(13),
+        amount:    v(14),
       };
     }).filter(l => l.id || l.name); // skip blank rows
 
@@ -471,13 +526,15 @@ function renderStats() {
   document.getElementById('stat-total').textContent = allLeads.length;
   document.getElementById('stat-new').textContent = allLeads.filter(l => l.stage === 'New').length;
   document.getElementById('stat-booked').textContent = allLeads.filter(l => l.stage === 'Booked').length;
-  // Month count
-  const now = new Date();
-  const thisMonth = allLeads.filter(l => {
-    const d = new Date(l.submitted);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  }).length;
-  document.getElementById('stat-revenue').textContent = thisMonth + ' leads';
+  const totalRevenue = allLeads
+    .filter(l => l.stage === 'Completed' && l.amount)
+    .reduce((sum, l) => sum + parseFloat(l.amount || 0), 0);
+  const pipelineValue = allLeads
+    .filter(l => (l.stage === 'Booked' || l.stage === 'Quoted') && l.amount)
+    .reduce((sum, l) => sum + parseFloat(l.amount || 0), 0);
+  document.getElementById('stat-revenue').textContent = totalRevenue > 0 ? '$' + totalRevenue.toLocaleString() : '$0';
+  document.getElementById('stat-pipeline').textContent = pipelineValue > 0 ? '$' + pipelineValue.toLocaleString() : '$0';
+  renderFinancials();
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────
@@ -498,6 +555,7 @@ function openModal(leadId) {
   document.getElementById('m-submitted').textContent    = lead.submitted || '—';
   document.getElementById('m-details').textContent      = lead.details || '(none)';
   document.getElementById('m-notes').value              = lead.notes || '';
+  document.getElementById('m-amount').value             = lead.amount || '';
 
   // Stage buttons
   document.querySelectorAll('.stage-btn').forEach(btn => {
@@ -536,6 +594,7 @@ async function saveModal() {
   const activeBtn = document.querySelector('.stage-btn.active');
   const newStage = activeBtn ? activeBtn.textContent.replace('● ','').trim() : null;
   const newNotes = document.getElementById('m-notes').value;
+  const newAmount = document.getElementById('m-amount').value;
 
   const lead = allLeads.find(l => l.id === activeLeadId);
   if (!lead) return;
@@ -543,6 +602,7 @@ async function saveModal() {
   // Optimistic update
   lead.stage = newStage || lead.stage;
   lead.notes = newNotes;
+  if (newAmount !== '') lead.amount = newAmount;
   renderBoard();
   renderStats();
   closeModalDirect();
@@ -557,7 +617,7 @@ async function saveModal() {
     await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'updateLead', leadId: activeLeadId, stage: newStage, notes: newNotes }),
+      body: JSON.stringify({ action: 'updateLead', leadId: activeLeadId, stage: newStage, notes: newNotes, amount: newAmount }),
       mode: 'no-cors'
     });
     showToast('✓ Lead updated', 'success');
@@ -638,6 +698,89 @@ function showToast(msg, type) {
   t.classList.add('show');
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+
+// ── TAB SWITCHING ────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes(tab === 'pipeline' ? 'pipeline' : 'financials')) b.classList.add('active');
+  });
+}
+
+// ── FINANCIALS VIEW ──────────────────────────────────────────────
+function renderFinancials() {
+  const completed = allLeads.filter(l => l.stage === 'Completed');
+  const booked    = allLeads.filter(l => l.stage === 'Booked');
+  const totalRev  = completed.reduce((s, l) => s + parseFloat(l.amount || 0), 0);
+  const pipeline  = allLeads.filter(l => l.stage === 'Booked' || l.stage === 'Quoted')
+                            .reduce((s, l) => s + parseFloat(l.amount || 0), 0);
+  const avgVal    = completed.filter(l => l.amount).length > 0
+    ? totalRev / completed.filter(l => l.amount).length : 0;
+  const now = new Date();
+  const thisMonthRev = completed.filter(l => {
+    if (!l.updated) return false;
+    const d = new Date(l.updated);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).reduce((s, l) => s + parseFloat(l.amount || 0), 0);
+
+  document.getElementById('fin-cards').innerHTML = `
+    <div class="fin-card">
+      <div class="fin-card-val" style="color:var(--green)">$${totalRev.toLocaleString()}</div>
+      <div class="fin-card-lbl">Total Revenue</div>
+      <div class="fin-card-sub">${completed.length} completed bookings</div>
+    </div>
+    <div class="fin-card">
+      <div class="fin-card-val" style="color:var(--gold)">$${thisMonthRev.toLocaleString()}</div>
+      <div class="fin-card-lbl">This Month</div>
+      <div class="fin-card-sub">${now.toLocaleString('default',{month:'long',year:'numeric'})}</div>
+    </div>
+    <div class="fin-card">
+      <div class="fin-card-val" style="color:var(--purple)">$${pipeline.toLocaleString()}</div>
+      <div class="fin-card-lbl">Pipeline Value</div>
+      <div class="fin-card-sub">Quoted + Booked leads</div>
+    </div>
+    <div class="fin-card">
+      <div class="fin-card-val" style="color:var(--blue)">$${Math.round(avgVal).toLocaleString()}</div>
+      <div class="fin-card-lbl">Avg Booking</div>
+      <div class="fin-card-sub">Based on completed gigs</div>
+    </div>
+  `;
+
+  const completedTbody = document.getElementById('fin-completed');
+  if (completed.length === 0) {
+    completedTbody.innerHTML = '<tr><td colspan="6" class="fin-empty">No completed bookings yet</td></tr>';
+  } else {
+    completedTbody.innerHTML = completed.map(l => `
+      <tr>
+        <td><strong>${esc(l.name)}</strong><br><span style="color:var(--muted);font-size:11px">${esc(l.id)}</span></td>
+        <td>${esc(l.eventType) || '—'}</td>
+        <td>${formatDate(l.eventDate) || '—'}</td>
+        <td>${esc(l.location) || '—'}</td>
+        <td class="amt">${l.amount ? '$' + parseFloat(l.amount).toLocaleString() : '<span style="color:var(--muted)">—</span>'}</td>
+        <td style="color:var(--muted)">${timeAgo(l.updated)}</td>
+      </tr>
+    `).join('');
+  }
+
+  const bookedTbody = document.getElementById('fin-booked');
+  if (booked.length === 0) {
+    bookedTbody.innerHTML = '<tr><td colspan="6" class="fin-empty">No active booked leads</td></tr>';
+  } else {
+    bookedTbody.innerHTML = booked.map(l => `
+      <tr>
+        <td><strong>${esc(l.name)}</strong><br><span style="color:var(--muted);font-size:11px">${esc(l.id)}</span></td>
+        <td>${esc(l.eventType) || '—'}</td>
+        <td>${formatDate(l.eventDate) || '—'}</td>
+        <td>${esc(l.location) || '—'}</td>
+        <td class="pending">${l.amount ? '$' + parseFloat(l.amount).toLocaleString() : '<span style="color:var(--muted)">—</span>'}</td>
+        <td style="color:var(--green);font-size:11px;font-weight:700">${esc(l.stage)}</td>
+      </tr>
+    `).join('');
+  }
 }
 
 // ── KEYBOARD ──────────────────────────────────────────────────────
