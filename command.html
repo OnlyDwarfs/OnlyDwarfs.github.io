@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OnlyDwarfs Empire — Command Center</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --gold:      #C9A84C;
+    --gold-lt:   #E8C66B;
+    --purple:    #7C3AED;
+    --purple-lt: #A78BFA;
+    --teal:      #0EA5E9;
+    --teal-lt:   #38BDF8;
+    --red:       #EF4444;
+    --orange:    #F97316;
+    --green:     #22C55E;
+    --bg:        #060C18;
+    --panel:     #0C1624;
+    --panel2:    #111E30;
+    --border:    #1A2E48;
+    --text:      #E2EAF4;
+    --dim:       #4A6480;
+    --faint:     #1E3050;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── WALLPAPER ─────────────────────────────────────── */
+  .wallpaper {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 75% 110%, rgba(26,47,80,0.5) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 20% -10%, rgba(22,38,68,0.4) 0%, transparent 55%),
+      linear-gradient(160deg, #06111E 0%, #080D18 45%, #060A14 100%);
+  }
+  .wallpaper::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(30,48,80,0.3) 1px, transparent 1px);
+    background-size: 38px 38px;
+  }
+
+  /* ── WIDGET — fixed size, top-left ─────────────────── */
+  .widget {
+    position: absolute;
+    top: 58px; left: 16px;
+    width: 970px;
+    /* rows: topbar | middle | bottom */
+    display: grid;
+    grid-template-rows: 68px 1fr 160px;
+    gap: 10px;
+    padding: 14px;
+    z-index: 10;
+    background: rgba(6,12,24,0.9);
+    border: 1px solid rgba(26,46,72,0.95);
+    border-radius: 16px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.03) inset, 0 10px 50px rgba(0,0,0,0.75);
+    overflow: hidden;
+  }
+
+  /* ── TOP BAR ──────────────────────────────────────── */
+  .topbar {
+    display: grid;
+    grid-template-columns: 190px 1fr 175px;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, rgba(18,32,56,0.95), rgba(8,16,32,0.8));
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 16px;
+  }
+
+  .brand h1 { font-size: 14px; font-weight: 900; letter-spacing: 0.2px; color: var(--text); }
+  .brand h1 span { color: var(--gold); }
+  .brand p   { font-size: 9px; color: var(--dim); margin-top: 2px; }
+
+  .cd-center { text-align: center; }
+  .cd-label  { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--purple-lt); margin-bottom: 2px; }
+  .cd-row    { display: flex; align-items: baseline; justify-content: center; gap: 5px; }
+  .cd-num    { font-size: 32px; font-weight: 900; letter-spacing: -2px; line-height: 1; color: #fff; }
+  .cd-unit   { font-size: 11px; font-weight: 600; color: var(--purple-lt); }
+  .cd-sub    { font-size: 9px; color: var(--dim); margin-top: 2px; }
+  .pbar-wrap { margin: 4px auto 0; max-width: 230px; }
+  .ptrack    { background: rgba(255,255,255,0.07); border-radius: 99px; height: 3px; overflow: hidden; }
+  .pfill     { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--purple), var(--purple-lt)); }
+  .plabels   { display: flex; justify-content: space-between; font-size: 8px; color: var(--faint); margin-top: 3px; }
+
+  .clock-block { text-align: right; }
+  .clock       { font-size: 30px; font-weight: 800; letter-spacing: -1.5px; color: var(--gold); line-height: 1; }
+  .clock-date  { font-size: 9px; color: var(--dim); margin-top: 3px; }
+
+  /* ── MIDDLE — 3 equal project columns ─────────────── */
+  .middle {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    min-height: 0; /* allow grid child to shrink */
+  }
+
+  .proj-col {
+    display: grid;
+    grid-template-rows: auto 1fr; /* header | task area */
+    gap: 7px;
+    min-height: 0;
+  }
+
+  /* Project headers */
+  .proj-hdr {
+    border-radius: 9px; padding: 8px 13px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .proj-hdr.od   { background: linear-gradient(135deg,rgba(22,50,80,0.95),rgba(12,28,50,0.95)); border: 1px solid rgba(201,168,76,0.35); }
+  .proj-hdr.dd   { background: linear-gradient(135deg,rgba(40,12,80,0.95),rgba(22,6,50,0.95));  border: 1px solid rgba(124,58,237,0.35); }
+  .proj-hdr.life { background: linear-gradient(135deg,rgba(6,58,78,0.95),rgba(4,34,52,0.95));   border: 1px solid rgba(14,165,233,0.3); }
+
+  .proj-name { font-size: 11px; font-weight: 800; letter-spacing: -0.2px; }
+  .proj-hdr.od   .proj-name { color: var(--gold); }
+  .proj-hdr.dd   .proj-name { color: var(--purple-lt); }
+  .proj-hdr.life .proj-name { color: var(--teal-lt); }
+
+  .proj-badge { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 3px 9px; border-radius: 99px; }
+  .proj-hdr.od   .proj-badge { background: rgba(201,168,76,0.12); color: var(--gold-lt); }
+  .proj-hdr.dd   .proj-badge { background: rgba(124,58,237,0.12); color: var(--purple-lt); }
+  .proj-hdr.life .proj-badge { background: rgba(14,165,233,0.12); color: var(--teal-lt); }
+
+  /* Two sub-columns: Today | This Week */
+  .task-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    min-height: 0;
+  }
+
+  .tblock {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    display: grid;
+    grid-template-rows: 30px 1fr;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .tblock-hdr {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 11px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .tdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .daily  .tdot { background: var(--red);    box-shadow: 0 0 5px var(--red); }
+  .weekly .tdot { background: var(--orange); box-shadow: 0 0 5px var(--orange); }
+
+  .tblock-label { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; }
+  .daily  .tblock-label { color: var(--red); }
+  .weekly .tblock-label { color: var(--orange); }
+
+  .ti-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly; /* distribute tasks evenly */
+    padding: 4px 0;
+    overflow: hidden;
+  }
+
+  .ti {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 0 11px;
+    cursor: pointer;
+    flex: 1;
+    align-items: center; /* vertically center within its slot */
+    min-height: 0;
+    transition: background 0.12s;
+  }
+  .ti:hover { background: var(--panel2); }
+  .ti.done { opacity: 0.28; }
+  .ti.done .ti-text { text-decoration: line-through; }
+
+  .ti-chk {
+    width: 12px; height: 12px; border-radius: 3px;
+    border: 1.5px solid var(--faint); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.12s;
+  }
+  .ti:hover .ti-chk { border-color: var(--dim); }
+  .ti.done .ti-chk  { background: var(--dim); border-color: var(--dim); }
+  .ti.done .ti-chk::after { content: '✓'; font-size: 7px; color: #fff; font-weight: 700; }
+
+  .ti-text {
+    font-size: 9.5px; color: var(--text); line-height: 1.4; flex: 1;
+    /* prevent runaway wrapping */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ti-tag {
+    font-size: 7px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.3px; padding: 2px 5px; border-radius: 3px; flex-shrink: 0;
+  }
+  .tag-hot   { background: rgba(239,68,68,0.18);  color: var(--red); }
+  .tag-money { background: rgba(34,197,94,0.18);  color: var(--green); }
+  .tag-promo { background: rgba(124,58,237,0.18); color: var(--purple-lt); }
+  .tag-track { background: rgba(249,115,22,0.18); color: var(--orange); }
+  .tag-life  { background: rgba(14,165,233,0.18); color: var(--teal-lt); }
+
+  /* divider between tasks */
+  .ti-div { height: 1px; background: var(--border); margin: 0 11px; opacity: 0.3; flex-shrink: 0; }
+
+  /* ── BOTTOM — metrics | yearly goals ─────────────── */
+  .bottom {
+    display: grid;
+    grid-template-columns: 224px 1fr;
+    gap: 10px;
+    min-height: 0;
+  }
+
+  /* Metrics */
+  .metrics {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 11px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr 1fr;
+    gap: 0;
+    row-gap: 4px;
+  }
+  .metrics-ttl {
+    grid-column: 1/-1;
+    font-size: 8px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--dim); padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2px;
+  }
+  .metric { display: flex; flex-direction: column; gap: 2px; }
+  .m-lbl  { font-size: 8.5px; color: var(--dim); font-weight: 500; }
+  .m-val  { font-size: 20px; font-weight: 800; letter-spacing: -1px; line-height: 1.1; }
+  .m-sub  { font-size: 8px; color: var(--faint); }
+  .mv-gold   { color: var(--gold); }
+  .mv-green  { color: var(--green); }
+  .mv-purple { color: var(--purple-lt); }
+  .mv-orange { color: var(--orange); }
+
+  /* Yearly goals */
+  .yearly {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 11px 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .yearly-ttl {
+    font-size: 8px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--gold);
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+  .goals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 20px;
+    flex: 1;
+    align-content: center;
+  }
+  .goal { display: flex; flex-direction: column; gap: 4px; }
+  .g-lbl { font-size: 9.5px; color: var(--dim); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .g-bar { background: var(--border); border-radius: 99px; height: 5px; overflow: hidden; }
+  .g-fill { height: 100%; border-radius: 99px; }
+  .g-nums { display: flex; justify-content: space-between; font-size: 8.5px; }
+  .g-cur  { font-weight: 700; }
+  .g-tgt  { color: var(--faint); }
+
+  /* stamp */
+  .stamp {
+    position: absolute; bottom: 8px; right: 16px;
+    font-size: 8px; color: var(--faint); z-index: 20;
+    pointer-events: none;
+  }
+
+  /* Life OS empty state */
+  .empty-state {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; color: var(--faint); font-size: 10px; font-style: italic;
+    flex-direction: column; gap: 4px;
+  }
+  .empty-state span { font-size: 18px; }
+</style>
+</head>
+<body>
+<script>
+(function(){if(localStorage.getItem('od_auth')!=='d7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555'){window.location.replace('/login.html');}
+})();
+</script>
+<div id="od-nav" style="position:fixed;top:0;left:0;right:0;z-index:9999;height:42px;background:rgba(6,10,20,0.97);border-bottom:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:space-between;padding:0 20px;backdrop-filter:blur(10px);font-family:'Inter',sans-serif;">
+  <span style="font-size:11px;font-weight:900;color:#C9A84C;letter-spacing:1px;">ONLY<span style="color:#fff;">DWARFS</span> EMPIRE</span>
+  <div style="display:flex;gap:2px;align-items:center;">
+    <a href="/command.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#9889; Command</a>
+    <a href="/crm.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#128203; CRM</a>
+    <a href="/hub.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#129504; Hub</a>
+    <button onclick="localStorage.removeItem('od_auth');window.location.href='/login.html';" style="font-size:11px;color:#64748B;background:none;border:1px solid rgba(100,116,139,0.3);padding:4px 10px;border-radius:6px;cursor:pointer;margin-left:8px;" onmouseover="this.style.color='#EF4444';this.style.borderColor='rgba(239,68,68,0.4)'" onmouseout="this.style.color='#64748B';this.style.borderColor='rgba(100,116,139,0.3)'">Logout</button>
+  </div>
+</div>
+
+<div class="wallpaper"></div>
+
+<div class="widget">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <h1>ONLY<span>DWARFS</span> EMPIRE</h1>
+      <p>COMMAND CENTER · RYDER WARBRICK</p>
+    </div>
+    <div class="cd-center">
+      <div class="cd-label">🎭 DwarfDivas Pilot Countdown</div>
+      <div class="cd-row">
+        <div class="cd-num" id="days-left">43</div>
+        <div class="cd-unit">days to May 28</div>
+      </div>
+      <div class="cd-sub">Deja Vu Showgirls · Las Vegas</div>
+      <div class="pbar-wrap">
+        <div class="ptrack"><div class="pfill" id="pfill" style="width:0%"></div></div>
+        <div class="plabels"><span>Tickets Live</span><span id="ppct">—</span><span>Show Day</span></div>
+      </div>
+    </div>
+    <div class="clock-block">
+      <div class="clock" id="clock">--:--</div>
+      <div class="clock-date" id="cdate">Loading...</div>
+    </div>
+  </div>
+
+  <!-- MIDDLE -->
+  <div class="middle">
+
+    <!-- MR. ONLYDWARFS -->
+    <div class="proj-col od">
+      <div class="proj-hdr od">
+        <div class="proj-name">⚡ MR. ONLYDWARFS</div>
+        <div class="proj-badge">Booking Engine</div>
+      </div>
+      <div class="task-cols">
+        <div class="tblock daily">
+          <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">Today</span></div>
+          <div class="ti-list">
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Check CRM & respond to new leads</span>
+              <span class="ti-tag tag-hot">Now</span>
+            </div>
+            <div class="ti-div"></div>
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Follow up on 24hr+ unanswered leads</span>
+              <span class="ti-tag tag-money">$$$</span>
+            </div>
+            <div class="ti-div"></div>
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Send unsent quotes before noon</span>
+              <span class="ti-tag tag-money">$$$</span>
+            </div>
+          </div>
+        </div>
+        <div class="tblock weekly">
+          <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">This Week</span></div>
+          <div class="ti-list">
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Push stuck quotes & negotiations</span>
+            </div>
+            <div class="ti-div"></div>
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Log closed bookings in dashboard</span>
+            </div>
+            <div class="ti-div"></div>
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Follow up on completed gigs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MS. DWARFDIVAS -->
+    <div class="proj-col dd">
+      <div class="proj-hdr dd">
+        <div class="proj-name">🎭 MS. DWARFDIVAS</div>
+        <div class="proj-badge">Pilot Launch</div>
+      </div>
+      <div class="task-cols">
+        <div class="tblock daily">
+          <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">Today</span></div>
+          <div class="ti-list">
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Post on 1+ platform w/ Eventbrite link</span>
+              <span class="ti-tag tag-promo">Promo</span>
+            </div>
+            <div class="ti-div"></div>
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Check Eventbrite & log ticket count</span>
+              <span class="ti-tag tag-track">Track</span>
+            </div>
+            <div class="ti-div"></div>
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">DM 3 Vegas influencers / bachelorette accts</span>
+              <span class="ti-tag tag-promo">Promo</span>
+            </div>
+          </div>
+        </div>
+        <div class="tblock weekly">
+          <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">This Week</span></div>
+          <div class="ti-list">
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Lock promo strategy: channels & hook</span>
+            </div>
+            <div class="ti-div"></div>
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Contact Deja Vu re: their mailing list</span>
+            </div>
+            <div class="ti-div"></div>
+            <div class="ti" onclick="toggle(this)">
+              <div class="ti-chk"></div>
+              <span class="ti-text">Confirm all 6 performers for May 28–29</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIFE OS -->
+    <div class="proj-col life">
+      <div class="proj-hdr life">
+        <div class="proj-name">🧠 LIFE OS</div>
+        <div class="proj-badge">Personal</div>
+      </div>
+      <div class="task-cols">
+        <div class="tblock daily">
+          <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">Today</span></div>
+          <div class="ti-list">
+            <div class="empty-state"><span>＋</span>No tasks yet — tell Claude</div>
+          </div>
+        </div>
+        <div class="tblock weekly">
+          <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">This Week</span></div>
+          <div class="ti-list">
+            <div class="empty-state"><span>＋</span>No tasks yet — tell Claude</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom">
+
+    <div class="metrics">
+      <div class="metrics-ttl">Live Metrics — update daily</div>
+      <div class="metric">
+        <div class="m-lbl">🎟 Tickets Sold</div>
+        <div class="m-val mv-purple" id="ticket-count">0</div>
+        <div class="m-sub">Check Eventbrite daily</div>
+      </div>
+      <div class="metric">
+        <div class="m-lbl">💰 OD Monthly Rev</div>
+        <div class="m-val mv-gold">$—</div>
+        <div class="m-sub">Target: $5k–$8k/mo</div>
+      </div>
+      <div class="metric">
+        <div class="m-lbl">📋 Open Leads</div>
+        <div class="m-val mv-orange">—</div>
+        <div class="m-sub">Target: 0 unanswered</div>
+      </div>
+      <div class="metric">
+        <div class="m-lbl">🏦 Net Worth</div>
+        <div class="m-val mv-green">~$10k</div>
+        <div class="m-sub">Target: $1M by age 25</div>
+      </div>
+    </div>
+
+    <div class="yearly">
+      <div class="yearly-ttl">🏆 2026 Goals</div>
+      <div class="goals-grid">
+        <div class="goal">
+          <div class="g-lbl">DwarfDivas Pilot Launch</div>
+          <div class="g-bar"><div class="g-fill" style="width:70%;background:#A855F7"></div></div>
+          <div class="g-nums"><span class="g-cur" style="color:#A855F7">70%</span><span class="g-tgt">May 28</span></div>
+        </div>
+        <div class="goal">
+          <div class="g-lbl">OD Revenue $5k/month</div>
+          <div class="g-bar"><div class="g-fill" style="width:30%;background:var(--gold)"></div></div>
+          <div class="g-nums"><span class="g-cur" style="color:var(--gold)">~$2k now</span><span class="g-tgt">$5,000</span></div>
+        </div>
+        <div class="goal">
+          <div class="g-lbl">DwarfDivas Running Weekly</div>
+          <div class="g-bar"><div class="g-fill" style="width:5%;background:#A855F7"></div></div>
+          <div class="g-nums"><span class="g-cur" style="color:#A855F7">Pending pilot</span><span class="g-tgt">Jun 2026</span></div>
+        </div>
+        <div class="goal">
+          <div class="g-lbl">OD Revenue $8k/month</div>
+          <div class="g-bar"><div class="g-fill" style="width:20%;background:var(--gold)"></div></div>
+          <div class="g-nums"><span class="g-cur" style="color:var(--gold)">~$2k now</span><span class="g-tgt">$8,000</span></div>
+        </div>
+        <div class="goal">
+          <div class="g-lbl">Millionaire by 25</div>
+          <div class="g-bar"><div class="g-fill" style="width:1%;background:var(--green)"></div></div>
+          <div class="g-nums"><span class="g-cur" style="color:var(--green)">~$10k</span><span class="g-tgt">$1M · Jul 2031</span></div>
+        </div>
+        <div class="goal">
+          <div class="g-lbl">Empire Systems Automated</div>
+          <div class="g-bar"><div class="g-fill" style="width:15%;background:var(--green)"></div></div>
+          <div class="g-nums"><span class="g-cur" style="color:var(--green)">Foundation built</span><span class="g-tgt">Full auto</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="stamp">Last updated: April 16, 2026 01:43 PM</div>
+</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent = h + ':' + m;
+    const D = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('cdate').textContent =
+      D[now.getDay()] + ' · ' + M[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+  }
+  updateClock(); setInterval(updateClock, 1000);
+
+  const pilot = new Date('2026-05-28T20:00:00');
+  const promoStart = new Date('2026-04-12');
+  function updateCountdown() {
+    const now = new Date();
+    document.getElementById('days-left').textContent = Math.max(0, Math.ceil((pilot - now) / 86400000));
+    const pct = Math.min(100, Math.max(0, ((now - promoStart) / (pilot - promoStart)) * 100));
+    document.getElementById('pfill').style.width = pct.toFixed(1) + '%';
+    document.getElementById('ppct').textContent = Math.round(pct) + '% of promo window used';
+  }
+  updateCountdown(); setInterval(updateCountdown, 60000);
+
+  function toggle(el) { el.classList.toggle('done'); }
+  fetch('https://onlydwarfs.github.io/data.json').then(r=>r.json()).then(d=>{
+    if(d.tickets!==undefined) document.getElementById('ticket-count').textContent=d.tickets;
+  }).catch(()=>{});
+  const s=document.querySelector('.stamp');
+  if(s){const n=new Date();s.textContent='Live · '+n.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
+</script>
+</body>
+</html>
