@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — OnlyDwarfs | Dwarf Entertainment Booking</title>
+  <meta name="description" content="Common questions about booking dwarf entertainers. Pricing, availability, what to expect, how it works. Everything you need to know before booking.">
+  <meta property="og:title" content="FAQ — OnlyDwarfs Entertainment">
+  <meta property="og:description" content="Everything you need to know about booking dwarf entertainers for your event.">
+  <meta property="og:url" content="https://www.onlydwarfs.com/faq.html">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does it cost to book a dwarf entertainer?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pricing starts at $350 and varies based on the type of event, duration, location, and the specific performer. We send a custom quote within 24 hours of your request — no commitment required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How far in advance do I need to book?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We recommend booking at least 1–2 weeks in advance to secure availability, especially for weekend events. That said, we often accommodate last-minute requests — reach out and we'll do our best."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you book events outside of Las Vegas?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes — we book worldwide. We have performers based across the US and can coordinate travel for events anywhere in the country or internationally."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What types of events do you cover?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bachelor and bachelorette parties, birthdays, corporate events, Vegas nightlife, private parties, film and commercial work, promotional events, and more. If you have an event and need entertainment, we can help."
+        }
+      }
+    ]
+  }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080808;
+      --bg2:       #0f0f0f;
+      --bg3:       #161616;
+      --border:    #222;
+      --cyan:      #00c2e0;
+      --cyan-dim:  rgba(0,194,224,0.10);
+      --gold:      #f0a500;
+      --gold-dim:  rgba(240,165,0,0.10);
+      --pink:      #ff2d78;
+      --pink-dim:  rgba(255,45,120,0.10);
+      --text:      #ffffff;
+      --muted:     #888;
+      --muted2:    #444;
+      --radius:    12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+    .nav-logo span { color: var(--cyan); }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--cyan) !important;
+      color: #000 !important;
+      padding: 8px 20px !important;
+      border-radius: 50px !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
+    }
+
+    /* ── SHARED ── */
+    section { padding: 80px 24px; }
+    .inner { max-width: 800px; margin: 0 auto; }
+    .inner-wide { max-width: 1080px; margin: 0 auto; }
+
+    .sec-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 14px;
+    }
+
+    .sec-title {
+      font-size: clamp(30px, 4vw, 52px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+
+    .sec-sub {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 52px;
+      line-height: 1.75;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 140px 24px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,194,224,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; max-width: 680px; margin: 0 auto; }
+
+    .hero h1 {
+      font-size: clamp(40px, 7vw, 72px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2.5px;
+      margin-bottom: 20px;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--muted);
+      margin-bottom: 0;
+      line-height: 1.75;
+    }
+
+    /* ── CATEGORY PILLS ── */
+    .category-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .cat-pill {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cat-pill:hover, .cat-pill.active {
+      background: var(--cyan-dim);
+      border-color: rgba(0,194,224,0.35);
+      color: var(--cyan);
+    }
+
+    /* ── FAQ ACCORDION ── */
+    .faq-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin: 48px 0 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+
+    .faq-item.open {
+      border-color: rgba(0,194,224,0.3);
+    }
+
+    .faq-q {
+      width: 100%;
+      background: var(--bg3);
+      border: none;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      transition: background 0.15s;
+    }
+
+    .faq-q:hover { background: rgba(255,255,255,0.03); }
+    .faq-item.open .faq-q { background: rgba(0,194,224,0.05); }
+
+    .faq-chevron {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      transition: transform 0.2s, background 0.15s;
+      color: var(--muted);
+    }
+
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+      background: var(--cyan-dim);
+      color: var(--cyan);
+    }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.2s;
+      background: var(--bg2);
+      padding: 0 24px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 400px;
+      padding: 18px 24px 22px;
+    }
+
+    .faq-a a { color: var(--cyan); text-decoration: underline; }
+    .faq-a strong { color: var(--text); font-weight: 700; }
+
+    /* ── STILL HAVE QUESTIONS ── */
+    .contact-strip {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .contact-card {
+      background: linear-gradient(135deg, rgba(0,194,224,0.06) 0%, rgba(240,165,0,0.06) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .contact-left h2 {
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+    }
+    .contact-left p {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 380px;
+      line-height: 1.7;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: #000;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 15px;
+      transition: all 0.15s;
+      box-shadow: 0 0 28px rgba(0,194,224,0.2);
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 44px rgba(0,194,224,0.4);
+      color: #000;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 40px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-logo { font-size: 17px; font-weight: 900; }
+    .footer-logo span { color: var(--cyan); }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--muted); transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 12px; color: var(--muted2); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links li:not(:last-child) { display: none; }
+      .contact-card { padding: 32px 24px; text-align: center; justify-content: center; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="/" class="nav-logo">Only<span>Dwarfs</span></a>
+  <ul class="nav-links">
+    <li><a href="/#services">Services</a></li>
+    <li><a href="/#talent">Browse Talent</a></li>
+    <li><a href="/talent.html">For Talent</a></li>
+    <li><a href="/intake.html" class="nav-cta">Book Now</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Everything you<br>need to <span style="color:var(--cyan);">know.</span></h1>
+    <p class="hero-sub">Common questions about booking, pricing, and what to expect. Can't find your answer? <a href="/intake.html" style="color:var(--cyan);">Just ask us directly →</a></p>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section>
+  <div class="inner">
+
+    <div class="faq-section-title">💰 Pricing & Payment</div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          How much does it cost to book a dwarf entertainer?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Pricing <strong>starts from $350</strong> and varies based on the type of event, duration, location, and performer. Weekend events, Vegas gigs, and last-minute bookings may carry a premium. We send a custom quote within 24 hours — no commitment required to get a number.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          What's included in the price?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          The quoted price covers the performer's time for the agreed duration, all coordination and logistics handled by our team, and a signed contract outlining everything. Travel may be included for certain bookings — it'll be spelled out clearly in your quote.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Do you require a deposit?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Yes. We typically require a <strong>50% deposit</strong> at booking to hold your date and performer, with the remaining balance due before the event. Deposits are non-refundable if you cancel within 7 days of the event.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          What payment methods do you accept?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          We accept Venmo, Zelle, PayPal, and credit/debit card. Payment details are included in your booking confirmation.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="faq-section-title">📅 Booking & Availability</div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          How far in advance do I need to book?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          We recommend at least <strong>1–2 weeks in advance</strong> to guarantee availability, especially for weekend events and peak Vegas dates. That said, we handle last-minute bookings regularly — reach out and we'll tell you what's possible.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          How quickly will I hear back after submitting a request?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Our standard response time is <strong>under 24 hours</strong>. Most inquiries get a reply same day. If you're on a tight timeline, say so in your request and we'll prioritize it.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Can I book for a specific performer I've seen?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Yes — if you have a specific performer in mind, mention them in your booking request and we'll check their availability first. We can't always guarantee a specific performer but we'll do our best.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          What happens if the performer can't make it?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          In the rare event of a cancellation on our end, we will find a replacement performer of equal caliber or issue a full refund. We have a <strong>100% show rate</strong> — this is essentially a non-issue, but it's covered in your contract regardless.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="faq-section-title">🌍 Locations & Events</div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Do you only do Vegas events?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          No — we book <strong>worldwide</strong>. We have performers based across the US and regularly coordinate travel for events in New York, Miami, LA, Chicago, and internationally. Vegas is our home base but we go where the gig is.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Who pays for travel if the event is outside the performer's city?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          For out-of-town gigs, travel (flights, hotel) is typically covered by the client and will be itemized in the quote. For nearby events, it's often rolled into the overall rate. Everything is spelled out upfront — no surprise costs.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          What types of events do you work with?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Bachelor and bachelorette parties, birthdays, corporate events, Vegas pool parties and nightlife, private parties, film and commercial shoots, brand activations, and custom experiences. If you need an entertainer and we haven't listed your event type — ask anyway.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="faq-section-title">🎭 The Performance</div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          What exactly does the performer do at my event?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          That depends on what you book. Options include: character appearances, hype/entertainment roles, exotic dance performances, comedy sets, promotional hosting, themed entrances, and more. We'll match you with a performer whose skill set fits your vibe — and discuss the specifics during booking.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Can I customize what the performer does?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Yes. We encourage it. Tell us your theme, your crowd, the energy you want — we'll make sure the performer is briefed and ready. Custom costumes, specific entrances, themed roasts — all on the table. Just communicate it during booking.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          How long does a typical booking last?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Most appearances run <strong>2–4 hours</strong>, though we can accommodate shorter or longer depending on the event. Extended bookings are available at an hourly rate. Duration is agreed upon upfront and written into the contract.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Is tipping the performer expected?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Tips are never required but always appreciated directly by the performer. Our pricing covers their professional fee — anything extra is between you and them and goes 100% to the talent.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="faq-section-title">📜 Contracts & Logistics</div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Is there a contract?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Yes — always. Every booking comes with a signed agreement that covers the scope of performance, payment terms, cancellation policy, and conduct expectations. This protects you and the performer. We take this seriously.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          What's your cancellation policy?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Cancellations made <strong>more than 7 days before the event</strong> receive a full deposit refund. Cancellations within 7 days forfeit the deposit. Same-day cancellations are charged the full amount. Full terms are in your contract.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Do you carry liability insurance?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-a">
+          Yes. OnlyDwarfs carries general liability coverage. If your venue requires a certificate of insurance, let us know during the booking process and we'll provide it.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ── STILL HAVE QUESTIONS ── -->
+<section class="contact-strip">
+  <div class="inner-wide" style="padding: 0 24px;">
+    <div class="contact-card">
+      <div class="contact-left">
+        <h2>Still have a question?</h2>
+        <p>We respond to every inquiry. Submit your event details and ask anything — we'll get back to you within 24 hours.</p>
+      </div>
+      <a href="/intake.html" class="btn-primary">Get a Free Quote →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo"><a href="/">Only<span>Dwarfs</span></a></div>
+  <div class="footer-links">
+    <a href="https://www.instagram.com/onlydwarfs" target="_blank" rel="noopener" style="color:var(--pink);">Instagram</a>
+    <a href="https://www.tiktok.com/@onlydwarfs" target="_blank" rel="noopener" style="color:var(--pink);">TikTok</a>
+    <a href="/#services">Services</a>
+    <a href="/talent.html">For Talent</a>
+    <a href="/intake.html">Book Now</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+  </div>
+  <div class="footer-copy">© 2026 OnlyDwarfs Entertainment. All rights reserved.</div>
+</footer>
+
+<script>
+  // Accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+      });
+      // Open clicked if it was closed
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
