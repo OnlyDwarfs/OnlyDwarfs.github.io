@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /hub.html
+Disallow: /crm.html
+Disallow: /data.json
+Disallow: /CRM_Script.gs
+
+Sitemap: https://www.onlydwarfs.com/sitemap.xml
