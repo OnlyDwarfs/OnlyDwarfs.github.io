@@ -315,7 +315,7 @@
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────
 const SHEET_ID   = '1SbchSzeThe_PTSju7WQyPe8_0d54xaCfpnCVWZIwBV0';
-const SCRIPT_URL = 'APPS_SCRIPT_URL_HERE'; // ← paste your deployed Apps Script URL here
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec'; // ← paste your deployed Apps Script URL here
 const GVIZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
 
 // ── STATE ──────────────────────────────────────────────────────────
@@ -540,7 +540,7 @@ async function saveModal() {
   closeModalDirect();
   showToast('Saving…', '');
 
-  if (SCRIPT_URL === 'APPS_SCRIPT_URL_HERE') {
+  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec') {
     showToast('⚠ Apps Script not deployed yet — changes saved locally only', 'error');
     return;
   }
@@ -570,7 +570,7 @@ async function quickStageForward(leadId) {
   renderStats();
   showToast(`→ Moved to ${nextStage}`, 'success');
 
-  if (SCRIPT_URL === 'APPS_SCRIPT_URL_HERE') return;
+  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec') return;
   try {
     await fetch(SCRIPT_URL, {
       method: 'POST',
