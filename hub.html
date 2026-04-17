@@ -115,6 +115,19 @@
   </script>
 </head>
 <body>
+<script>
+(function(){if(localStorage.getItem('od_auth')!=='d7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555'){window.location.replace('/login.html');}
+})();
+</script>
+<div id="od-nav" style="position:fixed;top:0;left:0;right:0;z-index:9999;height:42px;background:rgba(6,10,20,0.97);border-bottom:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:space-between;padding:0 20px;backdrop-filter:blur(10px);font-family:'Inter',sans-serif;">
+  <span style="font-size:11px;font-weight:900;color:#C9A84C;letter-spacing:1px;">ONLY<span style="color:#fff;">DWARFS</span> EMPIRE</span>
+  <div style="display:flex;gap:2px;align-items:center;">
+    <a href="/command.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#9889; Command</a>
+    <a href="/crm.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#128203; CRM</a>
+    <a href="/hub.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#129504; Hub</a>
+    <button onclick="localStorage.removeItem('od_auth');window.location.href='/login.html';" style="font-size:11px;color:#64748B;background:none;border:1px solid rgba(100,116,139,0.3);padding:4px 10px;border-radius:6px;cursor:pointer;margin-left:8px;" onmouseover="this.style.color='#EF4444';this.style.borderColor='rgba(239,68,68,0.4)'" onmouseout="this.style.color='#64748B';this.style.borderColor='rgba(100,116,139,0.3)'">Logout</button>
+  </div>
+</div>
 
 <div class="topbar">
   <div class="brand">
