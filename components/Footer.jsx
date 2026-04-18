@@ -40,6 +40,7 @@ const Footer = () => (
         <span className="od-footer-legal-links">
           <a href="privacy.html">Privacy</a>
           <a href="terms.html">Terms</a>
+          <a href="hub.html" style={{ opacity: 0.4 }}>Staff</a>
         </span>
       </div>
     </div>
