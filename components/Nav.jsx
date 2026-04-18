@@ -17,7 +17,7 @@ const Nav = () => {
         <li><a href="#process">Process</a></li>
         <li><a href="#showcase">Divas Show</a></li>
         <li>
-          <a href="../intake/index.html" className="od-nav-cta">
+          <a href="intake.html" className="od-nav-cta">
             <span className="od-nav-cta-dot" /> Book now
           </a>
         </li>
