@@ -1,4 +1,4 @@
-// ServicesGrid.jsx — editorial numbered services
+// ServicesGrid.jsx — editorial numbered services with oversized type
 const ServicesGrid = () => {
   const services = [
     { n: '01', icon: '🎉', name: 'Bachelor & Bachelorette', desc: "The party nobody forgets. Dwarf performers that bring the energy, the chaos, and the stories everyone's still telling months later.", tags: ['Vegas', 'Worldwide', 'All night'] },
@@ -12,15 +12,31 @@ const ServicesGrid = () => {
     <section id="services" className="od-section" data-screen-label="Services">
       <div className="od-inner">
         <div className="od-section-head">
-          <div><div className="od-eyebrow">What we do</div><h2 className="od-sec-title">Every event.<br/><span className="od-accent-blue">Any vibe.</span></h2></div>
-          <p className="od-sec-sub">From Vegas pool parties to Fortune 500 events — if you need unforgettable entertainment, we have the talent for it.</p>
+          <div>
+            <div className="od-eyebrow">What we do</div>
+            <h2 className="od-sec-title">Every event.<br/><span className="od-accent-blue">Any vibe.</span></h2>
+          </div>
+          <p className="od-sec-sub">
+            From Vegas pool parties to Fortune&nbsp;500 events — if you need unforgettable
+            entertainment, we have the talent for it. Six categories, infinite variations.
+          </p>
         </div>
+
         <div className="od-svc-grid">
           {services.map((s) => (
             <a href="intake.html" key={s.n} className="od-svc-card">
-              <div className="od-svc-top"><span className="od-svc-num">{s.n}</span><span className="od-svc-icon">{s.icon}</span></div>
-              <div className="od-svc-body"><div className="od-svc-name">{s.name}</div><div className="od-svc-desc">{s.desc}</div></div>
-              <div className="od-svc-foot">{s.tags.map((t) => <span key={t} className="od-svc-tag">{t}</span>)}<span className="od-svc-arrow">→</span></div>
+              <div className="od-svc-top">
+                <span className="od-svc-num">{s.n}</span>
+                <span className="od-svc-icon">{s.icon}</span>
+              </div>
+              <div className="od-svc-body">
+                <div className="od-svc-name">{s.name}</div>
+                <div className="od-svc-desc">{s.desc}</div>
+              </div>
+              <div className="od-svc-foot">
+                {s.tags.map((t) => <span key={t} className="od-svc-tag">{t}</span>)}
+                <span className="od-svc-arrow">→</span>
+              </div>
             </a>
           ))}
         </div>
@@ -28,4 +44,5 @@ const ServicesGrid = () => {
     </section>
   );
 };
+
 window.ServicesGrid = ServicesGrid;
