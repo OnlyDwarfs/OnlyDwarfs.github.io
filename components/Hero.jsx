@@ -1,4 +1,4 @@
-// Hero.jsx — editorial hero with kinetic accent, live status strip, key stats
+// Hero.jsx â editorial hero with kinetic accent, live status strip, key stats
 const Hero = () => {
   const [clock, setClock] = React.useState('');
   React.useEffect(() => {
@@ -24,16 +24,16 @@ const Hero = () => {
           <span className="od-hero-live-dot" /> Booking agents online
         </span>
         <span className="od-hero-strip-divider" />
-        <span className="od-hero-strip-item od-hero-strip-muted">Las Vegas · Worldwide · {clock}</span>
+        <span className="od-hero-strip-item od-hero-strip-muted">Las Vegas Â· Worldwide Â· {clock}</span>
         <span className="od-hero-strip-divider" />
         <span className="od-hero-strip-item od-hero-strip-muted">Quote in &lt; 24&nbsp;hrs</span>
       </div>
 
       {/* Main editorial block */}
-      <div className="od-hero-content">
-        <div className="od-hero-eyebrow">
-          <span className="od-hero-eyebrow-pill">⚡ The #1 dwarf entertainment agency</span>
-          <span className="od-hero-eyebrow-meta">Est. 2019 · 500+ bookings</span>
+      <div className="od-hero-content" style={{textAlign:'center',alignItems:'center'}}>
+        <div className="od-hero-eyebrow" style={{justifyContent:'center'}}>
+          <span className="od-hero-eyebrow-pill">â¡ The #1 dwarf entertainment agency</span>
+          <span className="od-hero-eyebrow-meta">Est. 2019 Â· 500+ bookings</span>
         </div>
 
         <h1 className="od-hero-title">
@@ -45,20 +45,20 @@ const Hero = () => {
           Need.
         </h1>
 
-        <div className="od-hero-lower">
+        <div className="od-hero-lower" style={{alignItems:'center'}}>
           <p className="od-hero-sub">
             Book world-class dwarf entertainers for any event. Bachelor parties, Vegas
             nightlife, birthdays, corporate &mdash; <strong>we show up and we deliver.</strong>
           </p>
 
-          <div className="od-hero-actions">
-            <a href="../intake/index.html" className="od-btn-primary">
-              Book a performer <span className="od-btn-arrow">→</span>
+          <div className="od-hero-actions" style={{justifyContent:'center'}}>
+            <a href="intake.html" className="od-btn-primary">
+              Book a performer <span className="od-btn-arrow">â</span>
             </a>
             <a href="#talent" className="od-btn-outline">See the roster</a>
           </div>
 
-          <div className="od-hero-meta-row">
+          <div className="od-hero-meta-row" style={{justifyContent:'center'}}>
             <span>From <strong>$350</strong></span>
             <span className="od-hero-meta-sep" />
             <span>No commitment</span>
