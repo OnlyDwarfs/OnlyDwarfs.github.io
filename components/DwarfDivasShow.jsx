@@ -83,12 +83,12 @@ const DwarfDivasShow = () => {
           </div>
 
           <div className="divas-hero-stars" aria-hidden="true">
-            <span>✶</span><span>✶</span><span>✶</span><span>✶</span><span>✶</span>
+            <span>✦</span><span>✦</span><span>✦</span><span>✦</span><span>✦</span>
           </div>
 
           <p className="divas-hero-sub">
             An all-dwarf burlesque &amp; variety show. Five acts. One band. The front row will never recover.{' '}
-            <strong>Las Vegas’ most unreasonable night out.</strong>
+            <strong>Las Vegas' most unreasonable night out.</strong>
           </p>
 
           <div className="divas-hero-meta">
@@ -156,7 +156,7 @@ const DwarfDivasShow = () => {
             '"The most unique ticket in town." — Vegas Magazine',
             '"Five acts of perfectly controlled chaos." — The Strip Review',
           ].map((q, i) => (
-            <span key={i} className="divas-critic">{q}<span className="divas-critic-star">✶</span></span>
+            <span key={i} className="divas-critic">{q}<span className="divas-critic-star">✦</span></span>
           ))}
         </div>
       </div>
@@ -210,6 +210,7 @@ const DwarfDivasShow = () => {
             </p>
           </div>
 
+          {/* Tier info — read only */}
           <div className="divas-tier-info-grid">
             {tiers.map((t) => (
               <div key={t.name} className="divas-tier-info-card">
