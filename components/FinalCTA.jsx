@@ -12,7 +12,7 @@ const FinalCTA = () => (
         Quote in 24 hours. No commitment. Real humans, real talent, real show.
       </p>
       <div className="od-final-actions">
-        <a href="../intake/index.html" className="od-btn-primary od-btn-lg">
+        <a href="intake.html" className="od-btn-primary od-btn-lg">
           Request a quote →
         </a>
         <a href="mailto:bookings@onlydwarfs.com" className="od-btn-outline od-btn-lg">
@@ -24,7 +24,7 @@ const FinalCTA = () => (
         <span className="od-final-meta-dot" />
         <span>@onlydwarfs</span>
         <span className="od-final-meta-dot" />
-        <span>+1&nbsp;(702)&nbsp;555-0199</span>
+        <span>+1&nbsp;(702)&nbsp;872-2970</span>
       </div>
     </div>
   </section>
