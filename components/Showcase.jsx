@@ -32,8 +32,8 @@ const Showcase = () => {
               unique night out in Las Vegas — and the only one you can also book privately.
             </p>
             <div className="od-showcase-ctas">
-              <a href="#" className="od-btn-primary">Get tickets →</a>
-              <a href="../intake/index.html" className="od-btn-outline">Book the show private</a>
+              <a href="divas.html" className="od-btn-primary">Get tickets →</a>
+              <a href="intake.html" className="od-btn-outline">Book the show private</a>
             </div>
           </div>
 
