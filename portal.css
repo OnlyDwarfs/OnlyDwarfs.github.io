@@ -1,0 +1,114 @@
+/* portal.css — shared styles for talent.html and client.html
+   Extends intake.css / site.css / colors_and_type.css */
+
+/* ── GIG / EVENT TYPE CHIP GRID ──────────────────────────── */
+.od-gig-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.od-gig-chip {
+  background: transparent;
+  border: 1px solid var(--od-border-2);
+  color: var(--od-fg-2);
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 140ms var(--od-ease);
+  user-select: none;
+}
+.od-gig-chip:hover {
+  border-color: var(--od-blue-border);
+  color: var(--od-fg);
+  background: var(--od-blue-dim);
+}
+.od-gig-chip.active {
+  background: var(--od-blue-dim);
+  border-color: var(--od-blue);
+  color: var(--od-blue);
+}
+
+/* ── PORTAL TAB SWITCHER (inside aside) ──────────────────── */
+.od-portal-tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 40px;
+  padding: 4px;
+  background: var(--od-bg-3);
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-r-md);
+}
+
+.od-portal-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--od-fg-3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 160ms var(--od-ease);
+}
+.od-portal-tab:hover { color: var(--od-fg); }
+.od-portal-tab.active {
+  background: var(--od-blue);
+  color: #000;
+}
+
+/* ── BOOKING LOOKUP RESULT ───────────────────────────────── */
+.od-lookup-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 64px 32px;
+  background: var(--od-bg-2);
+  border: 1px solid var(--od-border-2);
+  border-radius: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.od-lookup-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--od-blue-dim);
+  border: 1px solid var(--od-blue-border);
+  color: var(--od-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.od-lookup-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--od-fg);
+  margin-bottom: 12px;
+}
+
+.od-lookup-sub {
+  font-size: 15px;
+  color: var(--od-fg-2);
+  line-height: 1.65;
+  max-width: 360px;
+}
+
+.od-lookup-sub strong {
+  color: var(--od-fg);
+  font-weight: 700;
+}
