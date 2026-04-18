@@ -19,12 +19,16 @@
   * { box-sizing:border-box; margin:0; padding:0; }
   html,body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
   body { padding:16px; max-width:480px; margin:0 auto; padding-top:58px; }
+
+  /* TOP BAR */
   .topbar { display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; margin-bottom:14px; }
   .brand h1 { font-size:15px; font-weight:900; color:var(--text); }
   .brand h1 span { color:var(--gold); }
   .brand p { font-size:9px; color:var(--dim); margin-top:2px; }
   .clock { font-size:22px; font-weight:800; color:var(--gold); text-align:right; line-height:1; }
   .clock-date { font-size:9px; color:var(--dim); text-align:right; margin-top:2px; }
+
+  /* COUNTDOWN */
   .countdown { background:linear-gradient(135deg,rgba(40,12,80,0.95),rgba(22,6,50,0.95)); border:1px solid rgba(124,58,237,0.4); border-radius:14px; padding:16px; margin-bottom:12px; text-align:center; }
   .cd-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--purple-lt); margin-bottom:6px; }
   .cd-num { font-size:52px; font-weight:900; letter-spacing:-3px; color:#fff; line-height:1; }
@@ -33,6 +37,8 @@
   .ptrack { background:rgba(255,255,255,0.07); border-radius:99px; height:4px; overflow:hidden; margin:10px auto 0; max-width:260px; }
   .pfill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--purple),var(--purple-lt)); }
   .plabels { display:flex; justify-content:space-between; font-size:8px; color:var(--faint); margin-top:3px; max-width:260px; margin-left:auto; margin-right:auto; }
+
+  /* SECTION */
   .section { margin-bottom:12px; }
   .sect-hdr { display:flex; justify-content:space-between; align-items:center; border-radius:10px; padding:10px 14px; margin-bottom:8px; }
   .sect-hdr.od { background:linear-gradient(135deg,rgba(22,50,80,0.95),rgba(12,28,50,0.95)); border:1px solid rgba(201,168,76,0.35); }
@@ -46,6 +52,8 @@
   .sect-hdr.od .sect-badge { background:rgba(201,168,76,0.12); color:var(--gold-lt); }
   .sect-hdr.dd .sect-badge { background:rgba(124,58,237,0.12); color:var(--purple-lt); }
   .sect-hdr.life .sect-badge { background:rgba(14,165,233,0.12); color:var(--teal-lt); }
+
+  /* TASK BLOCKS */
   .tblock { background:var(--panel); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; overflow:hidden; }
   .tblock-hdr { display:flex; align-items:center; gap:7px; padding:8px 13px; border-bottom:1px solid var(--border); }
   .tdot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
@@ -61,7 +69,7 @@
   .ti.done .ti-text { text-decoration:line-through; }
   .ti-chk { width:16px; height:16px; border-radius:4px; border:1.5px solid var(--faint); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.12s; }
   .ti.done .ti-chk { background:var(--dim); border-color:var(--dim); }
-  .ti.done .ti-chk::after { content:'\u2713'; font-size:9px; color:#fff; font-weight:700; }
+  .ti.done .ti-chk::after { content:'✓'; font-size:9px; color:#fff; font-weight:700; }
   .ti-text { font-size:12px; color:var(--text); line-height:1.4; flex:1; }
   .ti-tag { font-size:8px; font-weight:700; text-transform:uppercase; padding:2px 6px; border-radius:3px; flex-shrink:0; }
   .tag-hot { background:rgba(239,68,68,0.18); color:var(--red); }
@@ -69,6 +77,8 @@
   .tag-promo { background:rgba(124,58,237,0.18); color:var(--purple-lt); }
   .tag-track { background:rgba(249,115,22,0.18); color:var(--orange); }
   .empty-state { padding:18px; text-align:center; color:var(--faint); font-size:11px; font-style:italic; }
+
+  /* METRICS */
   .metrics { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:12px; }
   .metrics-ttl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--dim); padding-bottom:8px; border-bottom:1px solid var(--border); margin-bottom:10px; }
   .metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
@@ -80,6 +90,8 @@
   .mv-green { color:var(--green); }
   .mv-purple { color:var(--purple-lt); }
   .mv-orange { color:var(--orange); }
+
+  /* GOALS */
   .goals { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:20px; }
   .goals-ttl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--gold); padding-bottom:8px; border-bottom:1px solid var(--border); margin-bottom:10px; }
   .goal { margin-bottom:10px; }
@@ -90,6 +102,7 @@
   .g-nums { display:flex; justify-content:space-between; font-size:9px; margin-top:3px; }
   .g-cur { font-weight:700; }
   .g-tgt { color:var(--faint); }
+
   .stamp { text-align:center; font-size:9px; color:var(--faint); padding-bottom:8px; }
 </style>
   <!-- Google tag (gtag.js) -->
@@ -144,13 +157,13 @@
   </div>
   <div class="tblock daily">
     <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">Today</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Check CRM &amp; respond to new leads</span><span class="ti-tag tag-hot">Now</span></div>
+    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Check CRM & respond to new leads</span><span class="ti-tag tag-hot">Now</span></div>
     <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Follow up on 24hr+ unanswered leads</span><span class="ti-tag tag-money">$$$</span></div>
     <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Send unsent quotes before noon</span><span class="ti-tag tag-money">$$$</span></div>
   </div>
   <div class="tblock weekly">
     <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">This Week</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Push stuck quotes &amp; negotiations</span></div>
+    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Push stuck quotes & negotiations</span></div>
     <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Log closed bookings in dashboard</span></div>
     <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Follow up on completed gigs</span></div>
   </div>
@@ -165,12 +178,12 @@
   <div class="tblock daily">
     <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">Today</span></div>
     <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Post on 1+ platform w/ Eventbrite link</span><span class="ti-tag tag-promo">Promo</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Check Eventbrite &amp; log ticket count</span><span class="ti-tag tag-track">Track</span></div>
+    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Check Eventbrite & log ticket count</span><span class="ti-tag tag-track">Track</span></div>
     <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">DM 3 Vegas influencers / bachelorette accts</span><span class="ti-tag tag-promo">Promo</span></div>
   </div>
   <div class="tblock weekly">
     <div class="tblock-hdr"><div class="tdot"></div><span class="tblock-label">This Week</span></div>
-    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Lock promo strategy: channels &amp; hook</span></div>
+    <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Lock promo strategy: channels & hook</span></div>
     <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Contact Deja Vu re: their mailing list</span></div>
     <div class="ti" onclick="toggle(this)"><div class="ti-chk"></div><span class="ti-text">Confirm all 6 performers for May 28–29</span></div>
   </div>
