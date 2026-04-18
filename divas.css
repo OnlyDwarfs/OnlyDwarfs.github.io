@@ -16,12 +16,16 @@
   border-bottom: 1px solid var(--od-border);
   gap: 20px;
 }
-.divas-nav-mid { flex: 1; text-align: center; }
-.divas-nav-show {
-  font-size: 12px; font-weight: 700;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--od-fg-3);
+.divas-nav-links {
+  display: flex; gap: 28px; align-items: center;
+  flex: 1; justify-content: center;
 }
+.divas-nav-links a {
+  font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  transition: color 160ms ease;
+}
+.divas-nav-links a:hover { color: rgba(255,255,255,0.9); }
 
 /* ── HERO / POSTER ── */
 .divas-hero {
