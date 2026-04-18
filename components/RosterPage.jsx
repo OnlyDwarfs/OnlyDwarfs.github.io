@@ -88,6 +88,7 @@ const RosterPage = () => {
 
   return (
     <>
+      {/* Page hero */}
       <section className="od-page-hero">
         <div className="od-inner">
           <div className="od-eyebrow">The roster</div>
@@ -109,6 +110,7 @@ const RosterPage = () => {
         </div>
       </section>
 
+      {/* Filter bar */}
       <section className="od-section" style={{paddingTop:'2rem',paddingBottom:'0'}}>
         <div className="od-inner">
           <div className="od-roster-filters">
@@ -125,6 +127,7 @@ const RosterPage = () => {
         </div>
       </section>
 
+      {/* Cards grid */}
       <section className="od-section">
         <div className="od-inner">
           {loading ? (
@@ -149,6 +152,7 @@ const RosterPage = () => {
         </div>
       </section>
 
+      {/* Bottom CTA */}
       <section className="od-section od-section-dark">
         <div className="od-inner od-text-center">
           <div className="od-eyebrow">Ready to book?</div>
