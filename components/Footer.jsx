@@ -5,31 +5,29 @@ const Footer = () => (
       <div className="od-footer-cols">
         <div className="od-footer-col">
           <div className="od-footer-heading">Book</div>
-          <a href="../intake/index.html">Request a quote</a>
+          <a href="intake.html">Request a quote</a>
           <a href="#services">Services</a>
-          <a href="#showcase">Divas Show</a>
+          <a href="divas.html">DwarfDivas show</a>
           <a href="#talent">Full roster</a>
         </div>
         <div className="od-footer-col">
           <div className="od-footer-heading">Talent</div>
-          <a href="#">Apply to the roster</a>
-          <a href="#">Open gigs</a>
-          <a href="#">Talent login</a>
-          <a href="#">Agent login</a>
+          <a href="talent.html">Apply to the roster</a>
+          <a href="talent.html">Open gigs</a>
+          <a href="talent.html">Talent portal</a>
         </div>
         <div className="od-footer-col">
-          <div className="od-footer-heading">Company</div>
-          <a href="#">About</a>
-          <a href="#">Press</a>
-          <a href="#">Contact</a>
-          <a href="#">Careers</a>
+          <div className="od-footer-heading">Clients</div>
+          <a href="client.html">Create a profile</a>
+          <a href="intake.html">Book an event</a>
+          <a href="client.html">Track my booking</a>
+          <a href="faq.html">FAQ</a>
         </div>
         <div className="od-footer-col">
           <div className="od-footer-heading">Follow</div>
-          <a href="#">Instagram</a>
-          <a href="#">TikTok</a>
-          <a href="#">YouTube</a>
-          <a href="#">X / Twitter</a>
+          <a href="https://www.instagram.com/onlydwarfs" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="https://www.tiktok.com/@onlydwarfs" target="_blank" rel="noopener noreferrer">TikTok</a>
+          <a href="mailto:bookings@onlydwarfs.com">Contact us</a>
         </div>
       </div>
 
@@ -40,9 +38,8 @@ const Footer = () => (
       <div className="od-footer-legal">
         <span>© 2026 OnlyDwarfs Entertainment LLC · Las Vegas, NV</span>
         <span className="od-footer-legal-links">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Licensing</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
         </span>
       </div>
     </div>
