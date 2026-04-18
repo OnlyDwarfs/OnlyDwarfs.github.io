@@ -1,4 +1,4 @@
-// TalentGrid.jsx â live roster fetched from Apps Script
+// TalentGrid.jsx — live roster fetched from Apps Script
 // Talent shows up here after Ryder sets STATUS = 'Active' in the Talent sheet
 const TALENT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec?action=getTalent';
 
@@ -82,8 +82,9 @@ const TalentGrid = () => {
           ))}
         </div>
 
-        <div className="od-text-center">
-          <a href="talent.html" className="od-btn-outline">Apply to join the roster â</a>
+        <div className="od-text-center" style={{display:'flex',gap:'1rem',justifyContent:'center',flexWrap:'wrap'}}>
+          <a href="roster.html" className="od-btn-primary">View full roster →</a>
+          <a href="talent.html" className="od-btn-outline">Apply to join the roster →</a>
         </div>
       </div>
     </section>
