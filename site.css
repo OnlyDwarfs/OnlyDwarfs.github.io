@@ -25,8 +25,14 @@ img { max-width: 100%; display: block; }
 .od-nav-logo {
   font-size: 18px; font-weight: 900; letter-spacing: -0.03em;
   color: var(--od-fg);
+  display: flex; align-items: center;
 }
 .od-nav-logo span { color: var(--od-blue); }
+.od-nav-logo-img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
 .od-nav-links {
   display: flex; gap: 32px; align-items: center; list-style: none;
 }
@@ -1086,4 +1092,167 @@ img { max-width: 100%; display: block; }
   .od-faq-a, .od-faq-item.open .od-faq-a { padding-left: 0; padding-right: 0; }
   .od-faq-q { gap: 12px; }
   .od-testi-foot { flex-direction: column; gap: 20px; text-align: center; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ROSTER PAGE
+═══════════════════════════════════════════════════════════ */
+.od-page-hero {
+  padding: 140px 40px 80px;
+  text-align: center;
+  position: relative;
+}
+.od-page-title {
+  font-size: clamp(44px, 7vw, 88px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 20px;
+  color: var(--od-fg);
+}
+.od-page-sub {
+  font-size: 18px;
+  color: var(--od-fg-2);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Filter pills */
+.od-roster-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 2rem;
+}
+.od-roster-filter-btn {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--od-border-2);
+  background: transparent;
+  color: var(--od-fg-2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms var(--od-ease);
+  font-family: inherit;
+}
+.od-roster-filter-btn:hover {
+  border-color: var(--od-fg-3);
+  color: var(--od-fg);
+}
+.od-roster-filter-btn.active {
+  background: var(--od-blue);
+  border-color: var(--od-blue);
+  color: #000;
+  font-weight: 700;
+}
+
+/* Card grid */
+.od-roster-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+.od-roster-card {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  background: var(--od-bg-2);
+  border: 1px solid var(--od-border);
+  border-radius: 12px;
+  transition: border-color 160ms var(--od-ease), transform 160ms var(--od-ease);
+}
+.od-roster-card:hover {
+  border-color: var(--od-border-strong);
+  transform: translateY(-2px);
+}
+
+/* Photo placeholder */
+.od-roster-photo {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  background: var(--od-bg-3);
+  border: 1px solid var(--od-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--od-fg-3);
+  position: relative;
+  overflow: hidden;
+}
+.od-roster-photo-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--od-fg-3);
+  text-align: center;
+  padding: 0 4px;
+  line-height: 1.2;
+}
+
+/* Info section */
+.od-roster-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.od-roster-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.od-roster-name {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--od-fg);
+}
+.od-roster-type {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--od-blue);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.od-roster-bio {
+  font-size: 13.5px;
+  color: var(--od-fg-3);
+  line-height: 1.6;
+}
+.od-roster-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+.od-roster-cta {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--od-blue);
+  white-space: nowrap;
+  transition: opacity 140ms var(--od-ease);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.od-roster-cta:hover { opacity: 0.75; }
+
+@media (max-width: 1024px) {
+  .od-roster-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .od-page-hero { padding: 110px 20px 60px; }
+  .od-roster-card { flex-direction: column; }
+  .od-roster-photo { width: 100%; height: 120px; border-radius: 8px; }
+  .od-roster-footer { flex-direction: column; align-items: flex-start; }
 }
