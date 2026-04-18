@@ -1,34 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Full Roster — OnlyDwarfs</title>
-  <meta name="description" content="Meet the full OnlyDwarfs roster — vetted dwarf entertainers available for bachelor parties, Vegas nightlife, corporate events, film, and more." />
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-  <link rel="stylesheet" href="colors_and_type.css" />
-  <link rel="stylesheet" href="site.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Roster — OnlyDwarfs Entertainment</title>
+  <meta name="description" content="Browse the OnlyDwarfs talent roster. Professional dwarf entertainers available for bachelor parties, Vegas nightlife, corporate events, and more.">
+  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="colors_and_type.css">
+  <style>
+    .roster-hero {
+      padding: 120px 40px 64px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .roster-hero-tag {
+      font-size: 11px; font-weight: 800;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--od-blue);
+      margin-bottom: 16px;
+    }
+    .roster-hero-title {
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: var(--od-fg);
+      margin-bottom: 24px;
+    }
+    .roster-hero-sub {
+      font-size: 17px;
+      color: var(--od-fg-2);
+      max-width: 520px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+    }
+    .roster-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 0 40px;
+      max-width: 1200px;
+      margin: 0 auto 48px;
+    }
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--od-border-2);
+      color: var(--od-fg-3);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 140ms var(--od-ease);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--od-blue-border);
+      color: var(--od-fg);
+      background: var(--od-blue-dim);
+    }
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      padding: 0 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .talent-card {
+      background: var(--od-bg-2);
+      border: 1px solid var(--od-border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 200ms var(--od-ease);
+    }
+    .talent-card:hover {
+      border-color: var(--od-blue-border);
+      transform: translateY(-4px);
+      box-shadow: var(--od-shadow-lg);
+    }
+    .talent-photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: linear-gradient(160deg, var(--od-bg-3) 0%, #0d1b2a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: var(--od-fg-4);
+      position: relative;
+    }
+    .talent-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .talent-avail {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .avail-open {
+      background: rgba(0,220,130,0.15);
+      border: 1px solid rgba(0,220,130,0.3);
+      color: #00dc82;
+    }
+    .avail-booked {
+      background: rgba(255,45,120,0.12);
+      border: 1px solid rgba(255,45,120,0.25);
+      color: var(--od-pink, #ff2d78);
+    }
+    .talent-info {
+      padding: 20px;
+    }
+    .talent-name {
+      font-size: 17px; font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--od-fg);
+      margin-bottom: 4px;
+    }
+    .talent-spec {
+      font-size: 13px;
+      color: var(--od-fg-3);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .talent-tags {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .talent-tag {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--od-blue-dim);
+      border: 1px solid var(--od-blue-border);
+      color: var(--od-blue);
+    }
+    .talent-book-btn {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      background: var(--od-blue);
+      color: #000;
+      font-size: 13px; font-weight: 800;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: opacity 140ms;
+    }
+    .talent-book-btn:hover { opacity: 0.85; }
+    .talent-book-btn.booked {
+      background: var(--od-bg-3);
+      color: var(--od-fg-4);
+      pointer-events: none;
+    }
+    .roster-cta {
+      text-align: center;
+      padding: 96px 40px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .roster-cta h2 {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      line-height: 1.0;
+      margin-bottom: 16px;
+    }
+    .roster-cta p {
+      font-size: 16px;
+      color: var(--od-fg-2);
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+    .loading-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 80px 0;
+      color: var(--od-fg-3);
+      font-size: 14px;
+    }
+    @media (max-width: 768px) {
+      .roster-hero { padding: 100px 20px 48px; }
+      .roster-filters { padding: 0 20px; }
+      .roster-grid { padding: 0 20px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+      .roster-cta { padding: 64px 20px; }
+    }
+  </style>
 </head>
-<body>
-  <div id="root" data-screen-label="Full Roster"></div>
+<body class="od-page">
 
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<!-- NAV -->
+<nav class="od-nav">
+  <div class="od-nav-inner">
+    <a href="index.html" class="od-nav-logo">
+      <img src="assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs" height="22">
+    </a>
+    <ul class="od-nav-links">
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="roster.html" class="active">Roster</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="divas.html">Divas Show</a></li>
+    </ul>
+    <div class="od-nav-actions">
+      <a href="intake.html" class="od-btn od-btn-primary od-btn-sm">Book now</a>
+    </div>
+  </div>
+</nav>
 
-  <script type="text/babel" src="components/Nav.jsx?v=2"></script>
-  <script type="text/babel" src="components/Footer.jsx?v=2"></script>
-  <script type="text/babel" src="components/RosterPage.jsx?v=1"></script>
+<!-- HERO -->
+<section class="roster-hero">
+  <div class="roster-hero-tag">The Roster</div>
+  <h1 class="roster-hero-title">Meet the<br><span style="color:var(--od-blue)">talent.</span></h1>
+  <p class="roster-hero-sub">Every performer is vetted, insured, and trained for the room. Browse the roster and book directly — or tell us what you need and we'll match you.</p>
+  <a href="intake.html" class="od-btn od-btn-primary">Book a performer →</a>
+</section>
 
-  <script type="text/babel">
-    const App = () => (
-      <>
-        <Nav />
-        <RosterPage />
-        <Footer />
-      </>
-    );
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+<!-- FILTERS -->
+<div class="roster-filters">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="Vegas">Vegas</button>
+  <button class="filter-btn" data-filter="Entertainment">Entertainment</button>
+  <button class="filter-btn" data-filter="Comedy">Comedy</button>
+  <button class="filter-btn" data-filter="Corporate">Corporate</button>
+  <button class="filter-btn" data-filter="Film">Film</button>
+  <button class="filter-btn" data-filter="Parties">Parties</button>
+</div>
+
+<!-- GRID -->
+<div class="roster-grid" id="roster-grid">
+  <div class="loading-state">Loading roster…</div>
+</div>
+
+<!-- CTA -->
+<section class="roster-cta">
+  <h2>Don't see<br>the right fit?</h2>
+  <p>Tell us about your event and we'll hand-match you with the right performer. Custom bookings, specialty acts, last-minute requests — we handle all of it.</p>
+  <a href="intake.html" class="od-btn od-btn-primary">Request a custom match →</a>
+</section>
+
+<!-- FOOTER -->
+<footer class="od-footer">
+  <div class="od-footer-inner">
+    <div class="od-footer-brand">
+      <a href="index.html" class="od-footer-logo">
+        <img src="assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs" height="20">
+      </a>
+      <p class="od-footer-tagline">The #1 dwarf entertainment agency.</p>
+    </div>
+    <nav class="od-footer-nav">
+      <div class="od-footer-col">
+        <span class="od-footer-col-label">Book</span>
+        <a href="intake.html">Request a quote</a>
+        <a href="index.html#services">Services</a>
+        <a href="divas.html">DwarfDivas show</a>
+        <a href="roster.html">Full roster</a>
+      </div>
+      <div class="od-footer-col">
+        <span class="od-footer-col-label">Talent</span>
+        <a href="talent.html">Apply to the roster</a>
+        <a href="talent.html">Open gigs</a>
+        <a href="client.html">Talent portal</a>
+      </div>
+      <div class="od-footer-col">
+        <span class="od-footer-col-label">Clients</span>
+        <a href="client.html">Create a profile</a>
+        <a href="client.html">Book an event</a>
+        <a href="client.html">Track my booking</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+      <div class="od-footer-col">
+        <span class="od-footer-col-label">Follow</span>
+        <a href="https://www.instagram.com/onlydwarfs" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.tiktok.com/@onlydwarfs" target="_blank" rel="noopener">TikTok</a>
+        <a href="mailto:bookings@onlydwarfs.com">Contact us</a>
+      </div>
+    </nav>
+  </div>
+  <div class="od-footer-bottom">
+    <span>© 2026 OnlyDwarfs Entertainment LLC · Las Vegas, NV</span>
+    <div class="od-footer-legal">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="hub.html" class="od-footer-staff">Staff ⚙</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const TALENT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec?action=getTalent';
+
+const PLACEHOLDERS = [
+  { name: 'The Roster',    spec: 'Performer profiles dropping soon',  tags: ['Vegas','Entertainment'], avail: 'Open' },
+  { name: 'Comedy Act',    spec: 'Stand-up & improv headliner',       tags: ['Comedy','Events'],       avail: 'Open' },
+  { name: 'Party MC',      spec: 'Host energy + crowd work',          tags: ['Parties','Vegas'],       avail: 'Booked' },
+  { name: 'Film Talent',   spec: 'SAG-eligible, set-ready',           tags: ['Film','TV'],             avail: 'Open' },
+  { name: 'Corporate Act', spec: 'Brand-safe & audience-trained',     tags: ['Corporate','Worldwide'], avail: 'Open' },
+  { name: 'Themed',        spec: 'Character work & costumes',         tags: ['Themed','Custom'],       avail: 'Open' },
+];
+
+let allTalent = [];
+let activeFilter = 'all';
+
+function cardHTML(t) {
+  const avail = t.avail || t.availability || 'Open';
+  const tags  = Array.isArray(t.tags) ? t.tags : (t.tags || '').split(',').map(s => s.trim()).filter(Boolean);
+  const photo = t.photo
+    ? `<img src="${t.photo}" alt="${t.name}" loading="lazy">`
+    : `<span>🎭</span>`;
+  return `
+    <div class="talent-card" data-tags="${tags.join(',')}">
+      <div class="talent-photo">
+        ${photo}
+        <span class="talent-avail ${avail === 'Open' ? 'avail-open' : 'avail-booked'}">${avail}</span>
+      </div>
+      <div class="talent-info">
+        <div class="talent-name">${t.name}</div>
+        <div class="talent-spec">${t.spec || t.specialty || ''}</div>
+        <div class="talent-tags">${tags.map(tag => `<span class="talent-tag">${tag}</span>`).join('')}</div>
+        <a href="intake.html" class="talent-book-btn ${avail !== 'Open' ? 'booked' : ''}">${avail === 'Open' ? 'Book this performer →' : 'Currently booked'}</a>
+      </div>
+    </div>`;
+}
+
+function renderGrid(talent) {
+  const grid = document.getElementById('roster-grid');
+  const filtered = activeFilter === 'all'
+    ? talent
+    : talent.filter(t => {
+        const tags = Array.isArray(t.tags) ? t.tags : (t.tags || '').split(',').map(s => s.trim());
+        return tags.some(tag => tag.toLowerCase() === activeFilter.toLowerCase());
+      });
+  grid.innerHTML = filtered.length
+    ? filtered.map(cardHTML).join('')
+    : `<div class="loading-state">No performers in this category yet — <a href="intake.html" style="color:var(--od-blue)">request a custom match</a>.</div>`;
+}
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderGrid(allTalent);
+  });
+});
+
+// Fetch
+fetch(TALENT_URL)
+  .then(r => r.json())
+  .then(data => {
+    allTalent = (data.talent && data.talent.length) ? data.talent : PLACEHOLDERS;
+    renderGrid(allTalent);
+  })
+  .catch(() => {
+    allTalent = PLACEHOLDERS;
+    renderGrid(allTalent);
+  });
+</script>
 </body>
 </html>
