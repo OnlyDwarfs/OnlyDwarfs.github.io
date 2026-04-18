@@ -10,12 +10,23 @@ const Testimonial = () => {
     <section className="od-testi" data-screen-label="Testimonial">
       <div className="od-inner">
         <div className="od-eyebrow" style={{ marginBottom: 28 }}>Word of mouth</div>
-        <blockquote className="od-testi-quote"><span className="od-testi-mark" aria-hidden="true">"</span>{quotes[i].q}</blockquote>
+        <blockquote className="od-testi-quote">
+          <span className="od-testi-mark" aria-hidden="true">"</span>
+          {quotes[i].q}
+        </blockquote>
         <div className="od-testi-foot">
-          <div><div className="od-testi-who">{quotes[i].who}</div><div className="od-testi-role">{quotes[i].role}</div></div>
+          <div>
+            <div className="od-testi-who">{quotes[i].who}</div>
+            <div className="od-testi-role">{quotes[i].role}</div>
+          </div>
           <div className="od-testi-nav">
             {quotes.map((_, idx) => (
-              <button key={idx} className={`od-testi-dot ${idx === i ? 'active' : ''}`} onClick={() => setI(idx)} aria-label={`Quote ${idx + 1}`} />
+              <button
+                key={idx}
+                className={`od-testi-dot ${idx === i ? 'active' : ''}`}
+                onClick={() => setI(idx)}
+                aria-label={`Quote ${idx + 1}`}
+              />
             ))}
           </div>
         </div>
@@ -23,4 +34,5 @@ const Testimonial = () => {
     </section>
   );
 };
+
 window.Testimonial = Testimonial;
