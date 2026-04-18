@@ -1,7 +1,7 @@
-// StepsRow.jsx â horizontal process timeline with connecting line
+// StepsRow.jsx — horizontal process timeline with connecting line
 const StepsRow = () => {
   const steps = [
-    { n: '01', t: 'Tell us the vibe', d: 'Fill out a 2-minute form â event, date, city, headcount, expectations. The weirder the better.', time: '2 min' },
+    { n: '01', t: 'Tell us the vibe', d: 'Fill out a 2-minute form — event, date, city, headcount, expectations. The weirder the better.', time: '2 min' },
     { n: '02', t: 'We cast the talent', d: 'Your booking agent replies with a hand-picked short list + custom quote. No bots. Real humans.', time: '< 24 hrs' },
     { n: '03', t: 'We handle the rest', d: 'Contracts, travel, riders, coordination. You just show up and enjoy the show.', time: 'Showtime' },
   ];
