@@ -13,14 +13,20 @@ const FAQ = () => {
     <section className="od-faq od-section-dark" data-screen-label="FAQ">
       <div className="od-inner">
         <div className="od-section-head">
-          <div><div className="od-eyebrow">Questions</div><h2 className="od-sec-title">You asked.<br/><span className="od-accent-blue">We answered.</span></h2></div>
-          <p className="od-sec-sub">Still have something specific? Drop it in the booking form — a real booking agent will reply in under a day.</p>
+          <div>
+            <div className="od-eyebrow">Questions</div>
+            <h2 className="od-sec-title">You asked.<br/><span className="od-accent-blue">We answered.</span></h2>
+          </div>
+          <p className="od-sec-sub">
+            Still have something specific? Drop it in the booking form — a real booking
+            agent will reply in under a day.
+          </p>
         </div>
         <div className="od-faq-list">
           {items.map((it, i) => (
             <div key={i} className={`od-faq-item ${open === i ? 'open' : ''}`}>
               <button className="od-faq-q" onClick={() => setOpen(open === i ? -1 : i)}>
-                <span className="od-faq-q-num">{String(i + 1).padStart(2, '00')}</span>
+                <span className="od-faq-q-num">{String(i + 1).padStart(2, '0')}</span>
                 <span className="od-faq-q-text">{it.q}</span>
                 <span className="od-faq-q-toggle">{open === i ? '−' : '+'}</span>
               </button>
@@ -32,4 +38,5 @@ const FAQ = () => {
     </section>
   );
 };
+
 window.FAQ = FAQ;
