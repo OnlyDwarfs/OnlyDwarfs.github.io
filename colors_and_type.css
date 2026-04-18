@@ -1,0 +1,197 @@
+/* =============================================================
+   OnlyDwarfs — Colors & Type
+   Brand positioning: "OnlyFans for dwarf entertainment booking"
+   Primary blue + deep black + crisp white = premium, direct, modern.
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  /* ── PRIMARY BRAND ── */
+  --od-blue:          #00AFF0;  /* OnlyFans-adjacent primary; the hero color */
+  --od-blue-hover:    #33C1F3;  /* +12% L — lightens on hover */
+  --od-blue-press:    #0098D1;  /* −10% L — darkens on press */
+  --od-blue-dim:      rgba(0, 175, 240, 0.12);   /* tinted bg for badges, soft buttons */
+  --od-blue-glow:     rgba(0, 175, 240, 0.35);   /* for button shadows / hero glows */
+  --od-blue-border:   rgba(0, 175, 240, 0.30);   /* outline variant */
+
+  /* ── NEUTRAL SCALE (dark-first, cool-biased toward brand blue — no green) ── */
+  --od-black:         #000000;  /* absolute black for hero surfaces */
+  --od-bg:            #0A0B0D;  /* default page bg — cool near-black */
+  --od-bg-2:          #101215;  /* raised surface 1 */
+  --od-bg-3:          #15181C;  /* raised surface 2 (cards) */
+  --od-bg-4:          #1C1F24;  /* raised surface 3 (inputs) */
+  --od-border:        #222529;  /* default hairline */
+  --od-border-2:      #2D3036;  /* input/card border */
+  --od-border-strong: #3A3E44;  /* hover border */
+
+  /* ── FOREGROUND ── */
+  --od-fg:            #FFFFFF;  /* primary text */
+  --od-fg-2:          #BBBFC4;  /* secondary text — cool gray */
+  --od-fg-3:          #888C92;  /* muted / helper */
+  --od-fg-4:          #55595E;  /* placeholder */
+  --od-fg-5:          #33363A;  /* disabled */
+
+  /* ── SEMANTIC ── */
+  --od-success:       #22C55E;
+  --od-success-dim:   rgba(34, 197, 94, 0.15);
+  --od-warning:       #F59E0B;
+  --od-warning-dim:   rgba(245, 158, 11, 0.15);
+  --od-danger:        #EF4444;
+  --od-danger-dim:    rgba(239, 68, 68, 0.15);
+  --od-info:          var(--od-blue);
+  --od-info-dim:      var(--od-blue-dim);
+
+  /* CRM pipeline stage colors (kept from legacy crm.html for parity) */
+  --od-stage-new:       #3498DB;  /* blue */
+  --od-stage-contacted: #F39C12;  /* orange */
+  --od-stage-quoted:    #00AFF0;  /* now brand blue */
+  --od-stage-booked:    #2ECC71;  /* green */
+  --od-stage-completed: #F1C40F;  /* gold */
+
+  /* ── TYPE ── */
+  --od-font:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --od-font-mono:     ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Type scale (desktop). Pair font-size with line-height directly. */
+  --od-text-hero:     clamp(52px, 9vw, 104px);   /* h1 hero only */
+  --od-text-display:  clamp(40px, 6vw, 72px);    /* big CTA blocks */
+  --od-text-h1:       clamp(32px, 4.5vw, 52px);  /* section titles */
+  --od-text-h2:       clamp(26px, 3vw, 36px);    /* subsection */
+  --od-text-h3:       20px;                      /* card title */
+  --od-text-h4:       16px;                      /* compact title */
+  --od-text-body:     15px;                      /* default body */
+  --od-text-sm:       13px;                      /* labels, meta */
+  --od-text-xs:       11px;                      /* tags, eyebrows (uppercase) */
+
+  /* Line heights */
+  --od-lh-tight:      1.05;
+  --od-lh-heading:    1.15;
+  --od-lh-body:       1.65;
+
+  /* Letter spacing */
+  --od-track-tight:   -0.03em;  /* hero/display */
+  --od-track-snug:    -0.02em;  /* h1–h3 */
+  --od-track-normal:  0;
+  --od-track-wide:    0.08em;
+  --od-track-xwide:   0.16em;   /* uppercase eyebrows */
+
+  /* Weights */
+  --od-w-regular:     400;
+  --od-w-medium:      500;
+  --od-w-semi:        600;
+  --od-w-bold:        700;
+  --od-w-heavy:       800;
+  --od-w-black:       900;  /* reserved for display + brand headlines */
+
+  /* ── SPACING ── */
+  --od-s-1:   4px;
+  --od-s-2:   8px;
+  --od-s-3:   12px;
+  --od-s-4:   16px;
+  --od-s-5:   24px;
+  --od-s-6:   32px;
+  --od-s-7:   48px;
+  --od-s-8:   64px;
+  --od-s-9:   96px;
+  --od-s-10: 128px;
+
+  /* ── RADII ── */
+  --od-r-sm:   6px;   /* tags, chips */
+  --od-r:      10px;  /* inputs, small buttons */
+  --od-r-md:   12px;  /* cards */
+  --od-r-lg:   16px;  /* modals, hero cards */
+  --od-r-xl:   24px;
+  --od-r-pill: 999px; /* capsule buttons, badges */
+
+  /* ── SHADOWS ── */
+  --od-shadow-sm:   0 1px 2px rgba(0,0,0,0.4);
+  --od-shadow:      0 4px 16px rgba(0,0,0,0.5);
+  --od-shadow-lg:   0 12px 40px rgba(0,0,0,0.6);
+  --od-shadow-glow: 0 0 32px var(--od-blue-glow);
+
+  /* ── MOTION ── */
+  --od-dur-fast:    120ms;
+  --od-dur:         180ms;
+  --od-dur-slow:    260ms;
+  --od-ease:        cubic-bezier(0.2, 0, 0, 1);   /* standard UI */
+  --od-ease-out:    cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* =============================================================
+   SEMANTIC BASE STYLES
+   Paste these into any artifact that uses the design system.
+   ============================================================= */
+
+html, body {
+  background: var(--od-bg);
+  color: var(--od-fg);
+  font-family: var(--od-font);
+  font-size: var(--od-text-body);
+  line-height: var(--od-lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings default to Black weight + tight tracking. */
+h1, .od-h1 {
+  font-size: var(--od-text-h1);
+  font-weight: var(--od-w-black);
+  letter-spacing: var(--od-track-snug);
+  line-height: var(--od-lh-heading);
+}
+h2, .od-h2 {
+  font-size: var(--od-text-h2);
+  font-weight: var(--od-w-heavy);
+  letter-spacing: var(--od-track-snug);
+  line-height: var(--od-lh-heading);
+}
+h3, .od-h3 {
+  font-size: var(--od-text-h3);
+  font-weight: var(--od-w-heavy);
+  letter-spacing: var(--od-track-snug);
+  line-height: 1.25;
+}
+h4, .od-h4 {
+  font-size: var(--od-text-h4);
+  font-weight: var(--od-w-bold);
+  line-height: 1.3;
+}
+.od-hero {
+  font-size: var(--od-text-hero);
+  font-weight: var(--od-w-black);
+  letter-spacing: var(--od-track-tight);
+  line-height: var(--od-lh-tight);
+}
+.od-display {
+  font-size: var(--od-text-display);
+  font-weight: var(--od-w-black);
+  letter-spacing: var(--od-track-tight);
+  line-height: var(--od-lh-tight);
+}
+
+p, .od-body { font-size: var(--od-text-body); line-height: var(--od-lh-body); color: var(--od-fg-2); }
+
+.od-eyebrow {
+  font-size: var(--od-text-xs);
+  font-weight: var(--od-w-bold);
+  letter-spacing: var(--od-track-xwide);
+  text-transform: uppercase;
+  color: var(--od-blue);
+}
+
+.od-label {
+  font-size: var(--od-text-sm);
+  font-weight: var(--od-w-medium);
+  color: var(--od-fg-3);
+}
+
+.od-mono { font-family: var(--od-font-mono); }
+
+/* Color utility accents, mirroring hero usage */
+.od-accent-blue { color: var(--od-blue); }
+.od-muted       { color: var(--od-fg-3); }
+
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--od-blue); color: #000; }
