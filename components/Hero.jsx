@@ -18,6 +18,7 @@ const Hero = () => {
       <div className="od-hero-glow" aria-hidden="true" />
       <div className="od-hero-grid-overlay" aria-hidden="true" />
 
+      {/* Top strip */}
       <div className="od-hero-strip">
         <span className="od-hero-strip-item">
           <span className="od-hero-live-dot" /> Booking agents online
@@ -25,9 +26,10 @@ const Hero = () => {
         <span className="od-hero-strip-divider" />
         <span className="od-hero-strip-item od-hero-strip-muted">Las Vegas · Worldwide · {clock}</span>
         <span className="od-hero-strip-divider" />
-        <span className="od-hero-strip-item od-hero-strip-muted">Quote in &lt; 24 hrs</span>
+        <span className="od-hero-strip-item od-hero-strip-muted">Quote in &lt; 24&nbsp;hrs</span>
       </div>
 
+      {/* Main editorial block */}
       <div className="od-hero-content" style={{textAlign:'center',alignItems:'center'}}>
         <div className="od-hero-eyebrow" style={{justifyContent:'center'}}>
           <span className="od-hero-eyebrow-pill">⚡ The #1 dwarf entertainment agency</span>
@@ -46,7 +48,7 @@ const Hero = () => {
         <div className="od-hero-lower" style={{alignItems:'center'}}>
           <p className="od-hero-sub">
             Book world-class dwarf entertainers for any event. Bachelor parties, Vegas
-            nightlife, birthdays, corporate — <strong>we show up and we deliver.</strong>
+            nightlife, birthdays, corporate &mdash; <strong>we show up and we deliver.</strong>
           </p>
 
           <div className="od-hero-actions" style={{justifyContent:'center'}}>
@@ -66,6 +68,7 @@ const Hero = () => {
         </div>
       </div>
 
+      {/* Scroll cue */}
       <div className="od-hero-scroll" aria-hidden="true">
         <span>Scroll</span>
         <span className="od-hero-scroll-line" />
