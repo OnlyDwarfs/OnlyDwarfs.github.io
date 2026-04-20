@@ -1,7 +1,7 @@
 // FAQ.jsx — accordion
 const FAQ = () => {
   const items = [
-    { q: 'How much does it cost to book a performer?',  a: 'Pricing starts at $350 and varies by event type, duration, location, and specific performer. Every inquiry gets a custom quote within 24 hours — no commitment.' },
+    { q: 'How much does it cost to book a performer?',  a: 'Pricing starts at $600 and varies by event type, duration, location, and specific performer. Every inquiry gets a custom quote within 24 hours — no commitment.' },
     { q: 'How far in advance do I need to book?',       a: 'We recommend 1–2 weeks in advance to secure availability, especially weekend events. We often accommodate last-minute — reach out either way.' },
     { q: 'Do you travel outside Las Vegas?',            a: 'We book worldwide. Performers based across the US, coordinated travel for events anywhere in the country or internationally.' },
     { q: 'What kinds of events do you cover?',          a: 'Bachelor/ette parties, birthdays, corporate events, Vegas nightlife, private parties, film and commercial work, promotions, and anything else we can invoice for.' },
