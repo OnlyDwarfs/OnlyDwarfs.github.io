@@ -18,32 +18,33 @@ const Hero = () => {
       <div className="od-hero-glow" aria-hidden="true" />
       <div className="od-hero-grid-overlay" aria-hidden="true" />
 
-      {/* Top strip */}
-      <div className="od-hero-strip">
-        <span className="od-hero-strip-item">
-          <span className="od-hero-live-dot" /> Booking agents online
-        </span>
-        <span className="od-hero-strip-divider" />
-        <span className="od-hero-strip-item od-hero-strip-muted">Las Vegas · Worldwide · {clock}</span>
-        <span className="od-hero-strip-divider" />
-        <span className="od-hero-strip-item od-hero-strip-muted">Quote in &lt; 24&nbsp;hrs</span>
-      </div>
-
       {/* Main editorial block */}
       <div className="od-hero-content" style={{textAlign:'center',alignItems:'center'}}>
-        <div className="od-hero-eyebrow" style={{justifyContent:'center'}}>
+        <h1 className="od-hero-title">
+          <span className="od-hero-the">The</span>
+          <img
+            src="assets/OnlyDwarfsLOGOText.svg"
+            alt="OnlyDwarfs"
+            className="od-hero-logo-img"
+          />
+          <span className="od-hero-bottom-text">You'll Ever<br/>Need.</span>
+        </h1>
+
+        <div className="od-hero-eyebrow" style={{justifyContent:'center', marginTop:'24px'}}>
           <span className="od-hero-eyebrow-pill">⚡ The #1 dwarf entertainment agency</span>
           <span className="od-hero-eyebrow-meta">Est. 2019 · 500+ bookings</span>
         </div>
 
-        <h1 className="od-hero-title">
-          The Only<br/>
-          <span className="od-hero-accent">
-            Dwarfs<span className="od-hero-underline" aria-hidden="true" />
-          </span><br/>
-          You'll Ever<br/>
-          Need.
-        </h1>
+        {/* Status strip — moved below title */}
+        <div className="od-hero-strip" style={{position:'relative', margin:'20px auto 0', maxWidth:'520px'}}>
+          <span className="od-hero-strip-item">
+            <span className="od-hero-live-dot" /> Booking agents online
+          </span>
+          <span className="od-hero-strip-divider" />
+          <span className="od-hero-strip-item od-hero-strip-muted">Las Vegas · Worldwide · {clock}</span>
+          <span className="od-hero-strip-divider" />
+          <span className="od-hero-strip-item od-hero-strip-muted">Quote in &lt; 24&nbsp;hrs</span>
+        </div>
 
         <div className="od-hero-lower" style={{alignItems:'center'}}>
           <p className="od-hero-sub">
@@ -59,7 +60,7 @@ const Hero = () => {
           </div>
 
           <div className="od-hero-meta-row" style={{justifyContent:'center'}}>
-            <span>From <strong>$350</strong></span>
+            <span>From <strong>$600</strong></span>
             <span className="od-hero-meta-sep" />
             <span>No commitment</span>
             <span className="od-hero-meta-sep" />
