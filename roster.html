@@ -7,6 +7,9 @@
   <meta name="description" content="Browse the OnlyDwarfs talent roster. Professional dwarf entertainers available for bachelor parties, Vegas nightlife, corporate events, and more.">
   <link rel="stylesheet" href="site.css">
   <link rel="stylesheet" href="colors_and_type.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
   <style>
     .roster-hero {
       padding: 120px 40px 64px;
@@ -192,23 +195,7 @@
 </head>
 <body class="od-page">
 
-<!-- NAV -->
-<nav class="od-nav">
-  <div class="od-nav-inner">
-    <a href="index.html" class="od-nav-logo">
-      <img src="assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs" height="22">
-    </a>
-    <ul class="od-nav-links">
-      <li><a href="index.html#services">Services</a></li>
-      <li><a href="roster.html" class="active">Roster</a></li>
-      <li><a href="index.html#process">Process</a></li>
-      <li><a href="divas.html">Divas Show</a></li>
-    </ul>
-    <div class="od-nav-actions">
-      <a href="intake.html" class="od-btn od-btn-primary od-btn-sm">Book now</a>
-    </div>
-  </div>
-</nav>
+<div id="nav-root"></div>
 
 <!-- HERO -->
 <section class="roster-hero">
@@ -241,53 +228,14 @@
   <a href="intake.html" class="od-btn od-btn-primary">Request a custom match →</a>
 </section>
 
-<!-- FOOTER -->
-<footer class="od-footer">
-  <div class="od-footer-inner">
-    <div class="od-footer-brand">
-      <a href="index.html" class="od-footer-logo">
-        <img src="assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs" height="20">
-      </a>
-      <p class="od-footer-tagline">The #1 dwarf entertainment agency.</p>
-    </div>
-    <nav class="od-footer-nav">
-      <div class="od-footer-col">
-        <span class="od-footer-col-label">Book</span>
-        <a href="intake.html">Request a quote</a>
-        <a href="index.html#services">Services</a>
-        <a href="divas.html">DwarfDivas show</a>
-        <a href="roster.html">Full roster</a>
-      </div>
-      <div class="od-footer-col">
-        <span class="od-footer-col-label">Talent</span>
-        <a href="talent.html">Apply to the roster</a>
-        <a href="talent.html">Open gigs</a>
-        <a href="client.html">Talent portal</a>
-      </div>
-      <div class="od-footer-col">
-        <span class="od-footer-col-label">Clients</span>
-        <a href="client.html">Create a profile</a>
-        <a href="client.html">Book an event</a>
-        <a href="client.html">Track my booking</a>
-        <a href="faq.html">FAQ</a>
-      </div>
-      <div class="od-footer-col">
-        <span class="od-footer-col-label">Follow</span>
-        <a href="https://www.instagram.com/onlydwarfs" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.tiktok.com/@onlydwarfs" target="_blank" rel="noopener">TikTok</a>
-        <a href="mailto:bookings@onlydwarfs.com">Contact us</a>
-      </div>
-    </nav>
-  </div>
-  <div class="od-footer-bottom">
-    <span>© 2026 OnlyDwarfs Entertainment LLC · Las Vegas, NV</span>
-    <div class="od-footer-legal">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="hub.html" class="od-footer-staff">Staff ⚙</a>
-    </div>
-  </div>
-</footer>
+<div id="footer-root"></div>
+
+<script type="text/babel" src="components/Nav.jsx?v=2"></script>
+<script type="text/babel" src="components/Footer.jsx?v=2"></script>
+<script type="text/babel">
+  ReactDOM.createRoot(document.getElementById('nav-root')).render(<Nav />);
+  ReactDOM.createRoot(document.getElementById('footer-root')).render(<Footer />);
+</script>
 
 <script>
 const TALENT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec?action=getTalent';
@@ -362,3 +310,4 @@ fetch(TALENT_URL)
 </script>
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
