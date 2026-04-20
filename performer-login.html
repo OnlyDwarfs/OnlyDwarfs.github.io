@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login — OnlyDwarfs</title>
+  <meta name="description" content="Sign in or join the OnlyDwarfs talent roster. Manage your profile and see open bookings." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="stylesheet" href="site.css" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <style>
+    .portal-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px 60px;
+    }
+    .portal-card {
+      background: var(--od-bg-2);
+      border: 1px solid var(--od-border);
+      border-radius: 20px;
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+    .portal-heading {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--od-fg);
+      margin-bottom: 6px;
+    }
+    .portal-sub {
+      font-size: 13px;
+      color: var(--od-fg-3);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* Tabs */
+    .portal-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--od-bg-3);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 32px;
+    }
+    .portal-tab {
+      flex: 1;
+      padding: 9px 0;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 160ms;
+      background: transparent;
+      color: var(--od-fg-3);
+    }
+    .portal-tab.active {
+      background: var(--od-bg);
+      color: var(--od-fg);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+
+    /* Fields */
+    .portal-field {
+      margin-bottom: 16px;
+    }
+    .portal-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .portal-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--od-fg-3);
+      margin-bottom: 7px;
+    }
+    .portal-field label .opt {
+      font-weight: 400;
+      opacity: 0.5;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .portal-input {
+      width: 100%;
+      background: var(--od-bg-3);
+      border: 1px solid var(--od-border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      color: var(--od-fg);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 150ms;
+    }
+    .portal-input:focus {
+      border-color: var(--od-blue-border);
+    }
+    .portal-input::placeholder { color: var(--od-fg-4); }
+    select.portal-input { cursor: pointer; }
+
+    /* Submit */
+    .portal-btn {
+      width: 100%;
+      background: var(--od-blue);
+      color: #000;
+      font-weight: 800;
+      font-size: 14px;
+      font-family: inherit;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      cursor: pointer;
+      margin-top: 8px;
+      letter-spacing: 0.02em;
+      transition: opacity 150ms, transform 100ms;
+    }
+    .portal-btn:hover:not(:disabled) { opacity: 0.88; }
+    .portal-btn:active:not(:disabled) { transform: scale(0.98); }
+    .portal-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* Message states */
+    .portal-err {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 8px;
+      color: #f87171;
+      font-size: 13px;
+      padding: 10px 14px;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+    .portal-success {
+      text-align: center;
+      padding: 16px 0 8px;
+    }
+    .portal-success-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+    .portal-success h3 {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--od-fg);
+      margin-bottom: 8px;
+    }
+    .portal-success p {
+      font-size: 13px;
+      color: var(--od-fg-3);
+      line-height: 1.6;
+    }
+    .portal-success .pending-note {
+      margin-top: 16px;
+      background: rgba(0,175,240,0.07);
+      border: 1px solid rgba(0,175,240,0.2);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: var(--od-blue);
+      line-height: 1.6;
+    }
+
+    /* Divider + switch link */
+    .portal-switch {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--od-fg-3);
+    }
+    .portal-switch button {
+      background: none;
+      border: none;
+      color: var(--od-blue);
+      font-weight: 700;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+      margin-left: 4px;
+    }
+    .portal-switch button:hover { opacity: 0.8; }
+
+    @media (max-width: 520px) {
+      .portal-card { padding: 36px 24px; }
+      .portal-field-row { grid-template-columns: 1fr; gap: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-root"></div>
+  <div id="app-root"></div>
+
+  <script type="text/babel" src="components/Nav.jsx?v=2"></script>
+
+  <script type="text/babel">
+    const CRM_URL     = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec';
+    const ADMIN_EMAIL = 'ryder@onlydwarfs.com';
+    const ADMIN_FULL  = 'ryderwarbrick@onlydwarfs.com';
+    const ADMIN_HASH  = 'd7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555';
+
+    const ACT_TYPES = [
+      'Oompa Loompa', 'Christmas Elf', 'Leprechaun', 'Mini Elvis',
+      'Mini Santa', 'Exotic Dancer', 'Wrestler', 'Boxer', 'Drag Queen',
+      'Butler', 'Wizard / Warlock', 'Court Jester', 'Pirate', 'Superhero',
+      'Cowboy / Cowgirl', 'Beer Wench', 'Emcee / Host', 'Mascot / Furry',
+      'Custom Character', 'Multiple / Other',
+    ];
+
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    /* ── SIGN IN ── */
+    const SignIn = ({ onSwitch }) => {
+      const [email, setEmail]   = React.useState('');
+      const [pw, setPw]         = React.useState('');
+      const [loading, setLoad]  = React.useState(false);
+      const [err, setErr]       = React.useState('');
+
+      const submit = async () => {
+        if (!email || !pw) return setErr('Please enter your email and password.');
+        setLoad(true); setErr('');
+        const hash = await sha256(pw);
+
+        // Admin path
+        if (email.trim().toLowerCase() === ADMIN_EMAIL || email.trim().toLowerCase() === ADMIN_FULL) {
+          if (hash === ADMIN_HASH) {
+            localStorage.setItem('od_auth', hash);
+            window.location.href = 'command.html';
+          } else {
+            setLoad(false);
+            setErr('Incorrect password.');
+          }
+          return;
+        }
+
+        // Performer / admin path via CRM
+        try {
+          const url  = `${CRM_URL}?action=verifyPerformer&email=${encodeURIComponent(email.trim())}&passHash=${hash}`;
+          const data = await fetch(url).then(r => r.json());
+          if (data.success) {
+            sessionStorage.setItem('od_performer', JSON.stringify({
+              talentId: data.talentId, name: data.name, email: data.email,
+              performerType: data.performerType, location: data.location,
+              status: data.status, role: data.role
+            }));
+            // Admin role → command center; everyone else → performer dashboard
+            if (data.role === 'Admin') {
+              localStorage.setItem('od_auth', hash);
+              window.location.href = 'command.html';
+            } else {
+              window.location.href = 'performer-dashboard.html';
+            }
+          } else {
+            setLoad(false);
+            setErr(data.error || 'Login failed. Check your email and password.');
+          }
+        } catch(e) {
+          setLoad(false);
+          setErr('Connection error. Please try again.');
+        }
+      };
+
+      return (
+        <>
+          <div className="portal-heading">Welcome back.</div>
+          <div className="portal-sub">Sign in to your talent account to manage your profile and see open bookings.</div>
+
+          <div className="portal-field">
+            <label>Email</label>
+            <input className="portal-input" type="email" placeholder="your@email.com"
+              value={email} onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && submit()} autoFocus />
+          </div>
+          <div className="portal-field">
+            <label>Password</label>
+            <input className="portal-input" type="password" placeholder="Password"
+              value={pw} onChange={e => setPw(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && submit()} />
+          </div>
+
+          <button className="portal-btn" onClick={submit} disabled={loading}>
+            {loading ? 'Signing in…' : 'Sign In →'}
+          </button>
+          {err && <div className="portal-err">{err}</div>}
+
+          <div className="portal-switch">
+            Don't have an account?
+            <button onClick={onSwitch}>Join the roster →</button>
+          </div>
+        </>
+      );
+    };
+
+    /* ── SIGN UP ── */
+    const SignUp = ({ onSwitch }) => {
+      const [f, setF] = React.useState({
+        name: '', email: '', phone: '', city: '',
+        actType: '', instagram: '', pw: '', pw2: ''
+      });
+      const [loading, setLoad]   = React.useState(false);
+      const [err, setErr]        = React.useState('');
+      const [success, setSuccess] = React.useState(false);
+
+      const set = k => e => setF(prev => ({ ...prev, [k]: e.target.value }));
+
+      const submit = async () => {
+        if (!f.name || !f.email || !f.phone || !f.city || !f.actType || !f.pw)
+          return setErr('Please fill in all required fields.');
+        if (f.pw !== f.pw2)
+          return setErr('Passwords don\'t match.');
+        if (f.pw.length < 8)
+          return setErr('Password must be at least 8 characters.');
+
+        setLoad(true); setErr('');
+        const hash    = await sha256(f.pw);
+        const social  = f.instagram ? f.instagram.replace(/^@/, '') : '';
+
+        try {
+          const params = new URLSearchParams({
+            action: 'registerPerformer',
+            name:          f.name.trim(),
+            email:         f.email.trim().toLowerCase(),
+            phone:         f.phone.trim(),
+            location:      f.city.trim(),
+            performerType: f.actType,
+            social:        social,
+            passHash:      hash,
+          });
+          const data = await fetch(`${CRM_URL}?${params}`).then(r => r.json());
+
+          if (data.success) {
+            sessionStorage.setItem('od_performer', JSON.stringify({
+              talentId: data.talentId, name: data.name, email: data.email,
+              performerType: data.performerType, location: data.location, status: 'Pending'
+            }));
+            setSuccess(true);
+            setTimeout(() => { window.location.href = 'performer-dashboard.html'; }, 3000);
+          } else {
+            setLoad(false);
+            setErr(data.error || 'Registration failed. Please try again.');
+          }
+        } catch(e) {
+          setLoad(false);
+          setErr('Connection error. Please try again.');
+        }
+      };
+
+      if (success) return (
+        <div className="portal-success">
+          <div className="portal-success-icon">🎭</div>
+          <h3>You're on the roster.</h3>
+          <p>Account created. Taking you to your dashboard now…</p>
+          <div className="pending-note">
+            Your profile is pending review. Once activated by the team, you'll appear on the public roster and can claim open bookings. You'll hear back within 24 hours.
+          </div>
+        </div>
+      );
+
+      return (
+        <>
+          <div className="portal-heading">Join the roster.</div>
+          <div className="portal-sub">Create your talent account. Takes 2 minutes.</div>
+
+          <div className="portal-field-row">
+            <div className="portal-field" style={{marginBottom:0}}>
+              <label>Stage Name</label>
+              <input className="portal-input" placeholder="e.g. Mini Elvis" value={f.name} onChange={set('name')} />
+            </div>
+            <div className="portal-field" style={{marginBottom:0}}>
+              <label>Act Type</label>
+              <select className="portal-input" value={f.actType} onChange={set('actType')}>
+                <option value="">Select…</option>
+                {ACT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="portal-field">
+            <label>Email</label>
+            <input className="portal-input" type="email" placeholder="your@email.com" value={f.email} onChange={set('email')} />
+          </div>
+
+          <div className="portal-field-row">
+            <div className="portal-field" style={{marginBottom:0}}>
+              <label>Phone</label>
+              <input className="portal-input" type="tel" placeholder="+1 702 000 0000" value={f.phone} onChange={set('phone')} />
+            </div>
+            <div className="portal-field" style={{marginBottom:0}}>
+              <label>City</label>
+              <input className="portal-input" placeholder="Las Vegas, NV" value={f.city} onChange={set('city')} />
+            </div>
+          </div>
+
+          <div className="portal-field">
+            <label>Instagram <span className="opt">(optional)</span></label>
+            <input className="portal-input" placeholder="@yourhandle" value={f.instagram} onChange={set('instagram')} />
+          </div>
+
+          <div className="portal-field-row">
+            <div className="portal-field" style={{marginBottom:0}}>
+              <label>Password</label>
+              <input className="portal-input" type="password" placeholder="Min 8 chars" value={f.pw} onChange={set('pw')} />
+            </div>
+            <div className="portal-field" style={{marginBottom:0}}>
+              <label>Confirm</label>
+              <input className="portal-input" type="password" placeholder="Repeat password" value={f.pw2} onChange={set('pw2')}
+                onKeyDown={e => e.key === 'Enter' && submit()} />
+            </div>
+          </div>
+
+          <button className="portal-btn" onClick={submit} disabled={loading}>
+            {loading ? 'Creating account…' : 'Create Account →'}
+          </button>
+          {err && <div className="portal-err">{err}</div>}
+
+          <div className="portal-switch">
+            Already have an account?
+            <button onClick={onSwitch}>Sign in →</button>
+          </div>
+        </>
+      );
+    };
+
+    /* ── MAIN APP ── */
+    const PortalApp = () => {
+      const params  = new URLSearchParams(window.location.search);
+      const initTab = params.get('tab') === 'join' ? 'join' : 'signin';
+      const [tab, setTab] = React.useState(initTab);
+
+      return (
+        <div className="portal-wrap">
+          <div className="portal-card">
+            <div className="portal-tabs">
+              <button className={`portal-tab ${tab === 'signin' ? 'active' : ''}`} onClick={() => setTab('signin')}>
+                Sign In
+              </button>
+              <button className={`portal-tab ${tab === 'join' ? 'active' : ''}`} onClick={() => setTab('join')}>
+                Join the Roster
+              </button>
+            </div>
+            {tab === 'signin'
+              ? <SignIn  onSwitch={() => setTab('join')} />
+              : <SignUp  onSwitch={() => setTab('signin')} />
+            }
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('nav-root')).render(<Nav />);
+    ReactDOM.createRoot(document.getElementById('app-root')).render(<PortalApp />);
+  </script>
+</body>
+</html>
