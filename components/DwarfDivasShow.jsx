@@ -44,21 +44,6 @@ const DwarfDivasShow = () => {
 
   return (
     <div className="divas">
-      {/* NAV */}
-      <nav className="divas-nav">
-        <a href="index.html" className="od-nav-logo">
-          <img src="assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs" className="od-nav-logo-img" />
-        </a>
-        <div className="divas-nav-links">
-          <a href="index.html">Home</a>
-          <a href="roster.html">Roster</a>
-          <a href="intake.html">Book a Performer</a>
-        </div>
-        <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-nav-cta">
-          <span className="od-nav-cta-dot"/> Get tickets
-        </a>
-      </nav>
-
       {/* HERO */}
       <section className="divas-hero" data-screen-label="Show Hero">
         <div className="divas-hero-noise" aria-hidden="true" />
@@ -316,23 +301,9 @@ const DwarfDivasShow = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="divas-footer">
-        <div className="divas-inner divas-footer-inner">
-          <div className="od-footer-logo">
-            <a href="index.html">Only<span>Dwarfs</span></a>
-          </div>
-          <div className="divas-footer-links">
-            <a href="index.html">Home</a>
-            <a href="intake.html">Book a performer</a>
-            <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer">Get tickets</a>
-            <a href="#venue">Venue info</a>
-          </div>
-          <div className="divas-footer-copy">© 2026 OnlyDwarfs Entertainment LLC · Las Vegas, NV</div>
-        </div>
-      </footer>
     </div>
   );
 };
 
 window.DwarfDivasShow = DwarfDivasShow;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
