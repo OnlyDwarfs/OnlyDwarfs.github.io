@@ -1,4 +1,4 @@
-// Footer.jsx — editorial multi-column footer with mega wordmark
+// Footer.jsx -- editorial multi-column footer with mega wordmark
 const Footer = () => (
   <footer className="od-footer" data-screen-label="Footer">
     <div className="od-inner">
@@ -36,11 +36,11 @@ const Footer = () => (
       </div>
 
       <div className="od-footer-legal">
-        <span>© 2026 OnlyDwarfs Entertainment LLC · Las Vegas, NV</span>
+        <span>(c) 2026 OnlyDwarfs Entertainment LLC  -  Las Vegas, NV</span>
         <span className="od-footer-legal-links">
           <a href="privacy.html">Privacy</a>
           <a href="terms.html">Terms</a>
-          <a href="hub.html" style={{ opacity: 0.55 }}>Staff ⚙</a>
+          <a href="hub.html" style={{ opacity: 0.55 }}>Staff </a>
         </span>
       </div>
     </div>
