@@ -40,6 +40,11 @@ const ServicesGrid = () => {
             </a>
           ))}
         </div>
+        <div className="od-text-center" style={{marginTop:'2.5rem'}}>
+          <a href="services.html" className="od-btn-outline">
+            See full services page →
+          </a>
+        </div>
       </div>
     </section>
   );
