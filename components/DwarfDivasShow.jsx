@@ -1,4 +1,4 @@
-// DwarfDivasShow.jsx — DwarfDivas info page
+// DwarfDivasShow.jsx -- DwarfDivas info page
 const OPENING_NIGHT  = new Date('2026-05-28T20:00:00-07:00');
 const EVENTBRITE_URL = 'https://www.eventbrite.com/e/1984199650568';
 
@@ -36,10 +36,10 @@ const DwarfDivasShow = () => {
   ];
 
   const tiers = [
-    { name: 'Rail',      price: '$65',  note: 'Standing · Main floor · 21+ bar access' },
-    { name: 'Seated',    price: '$95',  note: 'Reserved seat · Cocktail service · Priority entry' },
-    { name: 'Premium',   price: '$145', note: 'Front-row booth · Bottle service · Meet-and-greet' },
-    { name: 'VIP Stage', price: '$295', note: 'Stage-side booth · 2 bottles · Backstage tour · Photo with cast' },
+    { name: 'Rail',      price: '$65',  note: 'Standing  -  Main floor  -  21+ bar access' },
+    { name: 'Seated',    price: '$95',  note: 'Reserved seat  -  Cocktail service  -  Priority entry' },
+    { name: 'Premium',   price: '$145', note: 'Front-row booth  -  Bottle service  -  Meet-and-greet' },
+    { name: 'VIP Stage', price: '$295', note: 'Stage-side booth  -  2 bottles  -  Backstage tour  -  Photo with cast' },
   ];
 
   return (
@@ -52,11 +52,11 @@ const DwarfDivasShow = () => {
         <div className="divas-hero-inner">
           {/* Poster image */}
           <div className="divas-hero-poster">
-            <img src="assets/dwarfdivas-hero.jpg" alt="DwarfDivas — Live at Deja Vu Showgirls, May 28–29" />
+            <img src="assets/dwarfdivas-hero.jpg" alt="DwarfDivas -- Live at Deja Vu Showgirls, May 28-29" />
           </div>
 
           <div className="divas-hero-tags">
-            <span className="divas-tag">🎭 Flagship Show</span>
+            <span className="divas-tag">(show) Flagship Show</span>
             <span className="divas-tag-sep" />
             <span className="divas-tag-m">Las Vegas Residency</span>
             <span className="divas-tag-sep" />
@@ -68,7 +68,7 @@ const DwarfDivasShow = () => {
           </div>
 
           <div className="divas-hero-stars" aria-hidden="true">
-            <span>✦</span><span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+            <span>*</span><span>*</span><span>*</span><span>*</span><span>*</span>
           </div>
 
           <p className="divas-hero-sub">
@@ -84,24 +84,24 @@ const DwarfDivasShow = () => {
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Opening</span>
-              <span className="divas-meta-val">May 28–29, 2026</span>
-              <span className="divas-meta-sub">Doors 7:30 · Curtain 8:00</span>
+              <span className="divas-meta-val">May 28-29, 2026</span>
+              <span className="divas-meta-sub">Doors 7:30  -  Curtain 8:00</span>
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Residency</span>
               <span className="divas-meta-val">Every Thu &amp; Fri</span>
-              <span className="divas-meta-sub">Starting June 4 · 21+ only</span>
+              <span className="divas-meta-sub">Starting June 4  -  21+ only</span>
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Run Time</span>
               <span className="divas-meta-val">85 minutes</span>
-              <span className="divas-meta-sub">No intermission · One encore</span>
+              <span className="divas-meta-sub">No intermission  -  One encore</span>
             </div>
           </div>
 
           <div className="divas-hero-actions">
             <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-btn-primary od-btn-lg">
-              Get tickets from $65 <span className="od-btn-arrow">→</span>
+              Get tickets from $65 <span className="od-btn-arrow">-></span>
             </a>
             <a href="#the-show" className="od-btn-outline od-btn-lg">About the show</a>
           </div>
@@ -123,7 +123,7 @@ const DwarfDivasShow = () => {
           </div>
           <div className="divas-countdown-end">
             <span className="divas-meta-lbl" style={{opacity:0.8}}>Doors</span>
-            <span className="divas-meta-val" style={{fontSize:16}}>May 28 · 7:30 PM PT</span>
+            <span className="divas-meta-val" style={{fontSize:16}}>May 28  -  7:30 PM PT</span>
           </div>
         </div>
       </section>
@@ -132,16 +132,16 @@ const DwarfDivasShow = () => {
       <div className="divas-critics">
         <div className="divas-critics-track">
           {[
-            '"Absolutely unhinged. I have not laughed this hard in a Vegas theater in years." — LV Weekly',
-            '"The most unique ticket in town." — Vegas Magazine',
-            '"Five acts of perfectly controlled chaos." — The Strip Review',
-            '"You will not see this show anywhere else, because nobody else would book it." — Destination Las Vegas',
-            '"An instant residency classic." — Showbiz LV',
-            '"Absolutely unhinged. I have not laughed this hard in a Vegas theater in years." — LV Weekly',
-            '"The most unique ticket in town." — Vegas Magazine',
-            '"Five acts of perfectly controlled chaos." — The Strip Review',
+            '"Absolutely unhinged. I have not laughed this hard in a Vegas theater in years." -- LV Weekly',
+            '"The most unique ticket in town." -- Vegas Magazine',
+            '"Five acts of perfectly controlled chaos." -- The Strip Review',
+            '"You will not see this show anywhere else, because nobody else would book it." -- Destination Las Vegas',
+            '"An instant residency classic." -- Showbiz LV',
+            '"Absolutely unhinged. I have not laughed this hard in a Vegas theater in years." -- LV Weekly',
+            '"The most unique ticket in town." -- Vegas Magazine',
+            '"Five acts of perfectly controlled chaos." -- The Strip Review',
           ].map((q, i) => (
-            <span key={i} className="divas-critic">{q}<span className="divas-critic-star">✦</span></span>
+            <span key={i} className="divas-critic">{q}<span className="divas-critic-star">*</span></span>
           ))}
         </div>
       </div>
@@ -191,11 +191,11 @@ const DwarfDivasShow = () => {
             </div>
             <p className="divas-sec-sub">
               May 28 &amp; 29 are the pilot nights. Residency dates open after the run.
-              All tickets sold through Eventbrite — secure checkout, instant mobile delivery.
+              All tickets sold through Eventbrite -- secure checkout, instant mobile delivery.
             </p>
           </div>
 
-          {/* Tier info — read only */}
+          {/* Tier info -- read only */}
           <div className="divas-tier-info-grid">
             {tiers.map((t) => (
               <div key={t.name} className="divas-tier-info-card">
@@ -210,10 +210,10 @@ const DwarfDivasShow = () => {
 
           <div className="divas-tickets-cta">
             <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-btn-primary od-btn-lg">
-              Get tickets on Eventbrite <span className="od-btn-arrow">→</span>
+              Get tickets on Eventbrite <span className="od-btn-arrow">-></span>
             </a>
             <div className="divas-summary-foot">
-              Secure checkout · Instant mobile tickets · 21+ ID required at door
+              Secure checkout  -  Instant mobile tickets  -  21+ ID required at door
             </div>
           </div>
         </div>
@@ -238,7 +238,7 @@ const DwarfDivasShow = () => {
                 </div>
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Capacity</span>
-                  <span className="divas-venue-v">320 · Standing + seated</span>
+                  <span className="divas-venue-v">320  -  Standing + seated</span>
                 </div>
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Parking</span>
@@ -246,15 +246,15 @@ const DwarfDivasShow = () => {
                 </div>
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Accessibility</span>
-                  <span className="divas-venue-v">Step-free entry · ADA seating available</span>
+                  <span className="divas-venue-v">Step-free entry  -  ADA seating available</span>
                 </div>
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Ages</span>
-                  <span className="divas-venue-v">21+ only · Valid photo ID at door</span>
+                  <span className="divas-venue-v">21+ only  -  Valid photo ID at door</span>
                 </div>
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Dress code</span>
-                  <span className="divas-venue-v">Upscale casual · No athletic wear</span>
+                  <span className="divas-venue-v">Upscale casual  -  No athletic wear</span>
                 </div>
               </div>
             </div>
@@ -275,7 +275,7 @@ const DwarfDivasShow = () => {
                   </div>
                   <div className="divas-map-pin-pulse" />
                 </div>
-                <div className="divas-map-attr">Las Vegas · Industrial District</div>
+                <div className="divas-map-attr">Las Vegas  -  Industrial District</div>
               </div>
             </div>
           </div>
@@ -286,7 +286,7 @@ const DwarfDivasShow = () => {
       <section className="divas-final" data-screen-label="Final CTA">
         <div className="divas-final-glow" aria-hidden="true"/>
         <div className="divas-inner divas-final-inner">
-          <div className="od-eyebrow">Opening night · May 28</div>
+          <div className="od-eyebrow">Opening night  -  May 28</div>
           <h2 className="divas-final-title">
             Don't be the person<br/>
             who <span className="od-accent-blue">missed it.</span>
@@ -294,7 +294,7 @@ const DwarfDivasShow = () => {
           <p className="divas-final-sub">320 seats. Two nights to launch. A year of Vegas talk to follow.</p>
           <div className="divas-final-actions">
             <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-btn-primary od-btn-lg">
-              Get tickets now →
+              Get tickets now ->
             </a>
             <a href="intake.html" className="od-btn-outline od-btn-lg">Book the show private</a>
           </div>
