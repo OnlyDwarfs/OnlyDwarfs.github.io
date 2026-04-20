@@ -1,4 +1,4 @@
-// Nav.jsx — sticky top with live status dot + compact booking CTA
+// Nav.jsx -- sticky top with live status dot + compact booking CTA
 const Nav = () => {
   const [scrolled, setScrolled] = React.useState(false);
   React.useEffect(() => {
@@ -33,7 +33,7 @@ const Nav = () => {
             </a>
           </li>
           <li>
-            <a href="hub.html" className="od-nav-staff" title="Staff portal">⚙</a>
+            <a href="hub.html" className="od-nav-staff" title="Staff portal"></a>
           </li>
         </ul>
       </div>
