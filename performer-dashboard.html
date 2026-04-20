@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Performer Portal — OnlyDwarfs</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  body{
+    font-family:'Inter',sans-serif;
+    background:#060C18;
+    color:#E2EAF4;
+    min-height:100vh;
+  }
+
+  /* ── Header ─────────────────────────────────── */
+  .header{
+    background:#0C1624;
+    border-bottom:1px solid #1A2E48;
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .logo{font-size:16px;font-weight:900;color:#fff;letter-spacing:0.5px;}
+  .logo span{color:#C9A84C;}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .performer-badge{
+    background:#1A2E48;
+    border-radius:20px;
+    padding:6px 14px;
+    font-size:12px;
+    font-weight:600;
+    color:#C9A84C;
+  }
+  .signout{
+    font-size:12px;
+    color:#4A6480;
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    padding:0;
+    transition:color 0.15s;
+  }
+  .signout:hover{color:#EF4444;}
+
+  /* ── Main layout ─────────────────────────────── */
+  .main{max-width:900px;margin:0 auto;padding:40px 24px;}
+
+  .greeting{
+    margin-bottom:32px;
+  }
+  .greeting h1{
+    font-size:24px;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:6px;
+  }
+  .greeting p{
+    font-size:14px;
+    color:#6B8299;
+    line-height:1.5;
+  }
+
+  /* ── Section ─────────────────────────────────── */
+  .section-title{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:#4A6480;
+    margin-bottom:16px;
+  }
+
+  /* ── Loading / empty states ──────────────────── */
+  .state-box{
+    background:#0C1624;
+    border:1px solid #1A2E48;
+    border-radius:12px;
+    padding:48px 32px;
+    text-align:center;
+    color:#4A6480;
+    font-size:14px;
+    line-height:1.6;
+  }
+  .state-box .icon{font-size:32px;margin-bottom:12px;}
+
+  /* ── Gig cards ───────────────────────────────── */
+  .gigs-grid{
+    display:grid;
+    gap:16px;
+  }
+
+  .gig-card{
+    background:#0C1624;
+    border:1px solid #1A2E48;
+    border-radius:12px;
+    padding:24px;
+    transition:border-color 0.15s;
+  }
+  .gig-card:hover{border-color:#2A4464;}
+
+  .gig-card.available{
+    border-color:#10B981;
+    background:rgba(16,185,129,0.04);
+  }
+
+  .gig-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom:16px;
+    gap:16px;
+  }
+
+  .gig-type{
+    font-size:17px;
+    font-weight:700;
+    color:#fff;
+    line-height:1.2;
+  }
+
+  .gig-id{
+    font-size:11px;
+    color:#4A6480;
+    margin-top:4px;
+    font-family:monospace;
+  }
+
+  .avail-tag{
+    background:#10B981;
+    color:#060C18;
+    font-size:11px;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:20px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  .gig-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:16px;
+  }
+  .meta-chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    color:#8BA3BC;
+    background:#060C18;
+    border:1px solid #1A2E48;
+    border-radius:6px;
+    padding:5px 10px;
+  }
+  .meta-chip .icon{font-size:14px;}
+
+  .gig-details{
+    font-size:13px;
+    color:#6B8299;
+    line-height:1.5;
+    margin-bottom:20px;
+    padding:12px 14px;
+    background:#060C18;
+    border-radius:8px;
+    border-left:2px solid #1A2E48;
+  }
+
+  .gig-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .posted-at{
+    font-size:11px;
+    color:#4A6480;
+  }
+
+  .avail-btn{
+    background:#C9A84C;
+    color:#060C18;
+    font-weight:800;
+    font-size:13px;
+    font-family:'Inter',sans-serif;
+    border:none;
+    border-radius:8px;
+    padding:10px 20px;
+    cursor:pointer;
+    letter-spacing:0.3px;
+    transition:opacity 0.15s, background 0.15s;
+    white-space:nowrap;
+  }
+  .avail-btn:hover{opacity:0.88;}
+  .avail-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .avail-btn.sent{
+    background:#10B981;
+    color:#fff;
+    cursor:default;
+    opacity:1;
+  }
+
+  /* ── Info panel ──────────────────────────────── */
+  .info-panel{
+    margin-top:40px;
+    background:#0C1624;
+    border:1px solid #1A2E48;
+    border-radius:12px;
+    padding:20px 24px;
+  }
+  .info-panel h3{
+    font-size:13px;
+    font-weight:700;
+    color:#8BA3BC;
+    margin-bottom:10px;
+  }
+  .info-panel p{
+    font-size:13px;
+    color:#4A6480;
+    line-height:1.6;
+  }
+
+  /* ── Responsive ──────────────────────────────── */
+  @media(max-width:600px){
+    .main{padding:24px 16px;}
+    .gig-header{flex-direction:column;}
+    .gig-footer{flex-direction:column;align-items:flex-start;}
+    .avail-btn{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">ONLY<span>DWARFS</span></div>
+  <div class="header-right">
+    <div class="performer-badge" id="badge">Loading…</div>
+    <button class="signout" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <div class="greeting">
+    <h1 id="greeting-name">Welcome back!</h1>
+    <p>These are confirmed gigs that need a performer. Flag your availability and Ryder will follow up to confirm the booking.</p>
+  </div>
+
+  <div class="section-title">Open Gigs</div>
+  <div id="gigs-container">
+    <div class="state-box">
+      <div class="icon">⏳</div>
+      <div>Loading open gigs…</div>
+    </div>
+  </div>
+
+  <div class="info-panel">
+    <h3>How it works</h3>
+    <p>
+      When you click <strong>"I'm Available"</strong>, Ryder gets an instant notification with your name and the gig details.
+      He'll reach out to confirm your spot. Client contact info isn't shown here — once you're confirmed,
+      Ryder will connect you directly.
+    </p>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────
+const CRM_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec';
+
+// ── Auth guard ─────────────────────────────────────────────────────
+const performerRaw = sessionStorage.getItem('od_performer');
+if (!performerRaw) {
+  window.location.href = 'performer-login.html';
+}
+const performer = JSON.parse(performerRaw || '{}');
+
+// Populate header / greeting
+document.getElementById('badge').textContent = performer.name || 'Performer';
+document.getElementById('greeting-name').textContent = `Hey, ${(performer.name || '').split(' ')[0]}! 👋`;
+
+// ── Load open gigs ────────────────────────────────────────────────
+async function loadGigs() {
+  const container = document.getElementById('gigs-container');
+
+  try {
+    const resp = await fetch(`${CRM_URL}?action=getOpenGigs`);
+    const data = await resp.json();
+
+    if (!data.gigs || data.gigs.length === 0) {
+      container.innerHTML = `
+        <div class="state-box">
+          <div class="icon">🎉</div>
+          <div>No open gigs right now — check back soon!<br>Ryder will add new confirmed bookings as they come in.</div>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = data.gigs.map(gig => buildCard(gig)).join('');
+
+  } catch(e) {
+    container.innerHTML = `
+      <div class="state-box">
+        <div class="icon">⚠️</div>
+        <div>Couldn't load gigs — check your connection and refresh.</div>
+      </div>`;
+  }
+}
+
+// ── Build a gig card ──────────────────────────────────────────────
+function buildCard(gig) {
+  const date   = formatDate(gig.eventDate);
+  const pay    = gig.pay    ? `$${gig.pay}`   : 'Pay TBD';
+  const people = gig.headcount ? `${gig.headcount} guests` : '';
+  const detail = gig.details ? escHtml(gig.details) + (gig.details.length >= 120 ? '…' : '') : '';
+
+  return `
+    <div class="gig-card" id="card-${escHtml(gig.gigId)}">
+      <div class="gig-header">
+        <div>
+          <div class="gig-type">${escHtml(gig.eventType || 'Private Event')}</div>
+          <div class="gig-id">${escHtml(gig.gigId)}</div>
+        </div>
+      </div>
+      <div class="gig-meta">
+        ${date    ? `<div class="meta-chip"><span class="icon">📅</span>${date}</div>` : ''}
+        ${gig.location ? `<div class="meta-chip"><span class="icon">📍</span>${escHtml(gig.location)}</div>` : ''}
+        <div class="meta-chip"><span class="icon">💵</span>${pay}</div>
+        ${people ? `<div class="meta-chip"><span class="icon">👥</span>${people}</div>` : ''}
+      </div>
+      ${detail ? `<div class="gig-details">${detail}</div>` : ''}
+      <div class="gig-footer">
+        <div class="posted-at">Posted ${gig.postedAt || ''}</div>
+        <button
+          class="avail-btn"
+          id="btn-${escHtml(gig.gigId)}"
+          onclick="flagAvailable('${escHtml(gig.gigId)}', this)"
+        >I'm Available ✓</button>
+      </div>
+    </div>`;
+}
+
+// ── Flag availability ─────────────────────────────────────────────
+async function flagAvailable(gigId, btnEl) {
+  btnEl.disabled = true;
+  btnEl.textContent = 'Sending…';
+
+  try {
+    const url = `${CRM_URL}?action=markAvailable` +
+      `&talentId=${encodeURIComponent(performer.talentId)}` +
+      `&gigId=${encodeURIComponent(gigId)}` +
+      `&talentName=${encodeURIComponent(performer.name)}`;
+
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.success) {
+      btnEl.textContent   = '✅ Ryder notified!';
+      btnEl.classList.add('sent');
+      document.getElementById('card-' + gigId).classList.add('available');
+    } else {
+      btnEl.disabled    = false;
+      btnEl.textContent = 'I\'m Available ✓';
+      alert('Something went wrong: ' + (data.error || 'Unknown error'));
+    }
+  } catch(e) {
+    btnEl.disabled    = false;
+    btnEl.textContent = 'I\'m Available ✓';
+    alert('Connection error. Please try again.');
+  }
+}
+
+// ── Helpers ────────────────────────────────────────────────────────
+function signOut() {
+  sessionStorage.removeItem('od_performer');
+  window.location.href = 'performer-login.html';
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function formatDate(raw) {
+  if (!raw) return '';
+  // Handle ISO or common date strings
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) return raw; // return as-is if can't parse
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+}
+
+// ── Init ────────────────────────────────────────────────────────────
+loadGigs();
+</script>
+</body>
+</html>
