@@ -9,7 +9,7 @@
   .od-legal-nav a { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 150ms; }
   .od-legal-nav a:hover { color: #fff; }
   .od-legal-nav .sep { color: rgba(255,255,255,0.2); margin: 0 12px; }
-  main { flex: 1; max-width: 720px; margin: 0 auto; padding: 56px 24px 80px; }
+  main { flex: 1; max-width: 720px; margin: 0 auto; padding: 96px 24px 80px; }
   h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #fff; margin-bottom: 8px; }
   .meta { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 48px; }
   h2 { font-size: 16px; font-weight: 700; color: #fff; margin: 36px 0 12px; letter-spacing: -0.01em; }
@@ -24,6 +24,12 @@
   .od-footer-mini-links a:hover { color: #fff; }
   .od-footer-mini-copy { font-size: 12px; color: rgba(255,255,255,0.25); width: 100%; text-align: center; margin-top: 4px; }
 </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="stylesheet" href="site.css" />
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-9HWJJNWGG2"></script>
   <script>
@@ -35,13 +41,7 @@
 </head>
 <body>
 
-<nav class="od-legal-nav">
-  <a href="index.html">← OnlyDwarfs</a>
-  <span class="sep">/</span>
-  <a href="intake.html">Book a Performer</a>
-  <span class="sep">/</span>
-  <a href="divas.html">DwarfDivas Show</a>
-</nav>
+<div id="nav-root"></div>
 
 <main>
   <h1>Terms &amp; Conditions</h1>
@@ -60,19 +60,14 @@
   <p>Questions? Contact us at <a href="mailto:ryderwarbrick@onlydwarfs.com">ryderwarbrick@onlydwarfs.com</a>.</p>
 </main>
 
-<footer>
-  <div class="od-footer-mini">
-    <a href="index.html" class="od-footer-mini-logo">Only<span>Dwarfs</span></a>
-    <div class="od-footer-mini-links">
-      <a href="index.html">Home</a>
-      <a href="intake.html">Book</a>
-      <a href="divas.html">DwarfDivas</a>
-      <a href="roster.html">Roster</a>
-      <a href="privacy.html">Privacy</a>
-    </div>
-    <p class="od-footer-mini-copy">© 2026 OnlyDwarfs Entertainment LLC · Las Vegas, NV</p>
-  </div>
-</footer>
+<div id="footer-root"></div>
+
+<script type="text/babel" src="components/Nav.jsx?v=2"></script>
+<script type="text/babel" src="components/Footer.jsx?v=2"></script>
+<script type="text/babel">
+  ReactDOM.createRoot(document.getElementById('nav-root')).render(<Nav />);
+  ReactDOM.createRoot(document.getElementById('footer-root')).render(<Footer />);
+</script>
 
 </body>
 </html>
