@@ -99,7 +99,7 @@ const RosterPage = () => {
             Every performer is vetted, insured, and trained for the room.
             {isLive
               ? ` ${cards.length} active performer${cards.length !== 1 ? 's' : ''} available now.`
-              : ' Profiles dropping soon — reach out and we'll match you manually.'
+              : ' Profiles dropping soon — reach out and we\'ll match you manually.'
             }
           </p>
           {!isLive && (
