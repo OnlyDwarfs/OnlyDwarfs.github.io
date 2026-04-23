@@ -1,6 +1,8 @@
 // DwarfDivasShow.jsx -- DwarfDivas info page
 const OPENING_NIGHT  = new Date('2026-05-28T20:00:00-07:00');
-const EVENTBRITE_URL = 'https://www.eventbrite.com/e/1984199650568';
+const EVENTBRITE_URL = 'https://www.eventbrite.com/e/dwarf-divas-burlesque-show-tickets-1984199650568';
+const EVENT_ID       = '1984199650568';
+const CAPACITY       = 320;
 
 const CD = ({ num, lbl }) => (
   <div className="divas-cd-block">
@@ -11,7 +13,10 @@ const CD = ({ num, lbl }) => (
 
 const DwarfDivasShow = () => {
   const [countdown, setCountdown] = React.useState({ d: 0, h: 0, m: 0, s: 0 });
+  const [ticketData, setTicketData] = React.useState({ sold: null, updated: null });
+  const [widgetReady, setWidgetReady] = React.useState(false);
 
+  // Live countdown
   React.useEffect(() => {
     const tick = () => {
       const diff = Math.max(0, OPENING_NIGHT - new Date());
@@ -26,6 +31,56 @@ const DwarfDivasShow = () => {
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
+
+  // Fetch live ticket data from data.json (updated every 3hrs by Apps Script)
+  React.useEffect(() => {
+    fetch('https://onlydwarfs.github.io/data.json')
+      .then(r => r.json())
+      .then(d => setTicketData({ sold: d.tickets ?? 0, updated: d.updated || null }))
+      .catch(() => {});
+  }, []);
+
+  // Load Eventbrite checkout widget
+  React.useEffect(() => {
+    const existing = document.getElementById('eb-widget-script');
+    if (existing) {
+      if (window.EBWidgets) initWidget();
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = 'eb-widget-script';
+    script.src = 'https://www.eventbrite.com/static/widgets/eb_widgets.js';
+    script.onload = () => { if (window.EBWidgets) initWidget(); };
+    script.onerror = () => {}; // silently fall back to button
+    document.head.appendChild(script);
+  }, []);
+
+  function initWidget() {
+    try {
+      window.EBWidgets.createWidget({
+        widgetType: 'checkout',
+        eventId: EVENT_ID,
+        iframeContainerId: 'eb-checkout-container',
+        iframeContainerHeight: 435,
+        onOrderComplete: () => {},
+      });
+      setWidgetReady(true);
+    } catch(e) {}
+  }
+
+  // Urgency derived from sold count
+  const pct = ticketData.sold !== null ? Math.min(100, Math.round((ticketData.sold / CAPACITY) * 100)) : null;
+  const remaining = ticketData.sold !== null ? CAPACITY - ticketData.sold : null;
+  const urgencyLabel = pct === null ? null
+    : pct >= 80 ? 'Nearly sold out'
+    : pct >= 60 ? 'Selling fast — limited seats left'
+    : pct >= 25 ? 'Tickets going — grab yours now'
+    : 'Tickets available — two nights only';
+  const urgencyColor = pct === null ? '#22C55E'
+    : pct >= 80 ? '#EF4444'
+    : pct >= 60 ? '#F97316'
+    : pct >= 25 ? '#E8C66B'
+    : '#22C55E';
 
   const acts = [
     { n: '01', t: 'The Opening',     d: 'Big band entrance. Full cast on stage. Sets the tone in 90 seconds.' },
@@ -50,7 +105,6 @@ const DwarfDivasShow = () => {
         <div className="divas-hero-glow" aria-hidden="true" />
 
         <div className="divas-hero-inner">
-          {/* Poster image */}
           <div className="divas-hero-poster">
             <img src="assets/dwarfdivas-hero.jpg" alt="DwarfDivas -- Live at Deja Vu Showgirls, May 28-29" />
           </div>
@@ -100,7 +154,7 @@ const DwarfDivasShow = () => {
           </div>
 
           <div className="divas-hero-actions">
-            <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-btn-primary od-btn-lg">
+            <a href="#tickets" className="od-btn-primary od-btn-lg">
               Get tickets from $65 <span className="od-btn-arrow">-></span>
             </a>
             <a href="#the-show" className="od-btn-outline od-btn-lg">About the show</a>
@@ -186,17 +240,61 @@ const DwarfDivasShow = () => {
               <div className="od-eyebrow">Tickets</div>
               <h2 className="divas-sec-title">
                 From $65.<br/>
-                <span className="od-accent-blue">On Eventbrite.</span>
+                <span className="od-accent-blue">Two nights only.</span>
               </h2>
             </div>
             <p className="divas-sec-sub">
               May 28 &amp; 29 are the pilot nights. Residency dates open after the run.
-              All tickets sold through Eventbrite -- secure checkout, instant mobile delivery.
+              Secure checkout, instant mobile delivery.
             </p>
           </div>
 
-          {/* Tier info -- read only */}
-          <div className="divas-tier-info-grid">
+          {/* Live urgency bar */}
+          {ticketData.sold !== null && (
+            <div style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 12,
+              padding: '16px 20px',
+              marginBottom: 28,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{
+                    width: 8, height: 8, borderRadius: '50%',
+                    background: urgencyColor,
+                    boxShadow: `0 0 8px ${urgencyColor}`,
+                    display: 'inline-block', flexShrink: 0,
+                  }} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: urgencyColor }}>
+                    {urgencyLabel}
+                  </span>
+                </div>
+                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
+                  {ticketData.sold} sold · {remaining} of {CAPACITY} seats left
+                  {ticketData.updated ? `  ·  Updated ${ticketData.updated}` : ''}
+                </span>
+              </div>
+              {/* Progress bar */}
+              <div style={{
+                background: 'rgba(255,255,255,0.06)',
+                borderRadius: 99, height: 6, overflow: 'hidden',
+              }}>
+                <div style={{
+                  height: '100%', borderRadius: 99,
+                  width: `${Math.max(2, pct)}%`,
+                  background: `linear-gradient(90deg, ${urgencyColor}99, ${urgencyColor})`,
+                  transition: 'width 0.8s ease',
+                }} />
+              </div>
+            </div>
+          )}
+
+          {/* Tier info cards */}
+          <div className="divas-tier-info-grid" style={{ marginBottom: 32 }}>
             {tiers.map((t) => (
               <div key={t.name} className="divas-tier-info-card">
                 <div className="divas-tier-info-top">
@@ -208,9 +306,39 @@ const DwarfDivasShow = () => {
             ))}
           </div>
 
+          {/* Eventbrite checkout embed */}
+          <div style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: 16,
+            overflow: 'hidden',
+            marginBottom: 20,
+          }}>
+            <div style={{
+              padding: '14px 20px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Secure checkout — powered by Eventbrite
+              </span>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>SSL encrypted</span>
+            </div>
+            <div id="eb-checkout-container" style={{ minHeight: 435 }}>
+              {/* Fallback shown while widget loads */}
+              <div style={{
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                minHeight: 200, gap: 16, padding: 32,
+              }}>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>Loading checkout…</div>
+              </div>
+            </div>
+          </div>
+
           <div className="divas-tickets-cta">
-            <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-btn-primary od-btn-lg">
-              Get tickets on Eventbrite <span className="od-btn-arrow">-></span>
+            <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-btn-outline">
+              Open on Eventbrite instead <span className="od-btn-arrow">-></span>
             </a>
             <div className="divas-summary-foot">
               Secure checkout  -  Instant mobile tickets  -  21+ ID required at door
@@ -293,7 +421,7 @@ const DwarfDivasShow = () => {
           </h2>
           <p className="divas-final-sub">320 seats. Two nights to launch. A year of Vegas talk to follow.</p>
           <div className="divas-final-actions">
-            <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-btn-primary od-btn-lg">
+            <a href="#tickets" className="od-btn-primary od-btn-lg">
               Get tickets now ->
             </a>
             <a href="intake.html" className="od-btn-outline od-btn-lg">Book the show private</a>
