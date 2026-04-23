@@ -475,6 +475,55 @@
   .form-msg.ok  { background:rgba(0,220,130,0.1); border:1px solid rgba(0,220,130,0.2); color:#00dc82; }
   .form-msg.err { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); color:#EF4444; }
 
+  /* ── ONBOARDING SEARCH ─────────────────────────────────────── */
+  .ob-search-section {
+    margin-bottom: 18px;
+    padding: 14px;
+    background: rgba(124,58,237,0.06);
+    border: 1px solid rgba(124,58,237,0.22);
+    border-radius: 10px;
+  }
+  .ob-search-label {
+    font-size: 10px; font-weight: 700; color: var(--purple-lt);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+  }
+  .ob-search-hint { font-size: 11px; color: var(--dim); margin-top: 7px; }
+  .ob-search-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 120ms;
+  }
+  .ob-search-input:focus { border-color: rgba(124,58,237,0.5); }
+  .ob-dropdown {
+    background: #0C1624;
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 8px;
+    margin-top: 6px;
+    max-height: 180px;
+    overflow-y: auto;
+    display: none;
+  }
+  .ob-dropdown.open { display: block; }
+  .ob-item {
+    padding: 9px 13px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 100ms;
+  }
+  .ob-item:last-child { border-bottom: none; }
+  .ob-item:hover { background: rgba(124,58,237,0.15); }
+  .ob-item-name { font-size: 13px; color: var(--text); font-weight: 600; }
+  .ob-item-meta { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .ob-no-results { padding: 12px; color: var(--dim); font-size: 12px; text-align: center; }
+
+
 </style>
 </head>
 <body>
@@ -744,6 +793,15 @@
 <div id="edit-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <div class="modal-title" id="modal-title">Edit Performer</div>
+    <!-- Onboarding autofill (add mode only) -->
+    <div id="ob-search-section" class="ob-search-section" style="display:none;">
+      <div class="ob-search-label">🔍 Auto-fill from Onboarding Sheet</div>
+      <input id="ob-search-input" type="text" class="ob-search-input"
+             placeholder="Type a name to search your applicants…"
+             autocomplete="off" oninput="searchOnboarding(this.value)">
+      <div id="ob-dropdown" class="ob-dropdown"></div>
+      <div class="ob-search-hint" id="ob-status">Loading applicants…</div>
+    </div>
     <div class="form-row">
       <div class="form-group">
         <label>Name</label>
@@ -948,6 +1006,8 @@
     const img = document.getElementById('photo-preview-img');
     if (p.photo) { img.src = p.photo; img.style.display = 'block'; }
     else { img.src = ''; img.style.display = 'none'; }
+    document.getElementById('ob-search-section').style.display = 'none';
+    document.getElementById('save-btn').textContent = 'Save Changes';
     hideMsg();
     document.getElementById('edit-modal').style.display = 'flex';
   }
@@ -959,12 +1019,20 @@
       .forEach(id => { document.getElementById(id).value = ''; });
     document.getElementById('f-status').value = 'Pending';
     document.getElementById('photo-preview-img').style.display = 'none';
+    // Show onboarding search
+    document.getElementById('ob-search-section').style.display = 'block';
+    document.getElementById('ob-search-input').value = '';
+    document.getElementById('ob-dropdown').className = 'ob-dropdown';
+    document.getElementById('save-btn').textContent = 'Add Performer';
     hideMsg();
     document.getElementById('edit-modal').style.display = 'flex';
+    if (!onboardingLoaded && !onboardingLoading) loadOnboardingData();
   }
 
   function closeModal() {
     document.getElementById('edit-modal').style.display = 'none';
+    document.getElementById('ob-search-section').style.display = 'none';
+    document.getElementById('save-btn').textContent = 'Save Changes';
     editingId = null;
   }
 
@@ -1041,7 +1109,99 @@
   }).catch(()=>{});
   const s=document.querySelector('.stamp');
   if(s){const n=new Date();s.textContent='Live · '+n.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
+
+  // ── ONBOARDING SHEET AUTOFILL ─────────────────────────────────
+  const OB_SHEET_ID = '1qvNUYGCEVmLwqGtWNJV69FCH_vLe4pphluKdkw58-30';
+  let onboardingData = [];
+  let onboardingLoaded = false;
+  let onboardingLoading = false;
+  let _obMatches = [];
+
+  function loadOnboardingData() {
+    onboardingLoading = true;
+    const statusEl = document.getElementById('ob-status');
+    if (statusEl) statusEl.textContent = 'Loading applicants…';
+    const url = `https://docs.google.com/spreadsheets/d/${OB_SHEET_ID}/gviz/tq?tqx=out:json`;
+    fetch(url)
+      .then(r => r.text())
+      .then(txt => {
+        const json = JSON.parse(txt.replace(/^\/\*[\s\S]*?\*\/\s*\n?google\.visualization\.Query\.setResponse\(/, '').replace(/\);?\s*$/, ''));
+        const rows = json.table.rows;
+        onboardingData = rows.map(row => {
+          const c = row.c;
+          const v = (i) => (c[i] && c[i].v != null) ? String(c[i].v) : '';
+          return {
+            fullName: v(1), stageName: v(2),
+            location: v(13), email: v(14), phone: v(15), instagram: v(16),
+            skill1: v(8), skill2: v(9), skill3: v(10)
+          };
+        }).filter(r => r.fullName.trim());
+        onboardingLoaded = true;
+        onboardingLoading = false;
+        if (statusEl) statusEl.textContent = onboardingData.length + ' applicants loaded — type to search';
+      })
+      .catch(err => {
+        onboardingLoading = false;
+        if (statusEl) statusEl.textContent = 'Could not load onboarding sheet';
+        console.warn('Onboarding load error:', err);
+      });
+  }
+
+  function searchOnboarding(query) {
+    const dropdown = document.getElementById('ob-dropdown');
+    if (!query.trim()) {
+      dropdown.className = 'ob-dropdown';
+      _obMatches = [];
+      return;
+    }
+    if (!onboardingLoaded) {
+      dropdown.className = 'ob-dropdown open';
+      dropdown.innerHTML = '<div class="ob-no-results">Still loading applicants…</div>';
+      return;
+    }
+    const q = query.toLowerCase();
+    _obMatches = onboardingData.filter(r =>
+      r.fullName.toLowerCase().includes(q) ||
+      (r.stageName && r.stageName.toLowerCase().includes(q))
+    ).slice(0, 8);
+
+    if (!_obMatches.length) {
+      dropdown.className = 'ob-dropdown open';
+      dropdown.innerHTML = '<div class="ob-no-results">No match for "' + obEsc(query) + '"</div>';
+      return;
+    }
+    dropdown.className = 'ob-dropdown open';
+    dropdown.innerHTML = _obMatches.map((r, i) => {
+      const tags = [r.skill1, r.skill2, r.skill3].filter(Boolean).join(', ');
+      const meta = [r.location, r.email, tags].filter(Boolean).join(' · ');
+      const stageLabel = r.stageName ? ' <span style="color:var(--dim);font-weight:400">· ' + obEsc(r.stageName) + '</span>' : '';
+      return '<div class="ob-item" onclick="fillFromOnboarding(' + i + ')">'
+           + '<div class="ob-item-name">' + obEsc(r.fullName) + stageLabel + '</div>'
+           + '<div class="ob-item-meta">' + obEsc(meta) + '</div>'
+           + '</div>';
+    }).join('');
+  }
+
+  function fillFromOnboarding(idx) {
+    const r = _obMatches[idx];
+    if (!r) return;
+    if (r.fullName)   document.getElementById('f-name').value     = r.fullName;
+    if (r.stageName)  document.getElementById('f-type').value     = r.stageName;
+    if (r.email)      document.getElementById('f-email').value    = r.email;
+    if (r.phone)      document.getElementById('f-phone').value    = r.phone;
+    if (r.location)   document.getElementById('f-location').value = r.location;
+    if (r.instagram)  document.getElementById('f-social').value   = r.instagram.startsWith('@') ? r.instagram : '@' + r.instagram;
+    const gigs = [r.skill1, r.skill2, r.skill3].filter(Boolean).join(', ');
+    if (gigs)         document.getElementById('f-gigs').value     = gigs;
+    document.getElementById('ob-dropdown').className = 'ob-dropdown';
+    document.getElementById('ob-search-input').value = r.fullName + (r.stageName ? ' (' + r.stageName + ')' : '');
+    document.getElementById('ob-status').textContent = '✓ Auto-filled — just add rate, bio & photo';
+  }
+
+  function obEsc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
 </script>
 </body>
 </html>
-
