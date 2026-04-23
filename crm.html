@@ -226,6 +226,32 @@
     .filterbar { padding: 10px 16px; }
     .stats-bar { padding: 10px 16px; }
   }
+
+  .stage-lost .stage-dot { background: #e74c3c; opacity: 0.5; }
+  .stage-lost .col-header { border-top: 3px solid rgba(231,76,60,0.4); border-radius: 12px 12px 0 0; opacity: 0.85; }
+  .stage-lost .col-count { background: rgba(231,76,60,0.1); color: rgba(231,76,60,0.6); }
+  .card-contact-row { display:flex; gap:5px; margin-top:8px; }
+  .cc-btn { flex:1; padding:5px 0; border:1px solid var(--border2); border-radius:6px; background:transparent; color:var(--muted); font-size:11px; font-weight:700; cursor:pointer; transition:all 0.12s; text-decoration:none; text-align:center; display:block; }
+  .cc-btn:hover { background:var(--card2); color:var(--text); border-color:#555; }
+  .cc-btn.email-btn:hover { border-color:var(--purple); color:var(--purple); }
+  .cc-btn.call-btn:hover  { border-color:var(--green); color:var(--green); }
+  .cc-btn.sms-btn:hover   { border-color:var(--blue); color:var(--blue); }
+  .copy-chip { display:inline-flex; align-items:center; gap:5px; cursor:pointer; padding:3px 8px; border-radius:5px; border:1px solid var(--border); background:transparent; color:var(--text); font-size:13px; font-family:inherit; transition:all 0.12s; }
+  .copy-chip:hover { background:var(--card2); border-color:#555; }
+  .copy-chip .copy-icon { font-size:10px; color:var(--muted); }
+  .btn-danger { background:transparent; border:1px solid rgba(231,76,60,0.4); color:var(--red); }
+  .btn-danger:hover { background:rgba(231,76,60,0.1); border-color:var(--red); }
+  .lost-toggle { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); cursor:pointer; user-select:none; padding:4px 8px; border-radius:6px; border:1px solid var(--border); }
+  .lost-toggle:hover { background:var(--card2); }
+  .lost-toggle input { accent-color:var(--red); }
+  .confirm-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:300; display:flex; align-items:center; justify-content:center; }
+  .confirm-overlay.hidden { display:none; }
+  .confirm-box { background:var(--card); border:1px solid rgba(231,76,60,0.35); border-radius:14px; padding:28px; max-width:380px; width:calc(100vw - 40px); text-align:center; }
+  .confirm-icon { font-size:32px; margin-bottom:12px; }
+  .confirm-title { font-size:16px; font-weight:800; margin-bottom:8px; }
+  .confirm-sub { font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.5; }
+  .confirm-actions { display:flex; gap:10px; justify-content:center; }
+
 </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-9HWJJNWGG2"></script>
@@ -315,6 +341,7 @@
     <option>Instagram</option>
     <option>Other</option>
   </select>
+  <label class="lost-toggle"><input type="checkbox" id="show-lost" onchange="renderBoard()"> Show Lost</label>
   <div class="total-badge" id="total-badge">Loading…</div>
 </div>
 
@@ -353,8 +380,8 @@
       <div class="modal-section">
         <h4>Contact</h4>
         <div class="info-grid">
-          <div class="info-item"><label>Email</label><span id="m-email">—</span></div>
-          <div class="info-item"><label>Phone</label><span id="m-phone">—</span></div>
+          <div class="info-item"><label>Email</label><button class="copy-chip" onclick="copyField('m-email')"><span id="m-email">—</span><span class="copy-icon">⧉</span></button></div>
+          <div class="info-item"><label>Phone</label><button class="copy-chip" onclick="copyField('m-phone')"><span id="m-phone">—</span><span class="copy-icon">⧉</span></button></div>
         </div>
       </div>
       <div class="modal-section">
@@ -395,18 +422,33 @@
         <textarea class="notes-input" id="m-notes" placeholder="Add notes about this lead — what was discussed, what they need, follow-up reminders…"></textarea>
       </div>
     </div>
-    <div class="modal-footer">
-      <a id="modal-quote-link" href="quote.html" target="_blank" style="text-decoration:none">
-        <button class="btn btn-ghost btn-sm">📋 Generate Quote</button>
-      </a>
-      <a id="modal-email-link" href="#" style="text-decoration:none">
-        <button class="btn btn-ghost btn-sm" id="modal-email-btn">✉️ Email</button>
-      </a>
-      <button class="btn btn-primary" onclick="saveModal()">Save Changes</button>
+    <div class="modal-footer" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-danger btn-sm" onclick="markLost()" title="Move to Lost column">✕ Mark Lost</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelete()" title="Permanently delete from sheet">🗑 Delete</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a id="modal-quote-link" href="quote.html" target="_blank" style="text-decoration:none"><button class="btn btn-ghost btn-sm">📋 Quote</button></a>
+        <a id="modal-email-link" href="#" style="text-decoration:none"><button class="btn btn-ghost btn-sm" id="modal-email-btn">✉ Email</button></a>
+        <button class="btn btn-primary" onclick="saveModal()">Save Changes</button>
+      </div>
     </div>
   </div>
 </div>
 
+
+<!-- CONFIRM DELETE DIALOG -->
+<div class="confirm-overlay hidden" id="confirm-overlay" onclick="if(event.target===this)closeConfirm()">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑</div>
+    <div class="confirm-title" id="confirm-title">Delete this lead?</div>
+    <div class="confirm-sub" id="confirm-sub">This permanently removes them from the Google Sheet. Cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" onclick="executDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -420,7 +462,7 @@ const GVIZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?t
 let allLeads = [];
 let activeLeadId = null;
 
-const STAGES = ['New','Contacted','Quoted','Booked','Completed'];
+const STAGES = ['New','Contacted','Quoted','Booked','Completed','Lost'];
 const STAGE_LABELS = { New:'New', Contacted:'Contacted', Quoted:'Quoted', Booked:'Booked', Completed:'Completed' };
 
 // ── LOAD DATA ──────────────────────────────────────────────────────
@@ -468,7 +510,9 @@ function getFilteredLeads() {
   const q     = document.getElementById('search-input').value.toLowerCase();
   const fType = document.getElementById('filter-type').value;
   const fSrc  = document.getElementById('filter-source').value;
+  const showLost = document.getElementById('show-lost').checked;
   return allLeads.filter(l => {
+    if (!showLost && l.stage === 'Lost') return false;
     if (q && !`${l.name} ${l.email} ${l.location} ${l.eventType}`.toLowerCase().includes(q)) return false;
     if (fType && l.eventType !== fType) return false;
     if (fSrc && l.source !== fSrc) return false;
@@ -547,10 +591,16 @@ function buildCard(lead) {
     ${lead.eventDate ? `<div class="card-row"><span class="icon">📅</span> ${eventDateFmt}</div>` : ''}
     ${lead.location ? `<div class="card-row"><span class="icon">📍</span> ${esc(lead.location)}</div>` : ''}
     ${lead.headcount ? `<div class="card-row"><span class="icon">👥</span> ${esc(lead.headcount)} guests</div>` : ''}
+    ${(lead.email || lead.phone) ? `
+    <div class="card-contact-row" onclick="event.stopPropagation()">
+      ${lead.email ? `<a class="cc-btn email-btn" href="mailto:${esc(lead.email)}">✉ Email</a>` : ''}
+      ${lead.phone ? `<a class="cc-btn call-btn" href="tel:${esc(lead.phone)}">📞 Call</a>` : ''}
+      ${lead.phone ? `<a class="cc-btn sms-btn" href="sms:${esc(lead.phone)}">💬 Text</a>` : ''}
+    </div>` : ''}
     <div class="card-footer">
       <span class="card-date">${submittedAgo}</span>
       <div class="card-actions">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();quickStageForward('${esc(lead.id)}')">→</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();quickStageForward('${esc(lead.id)}')" title="Advance stage">→</button>
       </div>
     </div>
   `;
@@ -646,18 +696,10 @@ async function saveModal() {
   closeModalDirect();
   showToast('Saving…', '');
 
-  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec') {
-    showToast('⚠ Apps Script not deployed yet — changes saved locally only', 'error');
-    return;
-  }
-
   try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'updateLead', leadId: activeLeadId, stage: newStage, notes: newNotes, amount: newAmount }),
-      mode: 'no-cors'
-    });
+    const fd = new FormData();
+    fd.append('data', JSON.stringify({ action: 'updateLead', leadId: activeLeadId, stage: newStage, notes: newNotes, amount: newAmount }));
+    await fetch(SCRIPT_URL, { method: 'POST', body: fd, mode: 'no-cors' });
     showToast('✓ Lead updated', 'success');
   } catch(e) {
     showToast('⚠ Save failed — check connection', 'error');
@@ -676,14 +718,10 @@ async function quickStageForward(leadId) {
   renderStats();
   showToast(`→ Moved to ${nextStage}`, 'success');
 
-  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec') return;
   try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'updateLead', leadId, stage: nextStage, notes: lead.notes }),
-      mode: 'no-cors'
-    });
+    const fd2 = new FormData();
+    fd2.append('data', JSON.stringify({ action: 'updateLead', leadId, stage: nextStage, notes: lead.notes }));
+    await fetch(SCRIPT_URL, { method: 'POST', body: fd2, mode: 'no-cors' });
   } catch(e) {}
 }
 
@@ -859,6 +897,76 @@ function renderFinancials() {
       </tr>
     `).join('');
   }
+}
+
+
+// ── COPY TO CLIPBOARD ────────────────────────────────────────────
+function copyField(id) {
+  const el = document.getElementById(id);
+  const txt = el ? el.textContent.trim() : '';
+  if (!txt || txt === '—') return;
+  navigator.clipboard.writeText(txt).then(() => {
+    showToast('📋 Copied: ' + txt, 'success');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('📋 Copied!', 'success');
+  });
+}
+
+// ── MARK LOST ────────────────────────────────────────────────────
+async function markLost() {
+  if (!activeLeadId) return;
+  const lead = allLeads.find(l => l.id === activeLeadId);
+  if (!lead) return;
+  lead.stage = 'Lost';
+  renderBoard();
+  renderStats();
+  closeModalDirect();
+  showToast('✕ Marked as lost', '');
+  try {
+    const fd = new FormData();
+    fd.append('data', JSON.stringify({ action: 'updateLead', leadId: activeLeadId, stage: 'Lost', notes: lead.notes }));
+    await fetch(SCRIPT_URL, { method: 'POST', body: fd, mode: 'no-cors' });
+  } catch(e) {}
+}
+
+// ── DELETE LEAD ──────────────────────────────────────────────────
+let pendingDeleteId = null;
+
+function confirmDelete() {
+  if (!activeLeadId) return;
+  const lead = allLeads.find(l => l.id === activeLeadId);
+  if (!lead) return;
+  pendingDeleteId = activeLeadId;
+  document.getElementById('confirm-title').textContent = 'Delete ' + (lead.name || 'this lead') + '?';
+  document.getElementById('confirm-sub').textContent =
+    lead.name + ' will be permanently removed from the sheet. This cannot be undone.';
+  document.getElementById('confirm-overlay').classList.remove('hidden');
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.add('hidden');
+  pendingDeleteId = null;
+}
+
+async function executDelete() {
+  if (!pendingDeleteId) return;
+  const id   = pendingDeleteId;
+  const lead = allLeads.find(l => l.id === id);
+  const name = lead ? lead.name : id;
+  closeConfirm();
+  closeModalDirect();
+  allLeads = allLeads.filter(l => l.id !== id);
+  renderBoard();
+  renderStats();
+  showToast('🗑 Deleted ' + name, '');
+  try {
+    const fd = new FormData();
+    fd.append('data', JSON.stringify({ action: 'deleteLead', leadId: id }));
+    await fetch(SCRIPT_URL, { method: 'POST', body: fd, mode: 'no-cors' });
+  } catch(e) {}
 }
 
 // ── KEYBOARD ──────────────────────────────────────────────────────
