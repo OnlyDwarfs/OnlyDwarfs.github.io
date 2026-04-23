@@ -291,6 +291,190 @@
     flex-direction: column; gap: 4px;
   }
   .empty-state span { font-size: 18px; }
+
+  /* ── ROSTER VIEW ───────────────────────────────────── */
+  #view-roster {
+    display: none;
+    position: absolute;
+    top: 58px; left: 16px; right: 16px; bottom: 16px;
+    overflow-y: auto;
+    background: rgba(6,12,24,0.92);
+    border: 1px solid rgba(26,46,72,0.95);
+    border-radius: 16px;
+    padding: 24px;
+    z-index: 10;
+    font-family: 'Inter', sans-serif;
+  }
+  #view-roster::-webkit-scrollbar { width: 6px; }
+  #view-roster::-webkit-scrollbar-track { background: transparent; }
+  #view-roster::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 3px; }
+
+  .rstr-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .rstr-title  { font-size:18px; font-weight:900; color:var(--purple-lt); letter-spacing:-0.02em; }
+  .rstr-sub    { font-size:11px; color:var(--dim); margin-top:3px; }
+  .rstr-add-btn {
+    background: linear-gradient(135deg,rgba(124,58,237,0.3),rgba(124,58,237,0.15));
+    border: 1px solid rgba(124,58,237,0.5);
+    color: var(--purple-lt);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: all 140ms;
+  }
+  .rstr-add-btn:hover { background: rgba(124,58,237,0.4); }
+
+  .rstr-filters { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .rstr-filter {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-size: 11px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: all 120ms;
+  }
+  .rstr-filter.active, .rstr-filter:hover {
+    border-color: rgba(124,58,237,0.5);
+    color: var(--purple-lt);
+    background: rgba(124,58,237,0.1);
+  }
+
+  .rstr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .rstr-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 160ms;
+  }
+  .rstr-card:hover { border-color: rgba(124,58,237,0.35); transform: translateY(-2px); }
+  .rstr-photo {
+    width: 100%; aspect-ratio: 3/4;
+    background: linear-gradient(160deg,var(--panel2) 0%,#0d1b2a 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; position: relative; overflow: hidden;
+  }
+  .rstr-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+  .rstr-status {
+    position: absolute; top: 8px; right: 8px;
+    font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 99px;
+  }
+  .s-Active   { background:rgba(0,220,130,0.15); border:1px solid rgba(0,220,130,0.3); color:#00dc82; }
+  .s-Pending  { background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.3); color:var(--gold); }
+  .s-Applied  { background:rgba(14,165,233,0.15); border:1px solid rgba(14,165,233,0.3); color:var(--teal-lt); }
+  .s-Inactive { background:rgba(100,116,139,0.1); border:1px solid rgba(100,116,139,0.2); color:var(--dim); }
+  .rstr-info  { padding: 14px; }
+  .rstr-name  { font-size:14px; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin-bottom:2px; }
+  .rstr-type  { font-size:11px; color:var(--dim); margin-bottom:10px; }
+  .rstr-edit-btn {
+    display: block; width: 100%; text-align: center;
+    padding: 8px; background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.3);
+    color: var(--purple-lt);
+    font-size: 11px; font-weight: 700;
+    border-radius: 7px; cursor: pointer;
+    font-family: inherit; transition: all 120ms;
+  }
+  .rstr-edit-btn:hover { background: rgba(124,58,237,0.3); }
+
+  .rstr-empty {
+    grid-column: 1/-1; text-align: center;
+    padding: 60px 0; color: var(--dim); font-size: 13px;
+  }
+
+  /* ── EDIT MODAL ─────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 99999;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-box {
+    background: #0C1624;
+    border: 1px solid rgba(124,58,237,0.35);
+    border-radius: 16px;
+    width: 640px; max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding: 28px;
+  }
+  .modal-box::-webkit-scrollbar { width: 5px; }
+  .modal-box::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); border-radius:3px; }
+  .modal-title { font-size:16px; font-weight:900; color:var(--purple-lt); margin-bottom:20px; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .form-group { display:flex; flex-direction:column; gap:5px; margin-bottom:0; }
+  .form-group.full { grid-column:1/-1; margin-bottom:12px; }
+  .form-group label {
+    font-size:10px; font-weight:700; color:var(--dim);
+    text-transform:uppercase; letter-spacing:0.1em;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 120ms;
+    resize: vertical;
+  }
+  .form-group input:focus, .form-group select, .form-group textarea:focus {
+    border-color: rgba(124,58,237,0.5);
+  }
+  .form-group select option { background: #0C1624; }
+  .photo-row { display:flex; gap:8px; align-items:center; }
+  .photo-row input { flex:1; }
+  .preview-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--dim);
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit; white-space:nowrap;
+    transition: all 120ms;
+  }
+  .preview-btn:hover { color:var(--text); border-color:rgba(255,255,255,0.2); }
+  #photo-preview-box { margin-top:8px; }
+  #photo-preview-img { height:100px; border-radius:8px; object-fit:cover; display:none; }
+  .modal-status-row { display:flex; gap:8px; margin-bottom:12px; }
+  .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+  .cancel-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: all 120ms;
+  }
+  .cancel-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
+  .save-btn {
+    background: linear-gradient(135deg,rgba(124,58,237,0.9),rgba(124,58,237,0.7));
+    border: 1px solid rgba(124,58,237,0.6);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: all 120ms;
+  }
+  .save-btn:hover { background: rgba(124,58,237,0.95); }
+  .save-btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .form-msg { font-size:12px; margin-top:8px; padding:8px 12px; border-radius:6px; display:none; }
+  .form-msg.ok  { background:rgba(0,220,130,0.1); border:1px solid rgba(0,220,130,0.2); color:#00dc82; }
+  .form-msg.err { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); color:#EF4444; }
+
 </style>
 </head>
 <body>
@@ -304,6 +488,7 @@
     <a href="/command.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#9889; Command</a>
     <a href="/crm.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#128203; CRM</a>
     <a href="/hub.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#129504; Hub</a>
+    <a id="nav-roster-btn" href="#" onclick="switchTab('roster');return false;" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#127902; Roster</a>
     <button onclick="localStorage.removeItem('od_auth');window.location.href='/login.html';" style="font-size:11px;color:#64748B;background:none;border:1px solid rgba(100,116,139,0.3);padding:4px 10px;border-radius:6px;cursor:pointer;margin-left:8px;" onmouseover="this.style.color='#EF4444';this.style.borderColor='rgba(239,68,68,0.4)'" onmouseout="this.style.color='#64748B';this.style.borderColor='rgba(100,116,139,0.3)'">Logout</button>
   </div>
 </div>
@@ -532,6 +717,105 @@
 
   <div class="stamp">Last updated: April 16, 2026 01:43 PM</div>
 </div>
+<!-- ── ROSTER MANAGER VIEW ────────────────────────────────────── -->
+<div id="view-roster">
+  <div class="rstr-header">
+    <div>
+      <div class="rstr-title">🎭 Roster Manager</div>
+      <div class="rstr-sub">All performers in the Talent sheet — click any card to edit</div>
+    </div>
+    <button class="rstr-add-btn" onclick="openAddModal()">+ Add Performer</button>
+  </div>
+
+  <div class="rstr-filters">
+    <button class="rstr-filter active" data-status="all">All</button>
+    <button class="rstr-filter" data-status="Active">● Active</button>
+    <button class="rstr-filter" data-status="Pending">◐ Pending</button>
+    <button class="rstr-filter" data-status="Applied">○ Applied</button>
+    <button class="rstr-filter" data-status="Inactive">✕ Inactive</button>
+  </div>
+
+  <div id="rstr-grid" class="rstr-grid">
+    <div class="rstr-empty">Loading performers…</div>
+  </div>
+</div>
+
+<!-- ── EDIT MODAL ─────────────────────────────────────────────── -->
+<div id="edit-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title">Edit Performer</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input id="f-name" type="text" placeholder="Stage or real name">
+      </div>
+      <div class="form-group">
+        <label>Performer Type</label>
+        <input id="f-type" type="text" placeholder="e.g. Dancer, MC, Actor, Bartender">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone</label>
+        <input id="f-phone" type="tel" placeholder="+17025551234">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input id="f-email" type="email" placeholder="performer@email.com">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Location</label>
+        <input id="f-location" type="text" placeholder="City, State">
+      </div>
+      <div class="form-group">
+        <label>Rate</label>
+        <input id="f-rate" type="text" placeholder="e.g. $500/show, $350/hr">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Instagram Handle</label>
+        <input id="f-social" type="text" placeholder="@handle">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="f-status">
+          <option value="Active">Active — shows on public roster</option>
+          <option value="Pending">Pending — portal access, not public</option>
+          <option value="Applied">Applied — needs review</option>
+          <option value="Inactive">Inactive — hidden everywhere</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group full">
+      <label>Gigs / Tags (comma-separated)</label>
+      <input id="f-gigs" type="text" placeholder="e.g. Parties, Vegas, Corporate, Film">
+    </div>
+    <div class="form-group full">
+      <label>Bio</label>
+      <textarea id="f-bio" rows="3" placeholder="Short performer bio shown on the roster…"></textarea>
+    </div>
+    <div class="form-group full">
+      <label>Photo URL</label>
+      <div class="photo-row">
+        <input id="f-photo" type="url" placeholder="https://… (paste any direct image URL)">
+        <button class="preview-btn" onclick="previewPhoto()">Preview</button>
+      </div>
+      <div id="photo-preview-box">
+        <img id="photo-preview-img" src="" alt="preview">
+      </div>
+    </div>
+    <input type="hidden" id="f-id">
+    <div id="form-msg" class="form-msg"></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+      <button class="save-btn" id="save-btn" onclick="saveTalent()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 
 <script>
   function updateClock() {
@@ -558,6 +842,200 @@
   updateCountdown(); setInterval(updateCountdown, 60000);
 
   function toggle(el) { el.classList.toggle('done'); }
+
+  // ── TAB SWITCHING ─────────────────────────────────────────────
+  function switchTab(tab) {
+    const widget  = document.querySelector('.widget');
+    const roster  = document.getElementById('view-roster');
+    const navDash = document.querySelector('a[href="/command.html"]');
+    const navRstr = document.getElementById('nav-roster-btn');
+
+    if (tab === 'roster') {
+      widget.style.display  = 'none';
+      roster.style.display  = 'block';
+      if (navRstr) { navRstr.style.color='#A78BFA'; navRstr.style.background='rgba(124,58,237,0.12)'; }
+      if (navDash) { navDash.style.color='#94A3B8'; navDash.style.background='transparent'; }
+      if (!rosterLoaded) loadRoster();
+    } else {
+      widget.style.display  = '';
+      roster.style.display  = 'none';
+      if (navRstr) { navRstr.style.color='#94A3B8'; navRstr.style.background='transparent'; }
+      if (navDash) { navDash.style.color='#94A3B8'; navDash.style.background='transparent'; }
+    }
+  }
+
+  // ── ROSTER MANAGER ────────────────────────────────────────────
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec';
+  let allPerformers = [];
+  let activeStatusFilter = 'all';
+  let rosterLoaded = false;
+  let editingId = null;
+
+  function loadRoster() {
+    document.getElementById('rstr-grid').innerHTML = '<div class="rstr-empty">Loading performers…</div>';
+    fetch(SCRIPT_URL + '?action=getAllTalent')
+      .then(r => r.json())
+      .then(data => {
+        allPerformers = data.talent || [];
+        rosterLoaded = true;
+        renderRoster();
+        // Set up filter buttons
+        document.querySelectorAll('.rstr-filter').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.rstr-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeStatusFilter = btn.dataset.status;
+            renderRoster();
+          });
+        });
+      })
+      .catch(err => {
+        document.getElementById('rstr-grid').innerHTML =
+          '<div class="rstr-empty" style="color:#EF4444">Failed to load performers. Check that Apps Script is redeployed.</div>';
+      });
+  }
+
+  function renderRoster() {
+    const grid = document.getElementById('rstr-grid');
+    const filtered = activeStatusFilter === 'all'
+      ? allPerformers
+      : allPerformers.filter(p => p.status === activeStatusFilter);
+
+    if (!filtered.length) {
+      grid.innerHTML = '<div class="rstr-empty">No performers in this category yet.</div>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map(p => {
+      const photo = p.photo
+        ? `<img src="${p.photo}" alt="${p.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+        : '';
+      const fallback = p.photo ? `<span style="display:none;font-size:40px">🎭</span>` : `<span style="font-size:40px">🎭</span>`;
+      const statusClass = 's-' + (p.status || 'Inactive');
+      return `
+        <div class="rstr-card" data-id="${p.id}">
+          <div class="rstr-photo">
+            ${photo}${fallback}
+            <span class="rstr-status ${statusClass}">${p.status || '—'}</span>
+          </div>
+          <div class="rstr-info">
+            <div class="rstr-name">${p.name || '—'}</div>
+            <div class="rstr-type">${p.performerType || 'Performer'} · ${p.location || '?'}</div>
+            <button class="rstr-edit-btn" onclick="openEdit('${p.id}')">✏ Edit Profile</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function openEdit(id) {
+    const p = allPerformers.find(x => x.id === id);
+    if (!p) return;
+    editingId = id;
+    document.getElementById('modal-title').textContent = 'Edit: ' + p.name;
+    document.getElementById('f-id').value       = p.id;
+    document.getElementById('f-name').value     = p.name || '';
+    document.getElementById('f-type').value     = p.performerType || '';
+    document.getElementById('f-phone').value    = p.phone || '';
+    document.getElementById('f-email').value    = p.email || '';
+    document.getElementById('f-location').value = p.location || '';
+    document.getElementById('f-rate').value     = p.rate || '';
+    document.getElementById('f-gigs').value     = p.gigs || '';
+    document.getElementById('f-social').value   = p.social || '';
+    document.getElementById('f-bio').value      = p.bio || '';
+    document.getElementById('f-photo').value    = p.photo || '';
+    document.getElementById('f-status').value   = p.status || 'Applied';
+    // Photo preview
+    const img = document.getElementById('photo-preview-img');
+    if (p.photo) { img.src = p.photo; img.style.display = 'block'; }
+    else { img.src = ''; img.style.display = 'none'; }
+    hideMsg();
+    document.getElementById('edit-modal').style.display = 'flex';
+  }
+
+  function openAddModal() {
+    editingId = null;
+    document.getElementById('modal-title').textContent = 'Add New Performer';
+    ['f-id','f-name','f-type','f-phone','f-email','f-location','f-rate','f-gigs','f-social','f-bio','f-photo']
+      .forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('f-status').value = 'Pending';
+    document.getElementById('photo-preview-img').style.display = 'none';
+    hideMsg();
+    document.getElementById('edit-modal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('edit-modal').style.display = 'none';
+    editingId = null;
+  }
+
+  function previewPhoto() {
+    const url = document.getElementById('f-photo').value.trim();
+    const img = document.getElementById('photo-preview-img');
+    if (url) { img.src = url; img.style.display = 'block'; }
+    else { img.style.display = 'none'; }
+  }
+
+  function showMsg(text, type) {
+    const el = document.getElementById('form-msg');
+    el.textContent = text;
+    el.className = 'form-msg ' + type;
+    el.style.display = 'block';
+  }
+  function hideMsg() {
+    document.getElementById('form-msg').style.display = 'none';
+  }
+
+  function saveTalent() {
+    const btn  = document.getElementById('save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    hideMsg();
+
+    const id = document.getElementById('f-id').value;
+    const payload = {
+      action:        editingId ? 'updateTalent' : 'newTalent',
+      id:            id,
+      name:          document.getElementById('f-name').value.trim(),
+      performerType: document.getElementById('f-type').value.trim(),
+      phone:         document.getElementById('f-phone').value.trim(),
+      email:         document.getElementById('f-email').value.trim(),
+      location:      document.getElementById('f-location').value.trim(),
+      rate:          document.getElementById('f-rate').value.trim(),
+      gigs:          document.getElementById('f-gigs').value.trim(),
+      social:        document.getElementById('f-social').value.trim(),
+      bio:           document.getElementById('f-bio').value.trim(),
+      photo:         document.getElementById('f-photo').value.trim(),
+      status:        document.getElementById('f-status').value
+    };
+
+    const form = new FormData();
+    form.append('data', JSON.stringify(payload));
+
+    fetch(SCRIPT_URL, { method: 'POST', body: form })
+      .then(r => r.json())
+      .then(res => {
+        if (res.success) {
+          showMsg('✓ Saved successfully!', 'ok');
+          // Update local state
+          const idx = allPerformers.findIndex(p => p.id === id);
+          if (idx >= 0) {
+            allPerformers[idx] = { ...allPerformers[idx], ...payload };
+          }
+          renderRoster();
+          setTimeout(closeModal, 1200);
+        } else {
+          showMsg('Error: ' + (res.error || 'Unknown error'), 'err');
+        }
+      })
+      .catch(err => {
+        showMsg('Network error — check console', 'err');
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.textContent = 'Save Changes';
+      });
+  }
+
   fetch('https://onlydwarfs.github.io/data.json').then(r=>r.json()).then(d=>{
     if(d.tickets!==undefined) document.getElementById('ticket-count').textContent=d.tickets;
   }).catch(()=>{});
@@ -566,3 +1044,4 @@
 </script>
 </body>
 </html>
+
