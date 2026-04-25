@@ -4,244 +4,329 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>OnlyDwarfs — Admin</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; background: #060C18; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-  /* ── MAIN NAV ── */
-  #shell-nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-    height: 56px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 28px;
-    background: rgba(8,10,18,0.96);
-    border-bottom: 1px solid rgba(255,255,255,0.07);
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    background: #0d0d0d;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
   }
-  .nav-logo {
-    display: flex; align-items: center; text-decoration: none;
+
+  /* ── LAYOUT ── */
+  #shell {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: #111;
+    border-right: 1px solid #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  #sidebar::-webkit-scrollbar { display: none; }
+
+  .sb-logo {
+    padding: 16px 14px 14px;
+    border-bottom: 1px solid #1e1e1e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-shrink: 0;
   }
-  .nav-logo img { height: 24px; }
-  .nav-links {
-    display: flex; align-items: center; gap: 4px;
-    list-style: none; margin: 0; padding: 0;
+  .sb-logo img {
+    height: 20px;
+    width: auto;
   }
-  .nav-links a {
-    color: rgba(255,255,255,0.50);
-    font-size: 13px; font-weight: 600;
-    text-decoration: none; padding: 6px 10px;
-    border-radius: 6px;
-    transition: color 140ms, background 140ms;
+  .sb-logo-text {
+    font-size: 13px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.03em;
   }
-  .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.07); }
-  .nav-sep-v { width: 1px; height: 16px; background: rgba(255,255,255,0.10); margin: 0 4px; }
-  .nav-right { display: flex; align-items: center; gap: 8px; }
-  .nav-cta {
-    background: #00AFEF; color: #000;
-    font-size: 12px; font-weight: 800;
-    padding: 7px 16px; border-radius: 7px;
-    text-decoration: none; letter-spacing: 0.01em;
-    display: flex; align-items: center; gap: 6px;
-    transition: opacity 140ms;
-  }
-  .nav-cta::before {
-    content: ''; display: inline-block;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #000; opacity: 0.5;
-  }
-  .nav-cta:hover { opacity: 0.88; }
-  .nav-signout {
-    background: transparent; border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 6px; color: rgba(255,255,255,0.35);
-    font-size: 11px; font-weight: 600; padding: 5px 10px;
-    cursor: pointer; font-family: inherit; line-height: 1;
-    transition: all 140ms;
-  }
-  .nav-signout:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #f87171; }
-
-  .nav-page-label {
-    font-size: 12px; color: rgba(255,255,255,0.28);
-    border-left: 1px solid rgba(255,255,255,0.08);
-    padding-left: 12px; margin-left: 10px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    max-width: 160px;
+  .sb-logo-text span { color: #00AFF0; }
+  .sb-logo-badge {
+    margin-left: auto;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #444;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 2px 6px;
+    flex-shrink: 0;
   }
 
-  /* ── SUB-NAV ── */
-  #shell-subnav {
-    position: fixed; top: 56px; left: 0; right: 0; z-index: 9998;
-    height: 40px;
-    display: flex; align-items: center; gap: 2px;
-    padding: 0 20px;
-    background: rgba(10,14,24,0.97);
-    border-bottom: 1px solid rgba(155,89,245,0.18);
-    overflow-x: auto; scrollbar-width: none;
+  .sb-section {
+    padding: 14px 10px 4px;
   }
-  #shell-subnav::-webkit-scrollbar { display: none; }
-
-  .sn-link {
-    display: flex; align-items: center; gap: 5px;
-    color: rgba(255,255,255,0.42);
-    font-size: 12px; font-weight: 600;
-    text-decoration: none; padding: 4px 11px;
-    border-radius: 6px; white-space: nowrap;
+  .sb-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    padding: 0 8px;
+    margin-bottom: 4px;
+  }
+  .sb-link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 10px;
+    border-radius: 7px;
+    color: #666;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    margin-bottom: 1px;
+    transition: all 120ms;
     border: 1px solid transparent;
-    transition: all 140ms; cursor: pointer;
-    flex-shrink: 0; background: none; font-family: inherit;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
     line-height: 1;
   }
-  .sn-link:hover { color: #fff; background: rgba(255,255,255,0.06); }
-  .sn-link.active {
-    color: #fff;
-    background: rgba(155,89,245,0.14);
-    border-color: rgba(155,89,245,0.28);
+  .sb-link:hover {
+    background: #1a1a1a;
+    color: #ccc;
   }
-  .sn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.08); flex-shrink: 0; margin: 0 5px; }
-  .sn-icon { font-size: 13px; line-height: 1; }
+  .sb-link.active {
+    background: rgba(0, 175, 240, 0.08);
+    border-color: rgba(0, 175, 240, 0.18);
+    color: #00AFF0;
+  }
+  .sb-icon {
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+  }
 
-  /* ── LOADING OVERLAY ── */
+  .sb-divider {
+    height: 1px;
+    background: #1a1a1a;
+    margin: 8px 14px;
+    flex-shrink: 0;
+  }
+
+  .sb-bottom {
+    margin-top: auto;
+    padding: 12px;
+    border-top: 1px solid #1a1a1a;
+    flex-shrink: 0;
+  }
+  .sb-user {
+    font-size: 11px;
+    color: #3a3a3a;
+    padding: 0 4px;
+    margin-bottom: 8px;
+  }
+  .sb-signout {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #444;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: all 120ms;
+    text-decoration: none;
+    background: none;
+    border: none;
+    font-family: inherit;
+    width: 100%;
+    text-align: left;
+  }
+  .sb-signout:hover {
+    background: rgba(239, 68, 68, 0.08);
+    color: #f87171;
+  }
+
+  /* ── CONTENT AREA ── */
+  #content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #111;
+    min-width: 0;
+  }
+
+  /* ── TOP BAR ── */
+  #top-bar {
+    height: 48px;
+    background: #111;
+    border-bottom: 1px solid #1e1e1e;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  #page-label {
+    font-size: 12px;
+    color: #444;
+  }
+  #page-label-name {
+    color: #888;
+    font-weight: 600;
+  }
+  .top-bar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tb-link {
+    font-size: 12px;
+    color: #444;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 120ms;
+  }
+  .tb-link:hover { background: #1a1a1a; color: #aaa; }
+  .tb-cta {
+    background: #00AFF0;
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: opacity 120ms;
+  }
+  .tb-cta:hover { opacity: 0.85; }
+
+  /* ── CONTENT WRAP + IFRAME ── */
+  #content-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  #content-frame {
+    flex: 1;
+    border: none;
+    width: 100%;
+    height: 0; /* flex grows this */
+  }
+
+  /* ── LOADING ── */
   #frame-loader {
-    position: fixed; top: 96px; left: 0; right: 0; bottom: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: #060C18; z-index: 100;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.15s;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #111;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms;
   }
   #frame-loader.show { opacity: 1; pointer-events: all; }
   .loader-spinner {
-    width: 36px; height: 36px; border: 3px solid #1A2A3A;
-    border-top-color: #9B59F5; border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #1e1e1e;
+    border-top-color: #00AFF0;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── IFRAME ── */
-  #content-frame {
-    position: fixed;
-    top: 96px; left: 0; right: 0; bottom: 0;
-    width: 100%; height: calc(100vh - 96px);
-    border: none;
-  }
 </style>
 </head>
 <body>
+
 <script>
 (function(){
   if (localStorage.getItem('od_auth') !== 'd7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555') {
-    window.location.replace('/login.html');
+    window.location.replace('login.html');
   }
 })();
 </script>
 
-<!-- MAIN NAV -->
-<nav id="shell-nav">
-  <div style="display:flex;align-items:center;">
-    <a href="/index.html" class="nav-logo" target="_top">
-      <img src="/assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs" onerror="this.outerHTML='<span style=\'font-size:15px;font-weight:800;color:#9B59F5;\'>Only<span style=\'color:#E8EDF5;\'>Dwarfs</span></span>'">
-    </a>
-    <span class="nav-page-label" id="page-label">Command</span>
+<div id="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <nav id="sidebar">
+    <div class="sb-logo">
+      <img src="assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs"
+           onerror="this.outerHTML='<span class=&quot;sb-logo-text&quot;>ONLY<span>DWARFS</span></span>'">
+      <span class="sb-logo-badge">Admin</span>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-section-label">My Tools</div>
+      <button class="sb-link" id="sl-command"       onclick="navigate('command')">      <span class="sb-icon">⚡</span>Command Center</button>
+      <button class="sb-link" id="sl-crm"           onclick="navigate('crm')">          <span class="sb-icon">📋</span>Lead Tracker</button>
+      <button class="sb-link" id="sl-divas"         onclick="navigate('divas')">        <span class="sb-icon">🎭</span>DwarfDivas Admin</button>
+      <button class="sb-link" id="sl-hub"           onclick="navigate('hub')">          <span class="sb-icon">🏠</span>Empire Hub</button>
+      <button class="sb-link" id="sl-quote"         onclick="navigate('quote')">        <span class="sb-icon">💰</span>Quote Calculator</button>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-section-label">Site Manager</div>
+      <button class="sb-link" id="sl-pages"         onclick="navigate('pages')">         <span class="sb-icon">✏️</span>Edit Public Pages</button>
+      <button class="sb-link" id="sl-roster"        onclick="navigate('roster')">        <span class="sb-icon">👤</span>Roster Manager</button>
+      <button class="sb-link" id="sl-gigs"          onclick="navigate('gigs')">          <span class="sb-icon">📨</span>Open Gig Postings</button>
+      <button class="sb-link" id="sl-perf-accounts" onclick="navigate('perf-accounts')"> <span class="sb-icon">🗂</span>Performer Accounts</button>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-section-label">Talent Portal</div>
+      <button class="sb-link" id="sl-performer" onclick="navigate('performer')"><span class="sb-icon">🎪</span>Portal Overview</button>
+    </div>
+
+    <div class="sb-bottom">
+      <div class="sb-user">Ryder Warbrick · Admin</div>
+      <button class="sb-signout" onclick="signOut()">← Back to public site</button>
+    </div>
+  </nav>
+
+  <!-- ══ CONTENT AREA ══ -->
+  <div id="content-area">
+    <div id="top-bar">
+      <span id="page-label">Admin &rsaquo; <span id="page-label-name">Command Center</span></span>
+      <div class="top-bar-right">
+        <a href="index.html" class="tb-link" target="_top">← Public site</a>
+        <a href="intake.html" class="tb-cta" target="_top">Book now</a>
+      </div>
+    </div>
+    <div id="content-wrap">
+      <div id="frame-loader"><div class="loader-spinner"></div></div>
+      <iframe id="content-frame" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
   </div>
 
-  <ul class="nav-links">
-    <li><a href="/services.html" target="_top">Services</a></li>
-    <li><a href="/divas.html" target="_top">Divas Show</a></li>
-    <li class="nav-sep-v"></li>
-    <li><a href="#crm"     onclick="navigate('crm');     return false;">CRM</a></li>
-    <li><a href="#roster"  onclick="navigate('roster');  return false;">Roster</a></li>
-    <li><a href="#divas"   onclick="navigate('divas');   return false;">DwarfDivas</a></li>
-    <li><a href="#hub"     onclick="navigate('hub');     return false;">Hub</a></li>
-  </ul>
-
-  <div class="nav-right">
-    <a href="/intake.html" class="nav-cta" target="_top">Book now</a>
-    <button class="nav-signout" onclick="signOut()">Sign Out</button>
-  </div>
-</nav>
-
-<!-- SUB-NAV -->
-<div id="shell-subnav"></div>
-
-<!-- LOADING OVERLAY -->
-<div id="frame-loader"><div class="loader-spinner"></div></div>
-
-<!-- CONTENT IFRAME -->
-<iframe id="content-frame" src="" frameborder="0" allowfullscreen></iframe>
+</div>
 
 <script>
-// ── TOOL REGISTRY ─────────────────────────────────────────────────────
-const TOOLS = [
-  { id: 'command',    href: '/command.html',            icon: '⚙️', label: 'Command'      },
-  { id: 'crm',        href: '/crm.html',                icon: '📋', label: 'CRM'          },
-  { id: 'divas',      href: '/admin-divas.html',        icon: '🎭', label: 'DwarfDivas'   },
-  { id: 'roster',     href: '/roster.html',             icon: '👥', label: 'Roster'       },
-  { id: 'hub',        href: '/hub.html',                icon: '🧠', label: 'Hub'          },
-  null,
-  { id: 'quote',      href: '/quote.html',              icon: '💬', label: 'Quote'        },
-  { id: 'cueboard',   href: '/cueboard.html',           icon: '🎬', label: 'Cue Board'    },
-  { id: 'performer',  href: '/performer-dashboard.html',icon: '🎤', label: 'Performer'    },
-];
-
-let activeTool = null;
-
-function buildSubnav() {
-  const subnav = document.getElementById('shell-subnav');
-  subnav.innerHTML = TOOLS.map(tool => {
-    if (!tool) return '<div class="sn-sep"></div>';
-    return `<button class="sn-link" id="sn-${tool.id}" onclick="navigate('${tool.id}')">
-      <span class="sn-icon">${tool.icon}</span>${tool.label}
-    </button>`;
-  }).join('');
-}
-
-function navigate(id, pushState = true) {
-  const tool = TOOLS.find(t => t && t.id === id);
-  if (!tool) return;
-  activeTool = id;
-
-  document.querySelectorAll('.sn-link').forEach(el => el.classList.remove('active'));
-  const btn = document.getElementById('sn-' + id);
-  if (btn) btn.classList.add('active');
-
-  document.getElementById('page-label').textContent = tool.label;
-
-  const loader = document.getElementById('frame-loader');
-  loader.classList.add('show');
-
-  const frame = document.getElementById('content-frame');
-  frame.src = tool.href;
-
-  if (pushState) {
-    history.pushState({ tool: id }, tool.label, '#' + id);
-  }
-  document.title = `OnlyDwarfs — ${tool.label}`;
-}
-
-document.getElementById('content-frame').addEventListener('load', () => {
-  document.getElementById('frame-loader').classList.remove('show');
-});
-
-window.addEventListener('popstate', e => {
-  const id = (e.state && e.state.tool) || getHashTool() || 'command';
-  navigate(id, false);
-});
-
-function getHashTool() {
-  const hash = window.location.hash.replace('#', '');
-  return TOOLS.find(t => t && t.id === hash) ? hash : null;
-}
-
-function signOut() {
-  localStorage.removeItem('od_auth');
-  sessionStorage.removeItem('od_performer');
-  window.location.href = '/index.html';
-}
-
-buildSubnav();
-const startTool = getHashTool() || 'command';
-navigate(startTool, false);
-</script>
-</body>
-</html>
+// ── TOOL REGISTRY ──────────────────────────────────────────────────────────────
+const TOOLS = {
+  command:          { href: 'command.html',              label: 'Command Center',     sb: 'sl-command'       },
+  crm:             
