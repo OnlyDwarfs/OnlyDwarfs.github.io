@@ -3,197 +3,337 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roster Manager</title>
+<title>Performer Directory</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: #0d0d0d; color: #ccc; font-family: 'Inter', sans-serif; min-height: 100vh; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#0d0d0d;color:#ccc;font-family:'Inter',sans-serif;min-height:100vh;font-size:13px}
 
-  .page { padding: 28px 32px; }
-  .page-header { margin-bottom: 22px; }
-  .breadcrumb { font-size: 11px; color: #444; margin-bottom: 6px; }
-  .breadcrumb span { color: #888; }
-  .page-title { font-size: 22px; font-weight: 900; color: #fff; }
-  .page-sub { font-size: 13px; color: #555; margin-top: 4px; }
+  /* ── PAGE ── */
+  .page{padding:24px 28px;max-width:100%}
+  .page-hd{margin-bottom:18px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .page-title{font-size:20px;font-weight:900;color:#fff}
+  .page-sub{font-size:12px;color:#555;margin-top:3px}
 
-  .notice { border-radius: 7px; padding: 10px 14px; font-size: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-  .notice-blue { background: rgba(0,175,240,0.07); border: 1px solid rgba(0,175,240,0.2); color: #00AFF0; }
+  /* ── STATS BAR ── */
+  .stats-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .stat-pill{background:#1a1a1a;border:1px solid #222;border-radius:8px;padding:8px 14px;display:flex;flex-direction:column;gap:2px;min-width:90px}
+  .stat-pill .num{font-size:20px;font-weight:900;color:#fff}
+  .stat-pill .lbl{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.05em}
+  .stat-pill.green .num{color:#22c55e}
+  .stat-pill.blue .num{color:#00AFF0}
+  .stat-pill.yellow .num{color:#f59e0b}
+  .stat-pill.grey .num{color:#666}
 
-  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; }
-  .search-box {
-    flex: 1; max-width: 280px;
-    padding: 7px 12px; background: #1a1a1a;
-    border: 1px solid #2a2a2a; border-radius: 7px;
-    font-size: 13px; color: #ccc; font-family: inherit; outline: none;
-  }
-  .search-box:focus { border-color: #00AFF0; }
+  /* ── TOOLBAR ── */
+  .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+  .search-wrap{position:relative;flex:1;min-width:180px;max-width:300px}
+  .search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#555;pointer-events:none}
+  .search-box{width:100%;padding:7px 10px 7px 30px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:7px;font-size:13px;color:#ccc;font-family:inherit;outline:none}
+  .search-box:focus{border-color:#00AFF0}
+  .filter-sel{padding:7px 10px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:7px;font-size:12px;color:#aaa;font-family:inherit;outline:none;cursor:pointer}
+  .filter-sel:focus{border-color:#00AFF0}
+  .result-count{font-size:11px;color:#444;margin-left:auto;white-space:nowrap;align-self:center}
 
-  .section-hd {
-    font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase;
-    letter-spacing: 0.06em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-  }
-  .section-hd .count { background: #222; border-radius: 20px; padding: 1px 8px; font-size: 10px; color: #888; }
+  /* ── LIST ── */
+  .performer-list{display:flex;flex-direction:column;gap:0}
+  .list-header{display:grid;grid-template-columns:40px 1fr 140px 140px 100px 70px;gap:10px;align-items:center;padding:6px 14px;font-size:10px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #1a1a1a;margin-bottom:4px}
+  .perf-row{display:grid;grid-template-columns:40px 1fr 140px 140px 100px 70px;gap:10px;align-items:center;padding:10px 14px;border-radius:8px;cursor:pointer;transition:background 120ms;border:1px solid transparent}
+  .perf-row:hover{background:#161616;border-color:#2a2a2a}
+  .perf-row.selected{background:#0d1a2a;border-color:#00AFF0}
 
-  .roster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a1a2e,#0d1a40);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#00AFF0;overflow:hidden;flex-shrink:0}
+  .avatar img{width:100%;height:100%;object-fit:cover}
 
-  .talent-card {
-    background: #1a1a1a; border: 1px solid #222; border-radius: 10px;
-    padding: 16px; cursor: pointer; transition: border-color 150ms;
-    position: relative;
-  }
-  .talent-card:hover { border-color: #00AFF0; }
-  .talent-card.inactive { opacity: 0.5; }
-  .talent-card.inactive:hover { opacity: 0.8; border-color: #333; }
+  .perf-name-col .name{font-size:13px;font-weight:700;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .perf-name-col .type{font-size:11px;color:#555;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-  .card-photo {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: linear-gradient(135deg, #1a1a2e, #0d1a40);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; font-weight: 900; color: #00AFF0;
-    margin: 0 auto 10px; overflow: hidden;
-  }
-  .card-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .col-loc{font-size:12px;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .col-phone{font-size:12px;color:#aaa;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .col-phone.has-phone{color:#00AFF0;font-weight:500}
 
-  .card-name { font-size: 13px; font-weight: 700; color: #ddd; text-align: center; margin-bottom: 3px; }
-  .card-type { font-size: 11px; color: #555; text-align: center; margin-bottom: 10px; }
-  .card-bio  { font-size: 11px; color: #444; line-height: 1.5; margin-bottom: 10px;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .status-badge{display:inline-block;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+  .badge-active{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25)}
+  .badge-pending{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+  .badge-inactive{background:rgba(100,100,100,.1);color:#555;border:1px solid #222}
 
-  .card-foot { display: flex; gap: 6px; justify-content: center; }
+  .col-actions{display:flex;gap:4px;justify-content:flex-end}
+  .btn-icon{background:none;border:1px solid #2a2a2a;border-radius:6px;padding:4px 7px;font-size:11px;color:#666;cursor:pointer;transition:all 120ms;white-space:nowrap}
+  .btn-icon:hover{border-color:#555;color:#aaa}
 
-  .tag { display: inline-block; border-radius: 20px; padding: 2px 9px; font-size: 10px; font-weight: 600; }
-  .tag-green  { background: rgba(34,197,94,0.1);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.2);  }
-  .tag-grey   { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #2a2a2a; }
-  .tag-orange { background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+  .empty-state{padding:40px;text-align:center;color:#444;font-size:13px}
+  .spinner-wrap{padding:40px;text-align:center}
+  .spinner{display:inline-block;width:24px;height:24px;border:2px solid #222;border-top-color:#00AFF0;border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-  .btn { display: inline-block; padding: 5px 11px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: opacity 120ms; }
-  .btn:hover { opacity: 0.85; }
-  .btn-blue  { background: #00AFF0; color: #000; }
-  .btn-dark  { background: #222; border: 1px solid #333; color: #888; }
-  .btn-dark:hover { border-color: #00AFF0; color: #00AFF0; opacity: 1; }
-  .btn-red-ghost { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: #f87171; }
-  .btn-red-ghost:hover { background: rgba(239,68,68,0.08); opacity: 1; }
-  .btn-green-ghost { background: transparent; border: 1px solid rgba(34,197,94,0.3); color: #4ade80; }
-  .btn-green-ghost:hover { background: rgba(34,197,94,0.08); opacity: 1; }
-  .btn-lg { padding: 8px 18px; font-size: 12px; }
+  /* ── DETAIL OVERLAY ── */
+  .detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;backdrop-filter:blur(2px)}
+  .detail-overlay.open{display:block}
+  .detail-panel{position:fixed;top:0;right:0;height:100vh;width:420px;max-width:95vw;background:#111;border-left:1px solid #222;z-index:101;overflow-y:auto;transform:translateX(100%);transition:transform 220ms ease;display:flex;flex-direction:column}
+  .detail-panel.open{transform:translateX(0)}
 
-  /* Edit slide-in panel */
-  .edit-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7); z-index: 100; align-items: flex-start; justify-content: flex-end;
-  }
-  .edit-overlay.open { display: flex; }
-  .edit-panel {
-    background: #111; border-left: 1px solid #222;
-    width: 360px; min-height: 100vh;
-    padding: 24px 22px; overflow-y: auto;
-    animation: slideIn 200ms ease;
-  }
-  @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-  .edit-panel h2 { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-  .edit-panel .sub { font-size: 12px; color: #555; margin-bottom: 20px; }
+  .dp-header{padding:20px 20px 16px;border-bottom:1px solid #1e1e1e;flex-shrink:0}
+  .dp-close{float:right;background:none;border:1px solid #2a2a2a;border-radius:6px;padding:4px 9px;color:#666;cursor:pointer;font-size:12px}
+  .dp-close:hover{color:#aaa;border-color:#555}
+  .dp-photo-wrap{display:flex;align-items:center;gap:14px;margin-top:6px}
+  .dp-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#1a1a2e,#0d1a40);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#00AFF0;overflow:hidden;flex-shrink:0}
+  .dp-avatar img{width:100%;height:100%;object-fit:cover}
+  .dp-name{font-size:17px;font-weight:900;color:#fff;margin-bottom:3px}
+  .dp-type{font-size:12px;color:#555}
+  .dp-id{font-size:10px;color:#333;margin-top:2px}
 
-  .form-row { margin-bottom: 14px; }
-  .form-row label { display: block; font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
-  .form-row input, .form-row select, .form-row textarea {
-    width: 100%; padding: 8px 10px;
-    background: #1a1a1a; border: 1px solid #2a2a2a;
-    border-radius: 7px; font-size: 13px; color: #ccc; font-family: inherit; outline: none;
-  }
-  .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: #00AFF0; }
-  .form-row textarea { height: 80px; resize: vertical; }
+  /* Status toggle */
+  .status-toggle{display:flex;gap:4px;margin-top:12px}
+  .st-btn{flex:1;padding:5px 8px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;text-align:center;border:1px solid #2a2a2a;background:#1a1a1a;color:#555;transition:all 120ms}
+  .st-btn.active-status{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.4);color:#22c55e}
+  .st-btn.pending-status{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:#f59e0b}
+  .st-btn.inactive-status{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:#ef4444}
+  .st-btn:hover:not(.active-status):not(.pending-status):not(.inactive-status){border-color:#444;color:#888}
+  .st-saving{opacity:.5;pointer-events:none}
 
-  .edit-actions { display: flex; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #1a1a1a; }
+  .dp-body{padding:16px 20px;flex:1}
 
-  /* Status section toggle */
-  .visibility-row {
-    display: flex; align-items: center; gap: 10px;
-    background: #1a1a1a; border: 1px solid #222; border-radius: 8px;
-    padding: 12px 14px; margin-bottom: 20px;
-  }
-  .visibility-row .vr-label { flex: 1; font-size: 12px; font-weight: 600; color: #aaa; }
-  .visibility-row .vr-sub { font-size: 11px; color: #444; margin-top: 2px; }
+  /* Info sections */
+  .dp-section{margin-bottom:18px}
+  .dp-section-hd{font-size:10px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .dp-section-hd::after{content:'';flex:1;height:1px;background:#1e1e1e}
 
-  /* Loading */
-  .state-msg { text-align: center; padding: 40px; color: #444; font-size: 13px; }
-  .spinner { width: 20px; height: 20px; border: 2px solid #222; border-top-color: #00AFF0; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 10px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .info-item{background:#161616;border:1px solid #1e1e1e;border-radius:7px;padding:8px 10px}
+  .info-item.full{grid-column:1/-1}
+  .info-item .label{font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+  .info-item .value{font-size:13px;color:#ccc;font-weight:500;word-break:break-all}
+  .info-item .value.dim{color:#444;font-style:italic;font-weight:400}
+  .info-item a{color:#00AFF0;text-decoration:none}
+  .info-item a:hover{text-decoration:underline}
+  .info-item .value.phone-val{font-size:14px;font-weight:700;color:#00AFF0}
 
-  /* Toast */
-  #toast { position: fixed; bottom: 20px; right: 20px; padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; opacity: 0; transition: opacity 220ms; pointer-events: none; z-index: 999; }
-  #toast.show { opacity: 1; }
-  #toast.success { background: #166534; color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
-  #toast.error   { background: #7f1d1d; color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+  /* Edit mode */
+  .edit-section{display:none}
+  .edit-section.show{display:block}
+  .view-section{display:block}
+  .view-section.hide{display:none}
 
-  .empty-state { text-align: center; padding: 28px; color: #444; font-size: 12px; border: 1px dashed #222; border-radius: 10px; }
+  .form-row{margin-bottom:10px}
+  .form-row label{display:block;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+  .form-row input,.form-row textarea,.form-row select{width:100%;padding:7px 10px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;font-size:13px;color:#ccc;font-family:inherit;outline:none}
+  .form-row input:focus,.form-row textarea:focus{border-color:#00AFF0}
+  .form-row textarea{resize:vertical;min-height:70px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
-  /* Photo upload widget */
-  .photo-upload-wrap { display: flex; gap: 12px; align-items: flex-start; }
-  .photo-preview {
-    width: 72px; height: 72px; border-radius: 10px; flex-shrink: 0;
-    background: #1a1a1a; border: 1px dashed #333;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; overflow: hidden; cursor: pointer; transition: border-color 150ms;
-  }
-  .photo-preview:hover { border-color: #00AFF0; }
-  .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
-  .photo-upload-right { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-  .photo-upload-right input[type="url"] { width: 100%; }
-  .photo-upload-btns { display: flex; gap: 6px; }
-  .btn-upload { background: #1a1a1a; border: 1px solid #333; color: #888; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; }
-  .btn-upload:hover { border-color: #00AFF0; color: #00AFF0; }
-  .btn-remove-photo { background: transparent; border: 1px solid rgba(239,68,68,0.25); color: #f87171; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; display: none; }
-  .btn-remove-photo:hover { background: rgba(239,68,68,0.08); }
-  .photo-hint { font-size: 10px; color: #444; line-height: 1.5; }
+  /* Actions */
+  .dp-footer{padding:14px 20px;border-top:1px solid #1e1e1e;display:flex;gap:8px;flex-shrink:0}
+  .btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all 120ms}
+  .btn-blue{background:#00AFF0;color:#000}
+  .btn-blue:hover{background:#0099d0}
+  .btn-ghost{background:#1a1a1a;color:#aaa;border:1px solid #2a2a2a}
+  .btn-ghost:hover{border-color:#555;color:#fff}
+  .btn-danger{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+  .btn-danger:hover{background:rgba(239,68,68,.2)}
+  .btn:disabled{opacity:.4;pointer-events:none}
+  .btn-full{flex:1}
+  .save-msg{font-size:11px;padding:4px 8px;border-radius:5px;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);align-self:center;white-space:nowrap}
+
+  /* Scrollbar */
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:#0d0d0d}
+  ::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:2px}
 </style>
 </head>
 <body>
 <div class="page">
-  <div class="page-header">
-    <div class="breadcrumb">Site Manager › <span>Roster Manager</span></div>
-    <div class="page-title">Roster Manager</div>
-    <div class="page-sub">Control who appears on the public roster page, edit bios and photos.</div>
+  <div class="page-hd">
+    <div>
+      <div class="page-title">Performer Directory</div>
+      <div class="page-sub">Search, browse, and manage all performers. Click any row for full details.</div>
+    </div>
+    <button class="btn btn-ghost" onclick="load()" style="font-size:12px">↻ Refresh</button>
   </div>
 
-  <div class="notice notice-blue">ℹ️ Only <strong>Active</strong> performers appear on the public roster. Toggle visibility to add or remove someone.</div>
+  <!-- Stats -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-pill"><span class="num" id="st-total">—</span><span class="lbl">Total</span></div>
+    <div class="stat-pill green"><span class="num" id="st-active">—</span><span class="lbl">Active</span></div>
+    <div class="stat-pill yellow"><span class="num" id="st-pending">—</span><span class="lbl">Pending</span></div>
+    <div class="stat-pill grey"><span class="num" id="st-inactive">—</span><span class="lbl">Inactive</span></div>
+  </div>
 
+  <!-- Toolbar -->
   <div class="toolbar">
-    <input class="search-box" type="text" id="search-box" placeholder="Search by name or type…" oninput="renderAll()">
-    <button class="btn btn-blue btn-lg" onclick="openCreate()" style="margin-left:auto">+ Add Performer</button>
-    <button class="btn btn-dark btn-lg" onclick="load()">↻ Refresh</button>
-    <a href="roster.html" target="_blank" class="btn btn-dark btn-lg">View Public Page ↗</a>
+    <div class="search-wrap">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-box" id="search-box" type="text" placeholder="Search name, type, location, phone…" oninput="renderList()">
+    </div>
+    <select class="filter-sel" id="filter-status" onchange="renderList()">
+      <option value="">All Status</option>
+      <option value="Active">Active</option>
+      <option value="Pending">Pending</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+    <select class="filter-sel" id="filter-type" onchange="renderList()">
+      <option value="">All Types</option>
+    </select>
+    <span class="result-count" id="result-count"></span>
   </div>
 
-  <div id="main-content">
-    <div class="state-msg"><div class="spinner"></div>Loading roster…</div>
+  <!-- Column headers -->
+  <div class="list-header" style="display:grid;grid-template-columns:40px 1fr 140px 140px 100px 70px;gap:10px;padding:5px 14px;font-size:10px;font-weight:700;color:#333;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">
+    <span></span>
+    <span>Performer</span>
+    <span>Location</span>
+    <span>Phone</span>
+    <span>Status</span>
+    <span></span>
+  </div>
+
+  <!-- List -->
+  <div id="performer-list">
+    <div class="spinner-wrap"><div class="spinner"></div></div>
   </div>
 </div>
 
-<!-- Edit Panel -->
-<div class="edit-overlay" id="edit-overlay" onclick="closeEdit(event)">
-  <div class="edit-panel" id="edit-panel">
-    <!-- filled by JS -->
+<!-- Detail overlay -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail()"></div>
+
+<!-- Detail panel -->
+<div class="detail-panel" id="detail-panel">
+  <div class="dp-header">
+    <button class="dp-close" onclick="closeDetail()">✕ Close</button>
+    <div class="dp-photo-wrap">
+      <div class="dp-avatar" id="dp-avatar">?</div>
+      <div>
+        <div class="dp-name" id="dp-name">—</div>
+        <div class="dp-type" id="dp-type">—</div>
+        <div class="dp-id" id="dp-id">—</div>
+      </div>
+    </div>
+    <!-- Status toggle -->
+    <div class="status-toggle" id="status-toggle">
+      <div class="st-btn" id="stb-Active"   onclick="setStatus('Active')">✓ Active</div>
+      <div class="st-btn" id="stb-Pending"  onclick="setStatus('Pending')">● Pending</div>
+      <div class="st-btn" id="stb-Inactive" onclick="setStatus('Inactive')">✕ Inactive</div>
+    </div>
+  </div>
+
+  <div class="dp-body">
+    <!-- VIEW MODE -->
+    <div class="view-section" id="view-section">
+
+      <div class="dp-section">
+        <div class="dp-section-hd">Contact</div>
+        <div class="info-grid">
+          <div class="info-item full">
+            <div class="label">Phone</div>
+            <div class="value phone-val" id="dp-phone-view">—</div>
+          </div>
+          <div class="info-item full">
+            <div class="label">Email</div>
+            <div class="value" id="dp-email-view">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dp-section">
+        <div class="dp-section-hd">Booking Info</div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="label">Rate</div>
+            <div class="value" id="dp-rate-view">—</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Location</div>
+            <div class="value" id="dp-location-view">—</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Gigs</div>
+            <div class="value" id="dp-gigs-view">—</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Since</div>
+            <div class="value" id="dp-since-view">—</div>
+          </div>
+          <div class="info-item full">
+            <div class="label">Instagram</div>
+            <div class="value" id="dp-social-view">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dp-section" id="dp-bio-section">
+        <div class="dp-section-hd">Bio</div>
+        <div style="font-size:12px;color:#888;line-height:1.6" id="dp-bio-view">—</div>
+      </div>
+
+    </div>
+
+    <!-- EDIT MODE -->
+    <div class="edit-section" id="edit-section">
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Display Name</label>
+          <input id="ep-name" type="text" placeholder="Full name">
+        </div>
+        <div class="form-row">
+          <label>Performer Type</label>
+          <input id="ep-type" type="text" placeholder="e.g. Exotic Entertainer">
+        </div>
+        <div class="form-row">
+          <label>Phone</label>
+          <input id="ep-phone" type="tel" placeholder="+1 (702) 000-0000">
+        </div>
+        <div class="form-row">
+          <label>Email</label>
+          <input id="ep-email" type="email" placeholder="email@example.com">
+        </div>
+        <div class="form-row">
+          <label>Location</label>
+          <input id="ep-location" type="text" placeholder="City, State">
+        </div>
+        <div class="form-row">
+          <label>Rate</label>
+          <input id="ep-rate" type="text" placeholder="e.g. $400/hr">
+        </div>
+        <div class="form-row">
+          <label>Instagram</label>
+          <input id="ep-social" type="text" placeholder="username (no @)">
+        </div>
+        <div class="form-row">
+          <label>Photo URL</label>
+          <input id="ep-photo" type="url" placeholder="https://…">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Bio <span style="font-weight:400;text-transform:none;color:#444">(public roster)</span></label>
+        <textarea id="ep-bio" placeholder="Short bio…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="dp-footer" id="dp-footer">
+    <button class="btn btn-ghost" id="btn-edit-toggle" onclick="toggleEditMode()">✏ Edit</button>
+    <button class="btn btn-blue btn-full" id="btn-save" onclick="saveEdit()" style="display:none">Save Changes</button>
+    <button class="btn btn-ghost" id="btn-cancel-edit" onclick="cancelEdit()" style="display:none">Cancel</button>
+    <span class="save-msg" id="save-msg" style="display:none">Saved ✓</span>
   </div>
 </div>
-
-<div id="toast"></div>
 
 <script>
 if (!localStorage.getItem('od_auth')) { window.top.location.href = 'login.html'; }
 
 const CRM_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec';
 let allTalent = [];
-let editingId = null;
+let activeId  = null;
+let editMode  = false;
 
 /* ── LOAD ── */
 async function load() {
-  const mc = document.getElementById('main-content');
-  mc.innerHTML = '<div class="state-msg"><div class="spinner"></div>Loading roster…</div>';
+  const list = document.getElementById('performer-list');
+  list.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+  setStats(null);
 
-  // slow-load warning after 8 seconds
   const slowTimer = setTimeout(() => {
-    const s = mc.querySelector('.state-msg');
-    if (s) s.innerHTML = '<div class="spinner"></div>Still loading — Apps Script cold start can take 15–30 sec…';
+    const s = list.querySelector('.spinner-wrap');
+    if (s) s.innerHTML = '<div class="spinner"></div><div style="color:#444;font-size:12px;margin-top:10px">Still loading — Apps Script cold start…</div>';
   }, 8000);
 
   try {
@@ -203,399 +343,305 @@ async function load() {
     clearTimeout(kill);
     const data = await resp.json();
     clearTimeout(slowTimer);
-    if (!data.talent) throw new Error(data.error || 'No talent array in response');
+    if (!data.talent) throw new Error(data.error || 'No talent data');
     allTalent = data.talent;
-    renderAll();
+    populateTypeFilter();
+    renderList();
+    setStats(allTalent);
   } catch(e) {
     clearTimeout(slowTimer);
-    mc.innerHTML = `<div class="state-msg">⚠️ ${e.name === 'AbortError' ? 'Request timed out (35s). Apps Script may be down — try Refresh.' : e.message}</div>`;
+    list.innerHTML = `<div class="empty-state">⚠️ ${e.name === 'AbortError' ? 'Request timed out (35s). Try Refresh.' : e.message}</div>`;
   }
 }
 
-/* ── RENDER ── */
-function renderAll() {
-  const q = document.getElementById('search-box').value.toLowerCase();
+function setStats(talent) {
+  if (!talent) {
+    ['total','active','pending','inactive'].forEach(k => document.getElementById('st-'+k).textContent = '—');
+    return;
+  }
+  document.getElementById('st-total').textContent   = talent.length;
+  document.getElementById('st-active').textContent  = talent.filter(p => p.status === 'Active').length;
+  document.getElementById('st-pending').textContent = talent.filter(p => p.status === 'Pending').length;
+  document.getElementById('st-inactive').textContent= talent.filter(p => p.status !== 'Active' && p.status !== 'Pending').length;
+}
+
+function populateTypeFilter() {
+  const types = [...new Set(allTalent.map(p => p.performerType).filter(Boolean))].sort();
+  const sel = document.getElementById('filter-type');
+  sel.innerHTML = '<option value="">All Types</option>' +
+    types.map(t => `<option value="${t}">${t}</option>`).join('');
+}
+
+/* ── RENDER LIST ── */
+function renderList() {
+  const q      = document.getElementById('search-box').value.toLowerCase().trim();
+  const status = document.getElementById('filter-status').value;
+  const type   = document.getElementById('filter-type').value;
+
   let rows = allTalent;
   if (q) rows = rows.filter(p =>
-    (p.name || '').toLowerCase().includes(q) ||
-    (p.performerType || '').toLowerCase().includes(q)
+    (p.name         || '').toLowerCase().includes(q) ||
+    (p.performerType|| '').toLowerCase().includes(q) ||
+    (p.location     || '').toLowerCase().includes(q) ||
+    (p.phone        || '').replace(/\D/g,'').includes(q.replace(/\D/g,'')) ||
+    (p.email        || '').toLowerCase().includes(q) ||
+    (p.social       || '').toLowerCase().includes(q)
   );
+  if (status) rows = rows.filter(p => p.status === status);
+  if (type)   rows = rows.filter(p => p.performerType === type);
 
-  const active   = rows.filter(p => p.status === 'Active');
-  const inactive = rows.filter(p => p.status !== 'Active');
+  // Sort: Active first, then Pending, then Inactive; within each: alphabetical
+  const order = { 'Active': 0, 'Pending': 1 };
+  rows = rows.slice().sort((a, b) => {
+    const oa = order[a.status] ?? 2;
+    const ob = order[b.status] ?? 2;
+    if (oa !== ob) return oa - ob;
+    return (a.name || '').localeCompare(b.name || '');
+  });
 
-  let html = '';
+  document.getElementById('result-count').textContent = rows.length === allTalent.length
+    ? `${rows.length} performers`
+    : `${rows.length} of ${allTalent.length}`;
 
-  // On Roster
-  html += `<div class="section-hd">🟢 On Public Roster <span class="count">${active.length}</span></div>`;
-  if (active.length) {
-    html += `<div class="roster-grid">${active.map(buildCard).join('')}</div>`;
-  } else {
-    html += `<div class="empty-state" style="margin-bottom:28px">No active performers on the roster.</div>`;
+  if (!rows.length) {
+    document.getElementById('performer-list').innerHTML = '<div class="empty-state">No performers match your filters.</div>';
+    return;
   }
 
-  // Off Roster
-  html += `<div class="section-hd">⚫ Off Roster / Inactive <span class="count">${inactive.length}</span></div>`;
-  if (inactive.length) {
-    html += `<div class="roster-grid">${inactive.map(buildCard).join('')}</div>`;
-  } else {
-    html += `<div class="empty-state">No inactive performers.</div>`;
-  }
-
-  document.getElementById('main-content').innerHTML = html;
+  document.getElementById('performer-list').innerHTML = rows.map(buildRow).join('');
 }
 
-function buildCard(p) {
-  const init    = (p.name || '?')[0].toUpperCase();
-  const isActive = p.status === 'Active';
+function buildRow(p) {
+  const init = (p.name || '?')[0].toUpperCase();
   const photoEl = p.photo
-    ? `<img src="${p.photo}" alt="${p.name}" onerror="this.style.display='none'">`
+    ? `<img src="${p.photo}" alt="" onerror="this.style.display='none';this.parentNode.textContent='${init}'">`
     : init;
 
-  const statusTag = isActive
-    ? `<span class="tag tag-green">On Roster</span>`
-    : `<span class="tag tag-grey">${p.status || 'Inactive'}</span>`;
+  const badge = p.status === 'Active'  ? 'badge-active'
+              : p.status === 'Pending' ? 'badge-pending'
+              : 'badge-inactive';
 
-  const toggleBtn = isActive
-    ? `<button class="btn btn-red-ghost" onclick="event.stopPropagation();toggleVisibility('${p.id}','Inactive')">Remove</button>`
-    : `<button class="btn btn-green-ghost" onclick="event.stopPropagation();toggleVisibility('${p.id}','Active')">Add to Roster</button>`;
+  const hasPhone = p.phone && p.phone.trim().length > 3;
+  const phoneTxt = hasPhone ? p.phone : '<span style="color:#2a2a2a">—</span>';
+  const locTxt   = p.location || '<span style="color:#2a2a2a">—</span>';
 
   return `
-    <div class="talent-card${isActive ? '' : ' inactive'}" onclick="openEdit('${p.id}')">
-      <div class="card-photo">${photoEl}</div>
-      <div class="card-name">${p.name}</div>
-      <div class="card-type">${p.performerType || '—'}</div>
-      ${p.bio ? `<div class="card-bio">${p.bio}</div>` : '<div class="card-bio" style="color:#333;font-style:italic">No bio yet</div>'}
-      <div class="card-foot">
-        ${statusTag}
-        <button class="btn btn-dark" onclick="event.stopPropagation();openEdit('${p.id}')">Edit</button>
-        ${toggleBtn}
+    <div class="perf-row${activeId === p.id ? ' selected' : ''}" id="row-${p.id}" onclick="openDetail('${p.id}')">
+      <div class="avatar">${photoEl}</div>
+      <div class="perf-name-col">
+        <div class="name">${p.name || '—'}</div>
+        <div class="type">${p.performerType || '—'}</div>
+      </div>
+      <div class="col-loc">${locTxt}</div>
+      <div class="col-phone${hasPhone ? ' has-phone' : ''}">${phoneTxt}</div>
+      <div><span class="status-badge ${badge}">${p.status || 'Inactive'}</span></div>
+      <div class="col-actions">
+        <button class="btn-icon" onclick="event.stopPropagation();openDetail('${p.id}')">View</button>
       </div>
     </div>`;
 }
 
-/* ── PHOTO UPLOAD HELPERS ── */
-function compressImage(file, maxSize = 480, quality = 0.82) {
-  return new Promise((resolve, reject) => {
-    if (file.size > 8 * 1024 * 1024) { reject(new Error('File too large — max 8MB')); return; }
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('Could not read file'));
-    reader.onload = e => {
-      const img = new Image();
-      img.onerror = () => reject(new Error('Invalid image'));
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let w = img.width, h = img.height;
-        if (w > h) { if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; } }
-        else        { if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; } }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', quality));
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-// Renders the photo upload widget HTML for edit/create panels
-function photoWidgetHTML(currentSrc) {
-  const previewContent = currentSrc
-    ? `<img src="${currentSrc}" id="ep-photo-preview-img" alt="Preview">`
-    : `<span id="ep-photo-preview-img">📷</span>`;
-  return `
-    <div class="photo-upload-wrap">
-      <div class="photo-preview" id="ep-photo-preview" onclick="document.getElementById('ep-photo-file').click()">
-        ${previewContent}
-      </div>
-      <div class="photo-upload-right">
-        <input type="url" id="ep-photo" placeholder="Or paste URL…" value="${currentSrc || ''}" oninput="onPhotoUrlInput()">
-        <div class="photo-upload-btns">
-          <button type="button" class="btn-upload" onclick="document.getElementById('ep-photo-file').click()">📁 Upload Photo</button>
-          <button type="button" class="btn-remove-photo" id="ep-photo-remove" onclick="clearPhoto()" ${currentSrc ? 'style="display:inline-block"' : ''}>Remove</button>
-        </div>
-        <div class="photo-hint">Click the preview or Upload to choose a file. Max 8MB · JPEG/PNG/WebP</div>
-      </div>
-    </div>
-    <input type="file" id="ep-photo-file" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">`;
-}
-
-async function handlePhotoUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-  try {
-    const compressed = await compressImage(file);
-    setPhotoPreview(compressed);
-    document.getElementById('ep-photo').value = ''; // clear URL field — using uploaded data
-    toast('Photo ready ✓', 'success');
-  } catch(e) {
-    toast(e.message, 'error');
-  }
-  input.value = '';
-}
-
-function setPhotoPreview(src) {
-  const preview = document.getElementById('ep-photo-preview');
-  preview.innerHTML = src
-    ? `<img src="${src}" id="ep-photo-preview-img" alt="Preview">`
-    : `<span id="ep-photo-preview-img">📷</span>`;
-  const removeBtn = document.getElementById('ep-photo-remove');
-  if (removeBtn) removeBtn.style.display = src ? 'inline-block' : 'none';
-  preview._uploadedData = src || null;
-}
-
-function clearPhoto() {
-  setPhotoPreview(null);
-  document.getElementById('ep-photo').value = '';
-}
-
-function onPhotoUrlInput() {
-  const val = document.getElementById('ep-photo').value.trim();
-  const preview = document.getElementById('ep-photo-preview');
-  preview._uploadedData = null;
-  setPhotoPreview(val || null);
-}
-
-// Returns the final photo value: uploaded base64 takes priority over URL field
-function getFinalPhoto(performerId) {
-  const preview = document.getElementById('ep-photo-preview');
-  if (preview && preview._uploadedData) {
-    // Store uploaded photo in localStorage so public roster can use it
-    if (performerId) localStorage.setItem('od_roster_photo_' + performerId, preview._uploadedData);
-    return preview._uploadedData;
-  }
-  return document.getElementById('ep-photo').value.trim();
-}
-
-/* ── CREATE PANEL ── */
-function openCreate() {
-  editingId = null;
-  document.getElementById('edit-panel').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div>
-        <h2>Add Performer</h2>
-        <div class="sub">Creates a new entry directly on the roster.</div>
-      </div>
-      <button class="btn btn-dark" onclick="closeEdit()">✕</button>
-    </div>
-
-    <div class="form-row">
-      <label>Display Name <span style="color:#f87171">*</span></label>
-      <input id="ep-name" type="text" placeholder="Full name" autofocus>
-    </div>
-    <div class="form-row">
-      <label>Performer Type / Act</label>
-      <input id="ep-type" type="text" placeholder="e.g. Exotic Entertainer, Comedian…">
-    </div>
-    <div class="form-row">
-      <label>Location</label>
-      <input id="ep-location" type="text" placeholder="City, State">
-    </div>
-    <div class="form-row">
-      <label>Bio <span style="font-weight:400;text-transform:none;color:#444">(shown publicly)</span></label>
-      <textarea id="ep-bio" placeholder="Short bio for the roster page…"></textarea>
-    </div>
-    <div class="form-row">
-      <label>Photo</label>
-      ${photoWidgetHTML('')}
-    </div>
-    <div class="form-row">
-      <label>Instagram Handle</label>
-      <input id="ep-social" type="text" placeholder="username (no @)">
-    </div>
-    <div class="form-row">
-      <label>Rate</label>
-      <input id="ep-rate" type="text" placeholder="e.g. $400/hr">
-    </div>
-    <div class="form-row">
-      <label>Email</label>
-      <input id="ep-email" type="email" placeholder="optional">
-    </div>
-    <div class="form-row">
-      <label>Phone</label>
-      <input id="ep-phone" type="text" placeholder="optional">
-    </div>
-    <div class="form-row">
-      <label>Visibility</label>
-      <select id="ep-status">
-        <option value="Active" selected>Active — show on public roster</option>
-        <option value="Inactive">Inactive — hidden from public</option>
-      </select>
-    </div>
-
-    <div class="edit-actions">
-      <button class="btn btn-blue btn-lg" onclick="createPerformer()">Create Performer</button>
-      <button class="btn btn-dark btn-lg" onclick="closeEdit()">Cancel</button>
-    </div>`;
-
-  document.getElementById('edit-overlay').classList.add('open');
-}
-
-async function createPerformer() {
-  const name = document.getElementById('ep-name').value.trim();
-  if (!name) { toast('Name is required', 'error'); return; }
-
-  // Get photo — uploaded base64 stored locally, URL passed to sheet
-  const photoVal = getFinalPhoto(null); // id unknown yet, will store after we get it back
-  const isUpload = photoVal && photoVal.startsWith('data:');
-
-  const params = new URLSearchParams({
-    action:        'createTalent',
-    name,
-    performerType: document.getElementById('ep-type').value.trim(),
-    location:      document.getElementById('ep-location').value.trim(),
-    bio:           document.getElementById('ep-bio').value.trim(),
-    photo:         isUpload ? '' : photoVal, // don't send base64 over URL
-    social:        document.getElementById('ep-social').value.trim().replace(/^@/, ''),
-    rate:          document.getElementById('ep-rate').value.trim(),
-    email:         document.getElementById('ep-email').value.trim(),
-    phone:         document.getElementById('ep-phone').value.trim(),
-    status:        document.getElementById('ep-status').value,
-  });
-
-  const btn = document.querySelector('#edit-panel .btn-blue');
-  btn.textContent = 'Creating…'; btn.disabled = true;
-
-  try {
-    const r = await fetch(`${CRM_URL}?${params}`).then(r => r.json());
-    if (!r.success) throw new Error(r.error || 'Failed');
-    // If photo was an upload, store it in localStorage keyed by the new ID
-    if (isUpload && r.id) localStorage.setItem('od_roster_photo_' + r.id, photoVal);
-    document.getElementById('edit-overlay').classList.remove('open');
-    toast(`${name} added ✓`, 'success');
-    await load();
-  } catch(e) {
-    btn.textContent = 'Create Performer'; btn.disabled = false;
-    toast('Error: ' + e.message, 'error');
-  }
-}
-
-/* ── EDIT PANEL ── */
-function openEdit(id) {
-  editingId = id;
+/* ── DETAIL PANEL ── */
+function openDetail(id) {
   const p = allTalent.find(x => x.id === id);
   if (!p) return;
+  activeId = id;
 
-  const isActive = p.status === 'Active';
-  document.getElementById('edit-panel').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div>
-        <h2>${p.name}</h2>
-        <div class="sub">${p.id} · ${p.performerType || 'Performer'}</div>
-      </div>
-      <button class="btn btn-dark" onclick="closeEdit()">✕</button>
-    </div>
+  // Highlight row
+  document.querySelectorAll('.perf-row').forEach(r => r.classList.remove('selected'));
+  const row = document.getElementById('row-' + id);
+  if (row) row.classList.add('selected');
 
-    <div class="visibility-row">
-      <div>
-        <div class="vr-label">Public Visibility</div>
-        <div class="vr-sub">Controls whether this performer shows on the roster page.</div>
-      </div>
-      ${isActive
-        ? `<button class="btn btn-red-ghost" onclick="toggleVisibility('${p.id}','Inactive')">Remove from Roster</button>`
-        : `<button class="btn btn-green-ghost" onclick="toggleVisibility('${p.id}','Active')">Add to Roster</button>`}
-    </div>
+  // Avatar
+  const avatarEl = document.getElementById('dp-avatar');
+  const init = (p.name || '?')[0].toUpperCase();
+  avatarEl.innerHTML = p.photo ? `<img src="${p.photo}" alt="" onerror="this.parentNode.textContent='${init}'">` : init;
 
-    <div class="form-row">
-      <label>Display Name</label>
-      <input id="ep-name" type="text" value="${p.name || ''}" placeholder="Full name">
-    </div>
-    <div class="form-row">
-      <label>Performer Type / Act</label>
-      <input id="ep-type" type="text" value="${p.performerType || ''}" placeholder="e.g. Exotic Entertainer">
-    </div>
-    <div class="form-row">
-      <label>Location</label>
-      <input id="ep-location" type="text" value="${p.location || ''}" placeholder="City, State">
-    </div>
-    <div class="form-row">
-      <label>Bio <span style="font-weight:400;text-transform:none;color:#444">(shows on public roster)</span></label>
-      <textarea id="ep-bio" placeholder="Short bio for the public roster page…">${p.bio || ''}</textarea>
-    </div>
-    <div class="form-row">
-      <label>Photo</label>
-      ${photoWidgetHTML(localStorage.getItem('od_roster_photo_' + p.id) || p.photo || '')}
-    </div>
-    <div class="form-row">
-      <label>Instagram Handle</label>
-      <input id="ep-social" type="text" value="${p.social || ''}" placeholder="username (no @)">
-    </div>
-    <div class="form-row">
-      <label>Rate</label>
-      <input id="ep-rate" type="text" value="${p.rate || ''}" placeholder="e.g. $400/hr">
-    </div>
+  // Header
+  document.getElementById('dp-name').textContent = p.name || '—';
+  document.getElementById('dp-type').textContent = p.performerType || '—';
+  document.getElementById('dp-id').textContent   = p.id;
 
-    <div class="edit-actions">
-      <button class="btn btn-blue btn-lg" onclick="saveEdit('${p.id}')">Save Changes</button>
-      <button class="btn btn-dark btn-lg" onclick="closeEdit()">Cancel</button>
-    </div>`;
+  // Status toggle
+  updateStatusToggle(p.status);
 
-  document.getElementById('edit-overlay').classList.add('open');
+  // View fields
+  const phone = (p.phone || '').trim();
+  const email = (p.email || '').trim();
+  const phoneEl = document.getElementById('dp-phone-view');
+  if (phone && phone.length > 3) {
+    phoneEl.innerHTML = `<a href="tel:${phone}" style="color:#00AFF0;text-decoration:none">${phone}</a>`;
+    phoneEl.className = 'value phone-val';
+  } else {
+    phoneEl.innerHTML = '<span style="color:#444;font-style:italic;font-weight:400">Not on file</span>';
+  }
+
+  const emailEl = document.getElementById('dp-email-view');
+  if (email && email.includes('@')) {
+    emailEl.innerHTML = `<a href="mailto:${email}">${email}</a>`;
+  } else {
+    emailEl.innerHTML = '<span style="color:#444;font-style:italic;font-weight:400">Not on file</span>';
+  }
+
+  const setVal = (id, val, fallback) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const v = (val || '').trim();
+    el.innerHTML = v ? `<span style="color:#ccc">${v}</span>` : `<span class="dim">${fallback || '—'}</span>`;
+  };
+
+  setVal('dp-rate-view',     p.rate,        'Not set');
+  setVal('dp-location-view', p.location,    'Unknown');
+  setVal('dp-gigs-view',     p.gigs,        '0');
+  setVal('dp-since-view',    p.submittedAt, 'Unknown');
+
+  const social = (p.social || '').trim();
+  const socialEl = document.getElementById('dp-social-view');
+  if (social) {
+    socialEl.innerHTML = `<a href="https://instagram.com/${social}" target="_blank">@${social}</a>`;
+  } else {
+    socialEl.innerHTML = '<span class="dim">—</span>';
+  }
+
+  const bio = (p.bio || '').trim();
+  document.getElementById('dp-bio-view').textContent = bio || 'No bio yet.';
+  document.getElementById('dp-bio-view').style.color = bio ? '#888' : '#333';
+
+  // Reset to view mode
+  cancelEdit();
+
+  // Open
+  document.getElementById('detail-overlay').classList.add('open');
+  document.getElementById('detail-panel').classList.add('open');
 }
 
-function closeEdit(e) {
-  if (e && e.target !== document.getElementById('edit-overlay')) return;
-  document.getElementById('edit-overlay').classList.remove('open');
-  editingId = null;
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('open');
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelectorAll('.perf-row').forEach(r => r.classList.remove('selected'));
+  activeId = null;
+  cancelEdit();
 }
 
-/* ── SAVE EDIT ── */
-async function saveEdit(id) {
-  const p = allTalent.find(x => x.id === id);
+/* ── STATUS TOGGLE ── */
+function updateStatusToggle(status) {
+  ['Active','Pending','Inactive'].forEach(s => {
+    const btn = document.getElementById('stb-' + s);
+    btn.className = 'st-btn';
+    if (s === status) {
+      btn.classList.add(s.toLowerCase() + '-status');
+    }
+  });
+}
+
+async function setStatus(newStatus) {
+  if (!activeId) return;
+  const p = allTalent.find(x => x.id === activeId);
+  if (!p || p.status === newStatus) return;
+
+  // Optimistic UI
+  const toggle = document.getElementById('status-toggle');
+  toggle.classList.add('st-saving');
+  const old = p.status;
+  p.status = newStatus;
+  updateStatusToggle(newStatus);
+
+  try {
+    const params = new URLSearchParams({ action: 'updateTalent', id: p.id, status: newStatus });
+    const r = await fetch(`${CRM_URL}?${params}`).then(r => r.json());
+    if (!r.success) throw new Error(r.error || 'Failed');
+    setStats(allTalent);
+    renderList();
+    // Re-highlight row
+    const row = document.getElementById('row-' + activeId);
+    if (row) row.classList.add('selected');
+  } catch(e) {
+    // Revert
+    p.status = old;
+    updateStatusToggle(old);
+    alert('Status update failed: ' + e.message);
+  } finally {
+    toggle.classList.remove('st-saving');
+  }
+}
+
+/* ── EDIT MODE ── */
+function toggleEditMode() {
+  const p = allTalent.find(x => x.id === activeId);
+  if (!p) return;
+
+  editMode = true;
+  document.getElementById('view-section').classList.add('hide');
+  document.getElementById('edit-section').classList.add('show');
+  document.getElementById('btn-edit-toggle').style.display = 'none';
+  document.getElementById('btn-save').style.display = 'block';
+  document.getElementById('btn-cancel-edit').style.display = 'block';
+
+  // Populate edit fields
+  document.getElementById('ep-name').value     = p.name || '';
+  document.getElementById('ep-type').value     = p.performerType || '';
+  document.getElementById('ep-phone').value    = p.phone || '';
+  document.getElementById('ep-email').value    = p.email || '';
+  document.getElementById('ep-location').value = p.location || '';
+  document.getElementById('ep-rate').value     = p.rate || '';
+  document.getElementById('ep-social').value   = p.social || '';
+  document.getElementById('ep-photo').value    = p.photo || '';
+  document.getElementById('ep-bio').value      = p.bio || '';
+}
+
+function cancelEdit() {
+  editMode = false;
+  document.getElementById('view-section').classList.remove('hide');
+  document.getElementById('edit-section').classList.remove('show');
+  document.getElementById('btn-edit-toggle').style.display = 'block';
+  document.getElementById('btn-save').style.display = 'none';
+  document.getElementById('btn-cancel-edit').style.display = 'none';
+  document.getElementById('save-msg').style.display = 'none';
+}
+
+async function saveEdit() {
+  const p = allTalent.find(x => x.id === activeId);
   if (!p) return;
 
   const name          = document.getElementById('ep-name').value.trim();
   const performerType = document.getElementById('ep-type').value.trim();
+  const phone         = document.getElementById('ep-phone').value.trim();
+  const email         = document.getElementById('ep-email').value.trim();
   const location      = document.getElementById('ep-location').value.trim();
-  const bio           = document.getElementById('ep-bio').value.trim();
-  const social        = document.getElementById('ep-social').value.trim().replace(/^@/, '');
   const rate          = document.getElementById('ep-rate').value.trim();
+  const social        = document.getElementById('ep-social').value.trim().replace(/^@/, '');
+  const photo         = document.getElementById('ep-photo').value.trim();
+  const bio           = document.getElementById('ep-bio').value.trim();
 
-  // Photo: if uploaded, store in localStorage and don't send base64 to sheet
-  const photoVal  = getFinalPhoto(id);
-  const isUpload  = photoVal && photoVal.startsWith('data:');
-  const photo     = isUpload ? (p.photo || '') : photoVal; // keep old sheet URL if upload
-
-  const params = new URLSearchParams({ action: 'updateTalent', id,
-    name, performerType, location, bio, photo, social, rate });
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
 
   try {
+    const params = new URLSearchParams({ action: 'updateTalent', id: p.id,
+      name, performerType, phone, email, location, rate, social, photo, bio });
     const r = await fetch(`${CRM_URL}?${params}`).then(r => r.json());
-    if (!r.success) throw new Error(r.error || 'Update failed');
-    // Update local data — if uploaded, use the base64 for immediate card preview
-    Object.assign(p, { name, performerType, location, bio, photo: isUpload ? photoVal : photo, social, rate });
-    document.getElementById('edit-overlay').classList.remove('open');
-    editingId = null;
-    renderAll();
-    toast('Saved ✓', 'success');
-  } catch(e) {
-    toast('Error: ' + e.message, 'error');
-  }
-}
+    if (!r.success) throw new Error(r.error || 'Save failed');
 
-/* ── TOGGLE VISIBILITY ── */
-async function toggleVisibility(id, newStatus) {
-  try {
-    const url = `${CRM_URL}?action=setTalentStatus&id=${encodeURIComponent(id)}&status=${encodeURIComponent(newStatus)}`;
-    const r = await fetch(url).then(r => r.json());
-    if (!r.success) throw new Error(r.error || 'Failed');
-    const p = allTalent.find(x => x.id === id);
-    if (p) p.status = newStatus;
-    renderAll();
-    toast(newStatus === 'Active' ? 'Added to public roster ✓' : 'Removed from public roster ✓', 'success');
-  } catch(e) {
-    toast('Error: ' + e.message, 'error');
-  }
-}
+    // Update local
+    Object.assign(p, { name, performerType, phone, email, location, rate, social, photo, bio });
 
-/* ── TOAST ── */
-let toastTimer;
-function toast(msg, type) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'show ' + (type || '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+    // Update header
+    document.getElementById('dp-name').textContent = name || p.name;
+    document.getElementById('dp-type').textContent = performerType || p.performerType;
+
+    cancelEdit();
+    openDetail(p.id); // re-render view
+    const msg = document.getElementById('save-msg');
+    msg.style.display = 'inline-block';
+    setTimeout(() => { msg.style.display = 'none'; }, 2500);
+    renderList();
+  } catch(e) {
+    alert('Save failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save Changes';
+  }
 }
 
 load();
