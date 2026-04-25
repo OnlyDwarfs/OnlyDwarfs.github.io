@@ -54,7 +54,7 @@
     <div class="page-sub">Control what appears on each public-facing page of the website.</div>
   </div>
 
-  <div class="notice notice-yellow">⚠️ Live edits — changes here update the live site.</div>
+  <div class="notice notice-yellow">⚠️ Live edits — changes here update the live site. Coming in next build: inline editing.</div>
 
   <h2>Main Pages</h2>
   <div class="grid-3">
@@ -118,4 +118,6 @@
     </div>
   </div>
 </div>
-<script>if (!loc
+<script>if (!localStorage.getItem('od_auth')) { window.top.location.href = 'login.html'; }</script>
+</body>
+</html>
