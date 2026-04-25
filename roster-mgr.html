@@ -579,4 +579,26 @@ async function toggleVisibility(id, newStatus) {
     const url = `${CRM_URL}?action=setTalentStatus&id=${encodeURIComponent(id)}&status=${encodeURIComponent(newStatus)}`;
     const r = await fetch(url).then(r => r.json());
     if (!r.success) throw new Error(r.error || 'Failed');
-    const p = allTal
+    const p = allTalent.find(x => x.id === id);
+    if (p) p.status = newStatus;
+    renderAll();
+    toast(newStatus === 'Active' ? 'Added to public roster ✓' : 'Removed from public roster ✓', 'success');
+  } catch(e) {
+    toast('Error: ' + e.message, 'error');
+  }
+}
+
+/* ── TOAST ── */
+let toastTimer;
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+load();
+</script>
+</body>
+</html>
