@@ -7,236 +7,41 @@
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    height: 100%; overflow: hidden;
-    background: #0d0d0d;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
-
-  /* ── LAYOUT ── */
-  #shell {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
-  }
-
-  /* ── SIDEBAR ── */
-  #sidebar {
-    width: 220px;
-    flex-shrink: 0;
-    background: #111;
-    border-right: 1px solid #1e1e1e;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
-  }
+  html, body { height: 100%; overflow: hidden; background: #0d0d0d; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  #shell { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+  #sidebar { width: 220px; flex-shrink: 0; background: #111; border-right: 1px solid #1e1e1e; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
   #sidebar::-webkit-scrollbar { display: none; }
-
-  .sb-logo {
-    padding: 16px 14px 14px;
-    border-bottom: 1px solid #1e1e1e;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  .sb-logo img {
-    height: 20px;
-    width: auto;
-  }
-  .sb-logo-text {
-    font-size: 13px;
-    font-weight: 900;
-    color: #fff;
-    letter-spacing: -0.03em;
-  }
+  .sb-logo { padding: 16px 14px 14px; border-bottom: 1px solid #1e1e1e; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .sb-logo img { height: 20px; width: auto; }
+  .sb-logo-text { font-size: 13px; font-weight: 900; color: #fff; letter-spacing: -0.03em; }
   .sb-logo-text span { color: #00AFF0; }
-  .sb-logo-badge {
-    margin-left: auto;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #444;
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 4px;
-    padding: 2px 6px;
-    flex-shrink: 0;
-  }
-
-  .sb-section {
-    padding: 14px 10px 4px;
-  }
-  .sb-section-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #3a3a3a;
-    padding: 0 8px;
-    margin-bottom: 4px;
-  }
-  .sb-link {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 7px 10px;
-    border-radius: 7px;
-    color: #666;
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    margin-bottom: 1px;
-    transition: all 120ms;
-    border: 1px solid transparent;
-    background: none;
-    width: 100%;
-    text-align: left;
-    font-family: inherit;
-    line-height: 1;
-  }
-  .sb-link:hover {
-    background: #1a1a1a;
-    color: #ccc;
-  }
-  .sb-link.active {
-    background: rgba(0, 175, 240, 0.08);
-    border-color: rgba(0, 175, 240, 0.18);
-    color: #00AFF0;
-  }
-  .sb-icon {
-    font-size: 14px;
-    width: 18px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .sb-divider {
-    height: 1px;
-    background: #1a1a1a;
-    margin: 8px 14px;
-    flex-shrink: 0;
-  }
-
-  .sb-bottom {
-    margin-top: auto;
-    padding: 12px;
-    border-top: 1px solid #1a1a1a;
-    flex-shrink: 0;
-  }
-  .sb-user {
-    font-size: 11px;
-    color: #3a3a3a;
-    padding: 0 4px;
-    margin-bottom: 8px;
-  }
-  .sb-signout {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #444;
-    cursor: pointer;
-    padding: 6px 8px;
-    border-radius: 6px;
-    transition: all 120ms;
-    text-decoration: none;
-    background: none;
-    border: none;
-    font-family: inherit;
-    width: 100%;
-    text-align: left;
-  }
-  .sb-signout:hover {
-    background: rgba(239, 68, 68, 0.08);
-    color: #f87171;
-  }
-
-  /* ── CONTENT AREA ── */
-  #content-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: #111;
-    min-width: 0;
-  }
-
-  /* ── TOP BAR ── */
-  #top-bar {
-    height: 48px;
-    background: #111;
-    border-bottom: 1px solid #1e1e1e;
-    display: flex;
-    align-items: center;
-    padding: 0 24px;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-  #page-label {
-    font-size: 12px;
-    color: #444;
-  }
-  #page-label-name {
-    color: #888;
-    font-weight: 600;
-  }
-  .top-bar-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .tb-link {
-    font-size: 12px;
-    color: #444;
-    text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: all 120ms;
-  }
+  .sb-logo-badge { margin-left: auto; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #444; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 4px; padding: 2px 6px; flex-shrink: 0; }
+  .sb-section { padding: 14px 10px 4px; }
+  .sb-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #3a3a3a; padding: 0 8px; margin-bottom: 4px; }
+  .sb-link { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 7px; color: #666; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; margin-bottom: 1px; transition: all 120ms; border: 1px solid transparent; background: none; width: 100%; text-align: left; font-family: inherit; line-height: 1; }
+  .sb-link:hover { background: #1a1a1a; color: #ccc; }
+  .sb-link.active { background: rgba(0,175,240,0.08); border-color: rgba(0,175,240,0.18); color: #00AFF0; }
+  .sb-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .sb-divider { height: 1px; background: #1a1a1a; margin: 8px 14px; flex-shrink: 0; }
+  .sb-bottom { margin-top: auto; padding: 12px; border-top: 1px solid #1a1a1a; flex-shrink: 0; }
+  .sb-user { font-size: 11px; color: #3a3a3a; padding: 0 4px; margin-bottom: 8px; }
+  .sb-signout { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #444; cursor: pointer; padding: 6px 8px; border-radius: 6px; transition: all 120ms; text-decoration: none; background: none; border: none; font-family: inherit; width: 100%; text-align: left; }
+  .sb-signout:hover { background: rgba(239,68,68,0.08); color: #f87171; }
+  #content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #111; min-width: 0; }
+  #top-bar { height: 48px; background: #111; border-bottom: 1px solid #1e1e1e; display: flex; align-items: center; padding: 0 24px; gap: 10px; flex-shrink: 0; }
+  #page-label { font-size: 12px; color: #444; }
+  #page-label-name { color: #888; font-weight: 600; }
+  .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .tb-link { font-size: 12px; color: #444; text-decoration: none; padding: 5px 10px; border-radius: 5px; transition: all 120ms; }
   .tb-link:hover { background: #1a1a1a; color: #aaa; }
-  .tb-cta {
-    background: #00AFF0;
-    color: #000;
-    font-size: 11px;
-    font-weight: 800;
-    padding: 6px 14px;
-    border-radius: 6px;
-    text-decoration: none;
-    transition: opacity 120ms;
-  }
+  .tb-cta { background: #00AFF0; color: #000; font-size: 11px; font-weight: 800; padding: 6px 14px; border-radius: 6px; text-decoration: none; transition: opacity 120ms; }
   .tb-cta:hover { opacity: 0.85; }
-
-  /* ── CONTENT WRAP + IFRAME ── */
-  #content-wrap {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  #content-frame {
-    flex: 1;
-    border: none;
-    width: 100%;
-    height: 0; /* flex grows this */
-  }
-
-  /* ── LOADING (overlay removed — iframe renders directly) ── */
-  #frame-loader { display: none; }
+  #content-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  #content-frame { flex: 1; border: none; width: 100%; height: 100%; display: block; }
 </style>
 </head>
 <body>
-
 <script>
 (function(){
   if (localStorage.getItem('od_auth') !== 'd7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555') {
@@ -244,72 +49,90 @@
   }
 })();
 </script>
-
 <div id="shell">
-
-  <!-- ══ SIDEBAR ══ -->
   <nav id="sidebar">
     <div class="sb-logo">
-      <img src="assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs"
-           onerror="this.outerHTML='<span class=&quot;sb-logo-text&quot;>ONLY<span>DWARFS</span></span>'">
+      <img src="assets/OnlyDwarfsLOGOText.svg" alt="OnlyDwarfs" onerror="this.outerHTML='<span class=&quot;sb-logo-text&quot;>ONLY<span>DWARFS</span></span>'">
       <span class="sb-logo-badge">Admin</span>
     </div>
-
     <div class="sb-section">
       <div class="sb-section-label">My Tools</div>
-      <button class="sb-link" id="sl-command"       onclick="navigate('command')">      <span class="sb-icon">⚡</span>Command Center</button>
-      <button class="sb-link" id="sl-crm"           onclick="navigate('crm')">          <span class="sb-icon">📋</span>Lead Tracker</button>
-      <button class="sb-link" id="sl-divas"         onclick="navigate('divas')">        <span class="sb-icon">🎭</span>DwarfDivas Admin</button>
-      <button class="sb-link" id="sl-hub"           onclick="navigate('hub')">          <span class="sb-icon">🏠</span>Empire Hub</button>
-      <button class="sb-link" id="sl-quote"         onclick="navigate('quote')">        <span class="sb-icon">💰</span>Quote Calculator</button>
+      <button class="sb-link" id="sl-command"       onclick="navigate('command')">      <span class="sb-icon">&#9889;</span>Command Center</button>
+      <button class="sb-link" id="sl-crm"           onclick="navigate('crm')">          <span class="sb-icon">&#128203;</span>Lead Tracker</button>
+      <button class="sb-link" id="sl-divas"         onclick="navigate('divas')">        <span class="sb-icon">&#127917;</span>DwarfDivas Admin</button>
+      <button class="sb-link" id="sl-hub"           onclick="navigate('hub')">          <span class="sb-icon">&#127968;</span>Empire Hub</button>
+      <button class="sb-link" id="sl-quote"         onclick="navigate('quote')">        <span class="sb-icon">&#128176;</span>Quote Calculator</button>
     </div>
-
     <div class="sb-divider"></div>
-
     <div class="sb-section">
       <div class="sb-section-label">Site Manager</div>
-      <button class="sb-link" id="sl-pages"         onclick="navigate('pages')">         <span class="sb-icon">✏️</span>Edit Public Pages</button>
-      <button class="sb-link" id="sl-roster"        onclick="navigate('roster')">        <span class="sb-icon">👤</span>Roster Manager</button>
-      <button class="sb-link" id="sl-gigs"          onclick="navigate('gigs')">          <span class="sb-icon">📨</span>Open Gig Postings</button>
-      <button class="sb-link" id="sl-perf-accounts" onclick="navigate('perf-accounts')"> <span class="sb-icon">🗂</span>Performer Accounts</button>
+      <button class="sb-link" id="sl-pages"         onclick="navigate('pages')">         <span class="sb-icon">&#9999;</span>Edit Public Pages</button>
+      <button class="sb-link" id="sl-roster"        onclick="navigate('roster')">        <span class="sb-icon">&#128100;</span>Roster Manager</button>
+      <button class="sb-link" id="sl-gigs"          onclick="navigate('gigs')">          <span class="sb-icon">&#128232;</span>Open Gig Postings</button>
+      <button class="sb-link" id="sl-perf-accounts" onclick="navigate('perf-accounts')"> <span class="sb-icon">&#128450;</span>Performer Accounts</button>
     </div>
-
     <div class="sb-divider"></div>
-
     <div class="sb-section">
       <div class="sb-section-label">Talent Portal</div>
-      <button class="sb-link" id="sl-performer" onclick="navigate('performer')"><span class="sb-icon">🎪</span>Portal Overview</button>
+      <button class="sb-link" id="sl-performer" onclick="navigate('performer')"><span class="sb-icon">&#127914;</span>Portal Overview</button>
     </div>
-
     <div class="sb-bottom">
-      <div class="sb-user">Ryder Warbrick · Admin</div>
-      <button class="sb-signout" onclick="signOut()">← Back to public site</button>
+      <div class="sb-user">Ryder Warbrick &middot; Admin</div>
+      <button class="sb-signout" onclick="signOut()">&larr; Back to public site</button>
     </div>
   </nav>
-
-  <!-- ══ CONTENT AREA ══ -->
   <div id="content-area">
     <div id="top-bar">
       <span id="page-label">Admin &rsaquo; <span id="page-label-name">Command Center</span></span>
       <div class="top-bar-right">
-        <a href="index.html" class="tb-link" target="_top">← Public site</a>
+        <a href="index.html" class="tb-link" target="_top">&larr; Public site</a>
         <a href="intake.html" class="tb-cta" target="_top">Book now</a>
       </div>
     </div>
     <div id="content-wrap">
-      <div id="frame-loader"><div class="loader-spinner"></div></div>
       <iframe id="content-frame" src="" frameborder="0" allowfullscreen></iframe>
     </div>
   </div>
-
 </div>
-
 <script>
-// ── TOOL REGISTRY ──────────────────────────────────────────────────────────────
-const TOOLS = {
-  command:          { href: 'command.html',              label: 'Command Center',     sb: 'sl-command'       },
-  crm:              { href: 'crm.html',                  label: 'Lead Tracker',       sb: 'sl-crm'           },
-  divas:            { href: 'admin-divas.html',          label: 'DwarfDivas Admin',   sb: 'sl-divas'         },
-  hub:              { href: 'hub.html',                  label: 'Empire Hub',         sb: 'sl-hub'           },
-  quote:            { href: 'quote.html',                label: 'Quote Calculator',   sb: 'sl-quote'         },
-  pages:            { href: 'pages-m
+var TOOLS = {
+  'command':         { href: 'command.html',        label: 'Command Center',     sb: 'sl-command'       },
+  'crm':             { href: 'crm.html',            label: 'Lead Tracker',       sb: 'sl-crm'           },
+  'divas':           { href: 'admin-divas.html',    label: 'DwarfDivas Admin',   sb: 'sl-divas'         },
+  'hub':             { href: 'hub.html',            label: 'Empire Hub',         sb: 'sl-hub'           },
+  'quote':           { href: 'quote.html',          label: 'Quote Calculator',   sb: 'sl-quote'         },
+  'pages':           { href: 'pages-mgr.html',      label: 'Edit Public Pages',  sb: 'sl-pages'         },
+  'roster':          { href: 'roster-mgr.html',     label: 'Roster Manager',     sb: 'sl-roster'        },
+  'gigs':            { href: 'gigs.html',           label: 'Open Gig Postings',  sb: 'sl-gigs'          },
+  'perf-accounts':   { href: 'perf-accounts.html',  label: 'Performer Accounts', sb: 'sl-perf-accounts' },
+  'performer':       { href: 'portal-overview.html', label: 'Portal Overview',   sb: 'sl-performer'     }
+};
+function navigate(id, pushState) {
+  if (pushState === undefined) pushState = true;
+  var tool = TOOLS[id];
+  if (!tool) return;
+  var links = document.querySelectorAll('.sb-link');
+  for (var i = 0; i < links.length; i++) links[i].classList.remove('active');
+  var btn = document.getElementById(tool.sb);
+  if (btn) btn.classList.add('active');
+  document.getElementById('page-label-name').textContent = tool.label;
+  document.getElementById('content-frame').src = tool.href;
+  if (pushState) history.pushState({ tool: id }, tool.label, '#' + id);
+  document.title = 'OnlyDwarfs - ' + tool.label;
+}
+window.addEventListener('popstate', function(e) {
+  navigate((e.state && e.state.tool) || getHashTool() || 'command', false);
+});
+function getHashTool() {
+  var h = window.location.hash.replace('#', '');
+  return TOOLS[h] ? h : null;
+}
+function signOut() {
+  localStorage.removeItem('od_auth');
+  sessionStorage.removeItem('od_performer');
+  window.location.href = 'index.html';
+}
+navigate(getHashTool() || 'command', false);
+</script>
+</body>
+</html>
