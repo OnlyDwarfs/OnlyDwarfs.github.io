@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>DwarfDivas — Availability</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #060C18; color: #E8EDF5; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* ── HEADER ── */
+  .av-header {
+    background: rgba(8,10,18,0.96);
+    border-bottom: 1px solid rgba(155,89,245,0.22);
+    padding: 20px 24px 16px;
+    text-align: center;
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .av-header-eyebrow {
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(155,89,245,0.8);
+    margin-bottom: 4px;
+  }
+  .av-header-title {
+    font-size: 20px; font-weight: 900;
+    letter-spacing: -0.03em; color: #E8EDF5;
+  }
+  .av-header-sub {
+    font-size: 12px; color: rgba(255,255,255,0.38);
+    margin-top: 3px;
+  }
+
+  /* ── MAIN WRAP ── */
+  .av-wrap { max-width: 520px; margin: 0 auto; padding: 24px 16px 0; }
+
+  /* ── STEP INDICATOR ── */
+  .av-steps {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-bottom: 28px;
+  }
+  .av-step {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.28);
+  }
+  .av-step.active { color: #9B59F5; }
+  .av-step.done { color: rgba(0,175,240,0.7); }
+  .av-step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .av-step-divider {
+    flex: 1; max-width: 36px; height: 1px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  /* ── SECTION ── */
+  .av-section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .av-section-title {
+    font-size: 11px; font-weight: 800;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 14px;
+  }
+
+  /* ── CAST GRID ── */
+  .av-cast-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .av-cast-btn {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 160ms ease;
+    color: #E8EDF5;
+    font-family: inherit;
+  }
+  .av-cast-btn:hover {
+    border-color: rgba(155,89,245,0.4);
+    background: rgba(155,89,245,0.06);
+  }
+  .av-cast-btn.selected {
+    border-color: #9B59F5;
+    background: rgba(155,89,245,0.14);
+    box-shadow: 0 0 0 3px rgba(155,89,245,0.12);
+  }
+  .av-cast-btn.tester {
+    border-color: rgba(155,89,245,0.2);
+    background: rgba(155,89,245,0.04);
+  }
+  .av-cast-btn.tester.selected {
+    border-color: #9B59F5;
+    background: rgba(155,89,245,0.18);
+  }
+  .av-cast-name {
+    font-size: 14px; font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .av-cast-stage {
+    font-size: 11px; font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+  }
+  .av-cast-btn.tester .av-cast-stage {
+    color: rgba(155,89,245,0.6);
+  }
+  .av-cast-check {
+    display: none;
+    font-size: 10px; color: #9B59F5;
+    margin-top: 4px;
+  }
+  .av-cast-btn.selected .av-cast-check { display: block; }
+
+  /* ── CALENDAR ── */
+  .av-calendar { }
+  .av-cal-month-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .av-cal-month-label {
+    font-size: 15px; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .av-cal-nav-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 7px;
+    color: rgba(255,255,255,0.5);
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px;
+    transition: all 140ms ease;
+    font-family: inherit;
+  }
+  .av-cal-nav-btn:hover { border-color: rgba(155,89,245,0.4); color: #9B59F5; }
+  .av-cal-nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+  .av-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .av-cal-dow {
+    text-align: center;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.3);
+    padding-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .av-cal-day {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 140ms ease;
+    position: relative;
+    background: transparent;
+    color: #E8EDF5;
+    font-family: inherit;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .av-cal-day:hover:not(:disabled):not(.show-day) {
+    border-color: rgba(155,89,245,0.4);
+    background: rgba(155,89,245,0.08);
+  }
+  .av-cal-day.selected {
+    background: rgba(155,89,245,0.2);
+    border-color: #9B59F5;
+    color: #fff;
+  }
+  .av-cal-day.show-day {
+    background: rgba(0,175,240,0.08);
+    border-color: rgba(0,175,240,0.3);
+    color: rgba(0,175,240,0.6);
+    cursor: default;
+    font-size: 10px;
+  }
+  .av-cal-day.show-day .av-cal-show-icon { font-size: 12px; }
+  .av-cal-day.past {
+    opacity: 0.25; cursor: default;
+  }
+  .av-cal-day.empty { cursor: default; border: none; }
+  .av-cal-day.today {
+    border-color: rgba(255,255,255,0.2);
+  }
+  .av-cal-day:disabled { cursor: default; }
+
+  .av-cal-show-icon { font-size: 9px; line-height: 1; }
+
+  /* ── CHIPS ── */
+  .av-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    min-height: 32px;
+  }
+  .av-chip {
+    background: rgba(155,89,245,0.15);
+    border: 1px solid rgba(155,89,245,0.3);
+    border-radius: 999px;
+    padding: 5px 12px 5px 10px;
+    font-size: 12px; font-weight: 600;
+    color: #C8A8F8;
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer;
+    transition: all 140ms ease;
+    font-family: inherit;
+  }
+  .av-chip:hover { background: rgba(155,89,245,0.25); }
+  .av-chip-x { font-size: 10px; color: rgba(200,168,248,0.6); }
+  .av-chips-empty {
+    font-size: 13px; color: rgba(255,255,255,0.25);
+    font-style: italic;
+  }
+
+  /* ── NOTES ── */
+  .av-notes {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #E8EDF5;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 100px;
+    outline: none;
+    transition: border-color 160ms ease;
+  }
+  .av-notes::placeholder { color: rgba(255,255,255,0.25); }
+  .av-notes:focus { border-color: #9B59F5; }
+
+  /* ── SUBMIT ── */
+  .av-submit-btn {
+    width: 100%;
+    background: #9B59F5;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 18px;
+    font-size: 16px; font-weight: 800;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 160ms ease;
+    margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .av-submit-btn:hover:not(:disabled) { background: #8B49E5; }
+  .av-submit-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .av-error {
+    font-size: 13px; color: #f87171;
+    padding: 12px 16px;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 10px;
+    margin-top: 12px;
+    display: none;
+  }
+  .av-error.show { display: block; }
+
+  /* ── SUCCESS ── */
+  .av-success {
+    display: none;
+    flex-direction: column; align-items: center;
+    text-align: center;
+    padding: 60px 24px;
+    gap: 16px;
+  }
+  .av-success.show { display: flex; }
+  .av-success-mark {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(155,89,245,0.15);
+    border: 1px solid rgba(155,89,245,0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+  .av-success-title {
+    font-size: 28px; font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #E8EDF5;
+  }
+  .av-success-sub {
+    font-size: 15px; color: rgba(255,255,255,0.5);
+    line-height: 1.6; max-width: 340px;
+  }
+  .av-success-dates {
+    background: rgba(155,89,245,0.08);
+    border: 1px solid rgba(155,89,245,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 13px; color: rgba(200,168,248,0.8);
+    line-height: 1.7;
+    max-width: 340px; width: 100%;
+    text-align: left;
+  }
+  .av-success-dates strong {
+    display: block; color: #C8A8F8; font-weight: 700;
+    margin-bottom: 6px; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ── LEGEND ── */
+  .av-legend {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .av-legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11.5px; color: rgba(255,255,255,0.4);
+    font-weight: 500;
+  }
+  .av-legend-swatch {
+    width: 14px; height: 14px; border-radius: 4px;
+    border: 1.5px solid;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="av-header">
+  <div class="av-header-eyebrow">DwarfDivas · May 28–29</div>
+  <div class="av-header-title">Availability Submission</div>
+  <div class="av-header-sub">Select your available dates so we can schedule rehearsals</div>
+</div>
+
+<div class="av-wrap" id="main-content">
+
+  <div class="av-steps">
+    <div class="av-step active" id="step1">
+      <div class="av-step-num">1</div>
+      <span>Who</span>
+    </div>
+    <div class="av-step-divider"></div>
+    <div class="av-step" id="step2">
+      <div class="av-step-num">2</div>
+      <span>Dates</span>
+    </div>
+    <div class="av-step-divider"></div>
+    <div class="av-step" id="step3">
+      <div class="av-step-num">3</div>
+      <span>Submit</span>
+    </div>
+  </div>
+
+  <!-- Step 1: Who are you -->
+  <div class="av-section" id="section-who">
+    <div class="av-section-title">Who are you?</div>
+    <div class="av-cast-grid">
+      <button class="av-cast-btn" data-name="Crystal Lockhart" data-stage="Lil Miss Firefly" onclick="selectCast(this)">
+        <div class="av-cast-name">Crystal Lockhart</div>
+        <div class="av-cast-stage">Lil Miss Firefly</div>
+        <div class="av-cast-check">✓ Selected</div>
+      </button>
+      <button class="av-cast-btn" data-name="Anae Ayala" data-stage="" onclick="selectCast(this)">
+        <div class="av-cast-name">Anae Ayala</div>
+        <div class="av-cast-stage">Feature Performer</div>
+        <div class="av-cast-check">✓ Selected</div>
+      </button>
+      <button class="av-cast-btn" data-name="Jovana Rosales" data-stage="Lil Jojo" onclick="selectCast(this)">
+        <div class="av-cast-name">Jovana Rosales</div>
+        <div class="av-cast-stage">Lil Jojo</div>
+        <div class="av-cast-check">✓ Selected</div>
+      </button>
+      <button class="av-cast-btn" data-name="Christy McGinity" data-stage="" onclick="selectCast(this)">
+        <div class="av-cast-name">Christy McGinity</div>
+        <div class="av-cast-stage">Feature Performer</div>
+        <div class="av-cast-check">✓ Selected</div>
+      </button>
+      <button class="av-cast-btn" data-name="Maria Virgen" data-stage="" onclick="selectCast(this)">
+        <div class="av-cast-name">Maria Virgen</div>
+        <div class="av-cast-stage">Feature Performer</div>
+        <div class="av-cast-check">✓ Selected</div>
+      </button>
+      <button class="av-cast-btn" data-name="Ali Chapman" data-stage="Miss Amazing" onclick="selectCast(this)">
+        <div class="av-cast-name">Ali Chapman</div>
+        <div class="av-cast-stage">Miss Amazing</div>
+        <div class="av-cast-check">✓ Selected</div>
+      </button>
+      <button class="av-cast-btn tester" data-name="Ryder Warbrick" data-stage="Testing" onclick="selectCast(this)" style="grid-column: span 2;">
+        <div class="av-cast-name">Ryder Warbrick</div>
+        <div class="av-cast-stage">Testing only</div>
+        <div class="av-cast-check">✓ Selected</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2: Calendar -->
+  <div class="av-section" id="section-calendar">
+    <div class="av-section-title">Tap dates you're available</div>
+
+    <div class="av-calendar">
+      <div class="av-cal-month-nav">
+        <button class="av-cal-nav-btn" id="prev-month-btn" onclick="changeMonth(-1)" disabled>‹</button>
+        <div class="av-cal-month-label" id="month-label"></div>
+        <button class="av-cal-nav-btn" id="next-month-btn" onclick="changeMonth(1)">›</button>
+      </div>
+      <div class="av-cal-grid" id="cal-grid"></div>
+    </div>
+
+    <div class="av-legend" style="margin-top: 16px;">
+      <div class="av-legend-item">
+        <div class="av-legend-swatch" style="background:rgba(155,89,245,0.2);border-color:#9B59F5;"></div>
+        Available
+      </div>
+      <div class="av-legend-item">
+        <div class="av-legend-swatch" style="background:rgba(0,175,240,0.08);border-color:rgba(0,175,240,0.3);"></div>
+        Show day (locked)
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Chips + Notes + Submit -->
+  <div class="av-section">
+    <div class="av-section-title">Your selected dates</div>
+    <div class="av-chips" id="chips-container">
+      <span class="av-chips-empty">No dates selected yet</span>
+    </div>
+  </div>
+
+  <div class="av-section">
+    <div class="av-section-title">Notes (optional)</div>
+    <textarea class="av-notes" id="notes-field" placeholder="Anything to flag — travel days, time restrictions, blackout weeks, recurring conflicts…" rows="4"></textarea>
+  </div>
+
+  <div class="av-error" id="error-msg"></div>
+
+  <button class="av-submit-btn" onclick="submitAvailability()" id="submit-btn">
+    Submit Availability →
+  </button>
+
+</div>
+
+<!-- Success screen (hidden) -->
+<div class="av-wrap av-success" id="success-screen">
+  <div class="av-success-mark">✓</div>
+  <div class="av-success-title">Got it!</div>
+  <p class="av-success-sub" id="success-sub">Your availability has been recorded. Ryder will reach out once rehearsal dates are set.</p>
+  <div class="av-success-dates" id="success-dates"></div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec';
+
+// Show days — blocked
+const SHOW_DAYS = ['2026-05-28', '2026-05-29'];
+
+// State
+let selectedName = null;
+let selectedDates = new Set();
+let currentMonth = { year: 2026, month: 4 }; // April 2026 (month 0-indexed = 3, but we'll use 1-indexed)
+
+const TODAY = new Date();
+TODAY.setHours(0,0,0,0);
+
+// ── CAST SELECTION ──
+function selectCast(btn) {
+  document.querySelectorAll('.av-cast-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedName = btn.dataset.name;
+  updateStepIndicator();
+}
+
+// ── MONTH NAVIGATION ──
+// currentMonth.month is 1-indexed (4=April, 5=May)
+function changeMonth(dir) {
+  currentMonth.month += dir;
+  if (currentMonth.month > 12) { currentMonth.month = 1; currentMonth.year++; }
+  if (currentMonth.month < 1) { currentMonth.month = 12; currentMonth.year--; }
+  renderCalendar();
+  updateNavBtns();
+}
+
+function updateNavBtns() {
+  // Don't go before April 2026
+  const prev = document.getElementById('prev-month-btn');
+  const next = document.getElementById('next-month-btn');
+  prev.disabled = (currentMonth.year === 2026 && currentMonth.month <= 4);
+  // Don't go past July 2026
+  next.disabled = (currentMonth.year === 2026 && currentMonth.month >= 7);
+}
+
+function renderCalendar() {
+  const { year, month } = currentMonth;
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('month-label').textContent = `${monthNames[month-1]} ${year}`;
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  // Day of week headers
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'av-cal-dow';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(year, month-1, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(year, month, 0).getDate();
+
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('button');
+    el.className = 'av-cal-day empty';
+    el.disabled = true;
+    grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dateObj = new Date(year, month-1, d);
+    dateObj.setHours(0,0,0,0);
+
+    const el = document.createElement('button');
+    el.className = 'av-cal-day';
+    el.dataset.date = dateStr;
+
+    const isShowDay = SHOW_DAYS.includes(dateStr);
+    const isPast = dateObj < TODAY;
+    const isToday = dateObj.getTime() === TODAY.getTime();
+    const isSelected = selectedDates.has(dateStr);
+
+    if (isShowDay) {
+      el.className += ' show-day';
+      el.innerHTML = `<span class="av-cal-show-icon">🎭</span><span style="font-size:9px">${d}</span>`;
+      el.disabled = true;
+      el.title = 'Show day — blocked';
+    } else if (isPast) {
+      el.className += ' past';
+      el.textContent = d;
+      el.disabled = true;
+    } else {
+      if (isToday) el.className += ' today';
+      if (isSelected) el.className += ' selected';
+      el.textContent = d;
+      el.onclick = () => toggleDate(dateStr, el);
+    }
+
+    grid.appendChild(el);
+  }
+}
+
+function toggleDate(dateStr, el) {
+  if (selectedDates.has(dateStr)) {
+    selectedDates.delete(dateStr);
+    el.classList.remove('selected');
+  } else {
+    selectedDates.add(dateStr);
+    el.classList.add('selected');
+  }
+  renderChips();
+  updateStepIndicator();
+}
+
+// ── CHIPS ──
+function renderChips() {
+  const container = document.getElementById('chips-container');
+  if (selectedDates.size === 0) {
+    container.innerHTML = '<span class="av-chips-empty">No dates selected yet</span>';
+    return;
+  }
+  const sorted = Array.from(selectedDates).sort();
+  container.innerHTML = sorted.map(d => {
+    const [y,m,day] = d.split('-');
+    const label = new Date(parseInt(y), parseInt(m)-1, parseInt(day)).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    return `<button class="av-chip" onclick="removeDate('${d}')">
+      ${label} <span class="av-chip-x">✕</span>
+    </button>`;
+  }).join('');
+}
+
+function removeDate(dateStr) {
+  selectedDates.delete(dateStr);
+  renderChips();
+  updateStepIndicator();
+  // deselect in calendar if visible
+  const el = document.querySelector(`.av-cal-day[data-date="${dateStr}"]`);
+  if (el) el.classList.remove('selected');
+}
+
+// ── STEP INDICATOR ──
+function updateStepIndicator() {
+  const s1 = document.getElementById('step1');
+  const s2 = document.getElementById('step2');
+  const s3 = document.getElementById('step3');
+  if (selectedName) {
+    s1.classList.remove('active'); s1.classList.add('done');
+    s2.classList.add('active');
+  } else {
+    s1.classList.add('active'); s1.classList.remove('done');
+    s2.classList.remove('active');
+  }
+  if (selectedName && selectedDates.size > 0) {
+    s2.classList.remove('active'); s2.classList.add('done');
+    s3.classList.add('active');
+  } else {
+    s2.classList.remove('done');
+    s3.classList.remove('active');
+  }
+}
+
+// ── SUBMIT ──
+async function submitAvailability() {
+  const errorEl = document.getElementById('error-msg');
+  errorEl.classList.remove('show');
+
+  if (!selectedName) {
+    errorEl.textContent = 'Please select your name first.';
+    errorEl.classList.add('show');
+    document.getElementById('section-who').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  if (selectedDates.size === 0) {
+    errorEl.textContent = 'Please select at least one available date.';
+    errorEl.classList.add('show');
+    document.getElementById('section-calendar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  const payload = {
+    action: 'submitAvailability',
+    name: selectedName,
+    dates: Array.from(selectedDates).sort(),
+    notes: document.getElementById('notes-field').value.trim(),
+  };
+
+  try {
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch (e) {}
+
+  // Optimistic success after 600ms
+  setTimeout(() => showSuccess(payload), 600);
+}
+
+function showSuccess(payload) {
+  document.getElementById('main-content').style.display = 'none';
+
+  const sorted = payload.dates.sort();
+  const formatted = sorted.map(d => {
+    const [y,m,day] = d.split('-');
+    return new Date(parseInt(y), parseInt(m)-1, parseInt(day)).toLocaleDateString('en-US', {
+      weekday: 'short', month: 'short', day: 'numeric'
+    });
+  }).join('\n');
+
+  document.getElementById('success-sub').textContent = `${payload.name}, your availability has been recorded. Ryder will reach out once rehearsal dates are set.`;
+  document.getElementById('success-dates').innerHTML = `<strong>${payload.dates.length} date${payload.dates.length !== 1 ? 's' : ''} submitted</strong>${formatted.split('\n').map(d => `<div>${d}</div>`).join('')}`;
+
+  document.getElementById('success-screen').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── INIT ──
+renderCalendar();
+updateNavBtns();
+renderChips();
+</script>
+</body>
+</html>

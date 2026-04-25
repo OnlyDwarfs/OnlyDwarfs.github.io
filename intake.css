@@ -427,6 +427,23 @@
   flex-wrap: wrap;
 }
 
+/* ── SMS CONSENT ────────────────────────────────────────── */
+.od-sms-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--od-fg-3);
+  line-height: 1.55;
+  margin-bottom: 6px;
+}
+.od-sms-consent input[type="checkbox"] {
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 /* ── RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .od-intake-shell { grid-template-columns: 1fr; }

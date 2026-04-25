@@ -287,7 +287,11 @@ const IntakeForm = () => {
             {/* Submit */}
             <div className="od-intake-submit-row">
               <div className="od-intake-legal">
-                By submitting, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>. We'll never share your details.
+                <label className="od-sms-consent">
+                  <input type="checkbox" defaultChecked style={{marginRight:'7px', accentColor:'#9B59F5', flexShrink:0, marginTop:'2px'}} />
+                  <span>I agree to receive text messages from OnlyDwarfs about my booking inquiry. Message &amp; data rates may apply. Reply STOP to opt out.</span>
+                </label>
+                <div style={{marginTop:'8px'}}>By submitting, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>. We'll never share your details.</div>
               </div>
               <button type="submit" className="od-btn-primary od-btn-lg od-intake-submit" disabled={submitting}>
                 {submitting ? 'Sending…' : <>Request my quote <span className="od-btn-arrow">→</span></>}
