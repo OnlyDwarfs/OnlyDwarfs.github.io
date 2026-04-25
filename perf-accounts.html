@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performer Accounts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #0d0d0d; color: #ccc; font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+  .page { padding: 28px 32px; }
+  .page-header { margin-bottom: 22px; }
+  .breadcrumb { font-size: 11px; color: #444; margin-bottom: 6px; }
+  .breadcrumb span { color: #888; }
+  .page-title { font-size: 22px; font-weight: 900; color: #fff; }
+  .page-sub { font-size: 13px; color: #555; margin-top: 4px; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+  .stat { background: #1a1a1a; border: 1px solid #222; border-radius: 9px; padding: 14px 16px; }
+  .stat .num { font-size: 26px; font-weight: 900; color: #00AFF0; }
+  .stat .num.orange { color: #fb923c; }
+  .stat .lbl { font-size: 11px; color: #555; margin-top: 2px; }
+
+  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .search-box {
+    flex: 1; max-width: 280px;
+    padding: 7px 12px; background: #1a1a1a;
+    border: 1px solid #2a2a2a; border-radius: 7px;
+    font-size: 13px; color: #ccc; font-family: inherit; outline: none;
+  }
+  .search-box:focus { border-color: #00AFF0; }
+
+  .filter-tabs { display: flex; gap: 4px; }
+  .ftab { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; border: 1px solid #2a2a2a; background: transparent; color: #555; font-family: inherit; transition: all 120ms; }
+  .ftab.active { background: #00AFF0; color: #000; border-color: #00AFF0; }
+  .ftab:hover:not(.active) { border-color: #00AFF0; color: #00AFF0; }
+
+  .btn { display: inline-block; padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; }
+  .btn-blue { background: #00AFF0; color: #000; }
+  .btn-dark { background: #222; border: 1px solid #333; color: #888; }
+  .btn-dark:hover { border-color: #00AFF0; color: #00AFF0; }
+  .btn-sm { padding: 4px 10px; font-size: 11px; }
+  .btn-red-ghost { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: #f87171; }
+  .btn-red-ghost:hover { background: rgba(239,68,68,0.08); }
+  .btn-green-ghost { background: transparent; border: 1px solid rgba(34,197,94,0.3); color: #4ade80; }
+  .btn-green-ghost:hover { background: rgba(34,197,94,0.08); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #161616; text-align: left; padding: 9px 14px; border-bottom: 1px solid #222; font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.06em; }
+  td { padding: 11px 14px; border-bottom: 1px solid #1a1a1a; color: #aaa; vertical-align: middle; }
+  tr:hover td { background: #141414; }
+
+  .tag { display: inline-block; border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 600; }
+  .tag-green  { background: rgba(34,197,94,0.1);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.2);  }
+  .tag-orange { background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+  .tag-grey   { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #2a2a2a; }
+  .tag-red    { background: rgba(239,68,68,0.1);  color: #f87171; border: 1px solid rgba(239,68,68,0.2);  }
+  .tag-blue   { background: rgba(0,175,240,0.1);  color: #00AFF0; border: 1px solid rgba(0,175,240,0.2);  }
+
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #1a1a2e, #0d1a40);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: #00AFF0;
+    margin-right: 8px; vertical-align: middle; flex-shrink: 0;
+  }
+  .name-cell { display: flex; align-items: center; }
+  .name-sub { font-size: 11px; color: #444; margin-top: 1px; }
+  .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .state-msg { text-align: center; padding: 40px; color: #444; font-size: 13px; }
+  .state-msg .icon { font-size: 28px; margin-bottom: 10px; }
+  .spinner {
+    width: 20px; height: 20px; border: 2px solid #222;
+    border-top-color: #00AFF0; border-radius: 50%;
+    animation: spin 0.7s linear infinite; margin: 0 auto 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .detail-panel {
+    display: none; background: #111; border: 1px solid #222; border-radius: 10px;
+    padding: 20px; margin-bottom: 20px;
+  }
+  .detail-panel.open { display: block; }
+  .detail-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px 20px; font-size: 12px; }
+  .detail-field label { display: block; font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .detail-field span { color: #ccc; }
+  .detail-actions { display: flex; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #1a1a1a; }
+
+  #toast {
+    position: fixed; bottom: 20px; right: 20px;
+    padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    opacity: 0; transition: opacity 220ms; pointer-events: none; z-index: 999;
+  }
+  #toast.show { opacity: 1; }
+  #toast.success { background: #166534; color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+  #toast.error   { background: #7f1d1d; color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <div class="breadcrumb">Site Manager › <span>Performer Accounts</span></div>
+    <div class="page-title">Performer Accounts</div>
+    <div class="page-sub">Everyone who has registered a performer portal account.</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="num" id="stat-active">—</div><div class="lbl">Active accounts</div></div>
+    <div class="stat"><div class="num orange" id="stat-pending">—</div><div class="lbl">Pending approval</div></div>
+    <div class="stat"><div class="num" id="stat-incomplete">—</div><div class="lbl">Incomplete profiles</div></div>
+    <div class="stat"><div class="num" id="stat-total">—</div><div class="lbl">Total registered</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input class="search-box" type="text" id="search-box" placeholder="Search by name or email…" oninput="applyFilter()">
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="setFilter('all',this)">All</button>
+      <button class="ftab"        onclick="setFilter('Pending',this)">Pending</button>
+      <button class="ftab"        onclick="setFilter('Active',this)">Active</button>
+      <button class="ftab"        onclick="setFilter('Inactive',this)">Inactive</button>
+    </div>
+    <button class="btn btn-dark" onclick="loadAccounts()" style="margin-left:auto">↻ Refresh</button>
+  </div>
+
+  <div class="detail-panel" id="detail-panel"></div>
+
+  <table>
+    <thead>
+      <tr>
