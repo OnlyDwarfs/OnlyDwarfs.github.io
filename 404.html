@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Not Found — OnlyDwarfs</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #0A0B0D;
+    color: #ccc;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    text-align: center;
+    padding: 40px 24px;
+    max-width: 480px;
+  }
+
+  .big-num {
+    font-size: 120px;
+    font-weight: 900;
+    line-height: 1;
+    color: #00AFF0;
+    opacity: 0.15;
+    letter-spacing: -4px;
+    margin-bottom: -10px;
+    user-select: none;
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .sub {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 36px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    text-decoration: none;
+    transition: opacity 120ms;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-blue { background: #00AFF0; color: #000; }
+  .btn-dark { background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; }
+  .btn-dark:hover { border-color: #00AFF0; color: #00AFF0; opacity: 1; }
+
+  .logo {
+    margin-bottom: 32px;
+  }
+  .logo-text {
+    font-size: 13px;
+    font-weight: 800;
+    color: #00AFF0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .divider {
+    width: 40px;
+    height: 2px;
+    background: #00AFF0;
+    opacity: 0.2;
+    margin: 0 auto 28px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <a href="index.html" class="logo-text">OnlyDwarfs</a>
+  </div>
+  <div class="big-num">404</div>
+  <h1 class="title">Page not found</h1>
+  <div class="divider"></div>
+  <p class="sub">The page you're looking for doesn't exist or has been moved.<br>Head back and we'll get you sorted.</p>
+  <div class="actions">
+    <a href="index.html" class="btn btn-blue">← Back to Home</a>
+    <a href="intake.html" class="btn btn-dark">Book a Performance</a>
+  </div>
+</div>
+</body>
+</html>
