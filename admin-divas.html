@@ -826,7 +826,61 @@ function renderAvailabilityGrid(data) {
   });
   html += '</div>';
 
-  // Calendar + legend
-  html += `
-  <div class="avail-cal-wrap">
-    <div clas
+  // Calendar + legend - May 2026 (May 1 = Friday, col 5)
+  const DOW = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let calHtml = '<div class="avail-cal-header"><div class="avail-cal-title">May 2026</div><div class="avail-cal-legend">';
+  calHtml += '<div class="avail-cal-legend-item"><div class="avail-cal-legend-swatch" style="background:rgba(34,197,94,0.5)"></div>All</div>';
+  calHtml += '<div class="avail-cal-legend-item"><div class="avail-cal-legend-swatch" style="background:rgba(155,89,245,0.5)"></div>Most</div>';
+  calHtml += '<div class="avail-cal-legend-item"><div class="avail-cal-legend-swatch" style="background:rgba(249,115,22,0.4)"></div>Some</div>';
+  calHtml += '<div class="avail-cal-legend-item"><div class="avail-cal-legend-swatch" style="background:rgba(0,175,240,0.3)"></div>Show night</div>';
+  calHtml += '</div></div><div class="avail-cal-grid">';
+  DOW.forEach(d => { calHtml += '<div class="avail-cal-dow">' + d + '</div>'; });
+  const firstCol = 5;
+  for (let i = 0; i < firstCol; i++) calHtml += '<div class="avail-cal-day empty"></div>';
+  const perfFilter = activePerformer;
+  const nonRyder = submittedNames.filter(n => n !== 'Ryder Warbrick');
+  for (let day = 1; day <= 31; day++) {
+    const dateStr = '2026-05-' + String(day).padStart(2,'0');
+    const isShow = SHOW_DAYS.includes(dateStr);
+    let cls = '', sub = '';
+    if (perfFilter === 'all') {
+      const avail = nonRyder.filter(n => submissions[n] && submissions[n].dates && submissions[n].dates.includes(dateStr)).length;
+      const tot = nonRyder.length;
+      if (tot > 0) {
+        const r = avail / tot;
+        cls = r === 1 ? 'count-all' : r >= 0.75 ? 'count-most' : r >= 0.5 ? 'count-some' : r > 0 ? 'count-few' : 'count-none';
+        if (avail > 0) sub = avail + '/' + tot;
+      }
+    } else {
+      const sd = submissions[perfFilter];
+      const yes = sd && sd.dates && sd.dates.includes(dateStr);
+      cls = yes ? 'person-yes' : 'person-no';
+      sub = yes ? '&#10003;' : '';
+    }
+    if (isShow) cls += ' show-day';
+    calHtml += '<div class="avail-cal-day ' + cls + '"><div class="avail-cal-day-num">' + day + '</div>' + (sub ? '<div class="avail-cal-day-sub">' + sub + '</div>' : '') + '</div>';
+  }
+  const rem = (firstCol + 31) % 7;
+  if (rem) for (let i = 0; i < 7 - rem; i++) calHtml += '<div class="avail-cal-day empty"></div>';
+  calHtml += '</div>';
+  const noted = Object.entries(submissions).filter(function(e){ return e[1].notes && e[1].notes.trim(); });
+  if (noted.length) {
+    calHtml += '<div class="avail-notes">';
+    noted.forEach(function(e){ calHtml += '<div class="avail-note-row"><div class="avail-note-name">' + e[0].split(' ')[0] + '</div><div class="avail-note-text">' + e[1].notes + '</div></div>'; });
+    calHtml += '</div>';
+  }
+  html += '<div class="avail-cal-wrap">' + calHtml + '</div>';
+  el.innerHTML = html;
+}
+
+function selectPerformer(name) {
+  activePerformer = name;
+  renderAvailabilityGrid(availData);
+}
+
+renderChecklist();
+loadAvailability();
+</script>
+<script>if (!localStorage.getItem('od_auth')) { window.top.location.href = 'login.html'; }</script>
+</body>
+</html>
