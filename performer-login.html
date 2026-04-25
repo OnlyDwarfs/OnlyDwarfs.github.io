@@ -267,7 +267,7 @@
               localStorage.setItem('od_auth', hash);
               window.location.href = 'admin.html';
             } else {
-              window.location.href = 'performer-dashboard.html';
+              window.location.href = 'performer-portal.html';
             }
           } else {
             setLoad(false);
@@ -353,7 +353,7 @@
               performerType: data.performerType, location: data.location, status: 'Pending'
             }));
             setSuccess(true);
-            setTimeout(() => { window.location.href = 'performer-dashboard.html'; }, 3000);
+            setTimeout(() => { window.location.href = 'performer-portal.html'; }, 3000);
           } else {
             setLoad(false);
             setErr(data.error || 'Registration failed. Please try again.');
@@ -471,3 +471,4 @@
   </script>
 </body>
 </html>
+          
