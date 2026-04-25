@@ -1105,7 +1105,7 @@
       });
   }
 
-  fetch('https://onlydwarfs.github.io/data.json').then(r=>r.json()).then(d=>{
+  fetch('https://onlydwarfs.com/data.json').then(r=>r.json()).then(d=>{
     if(d.tickets!==undefined) document.getElementById('ticket-count').textContent=d.tickets;
   }).catch(()=>{});
   const s=document.querySelector('.stamp');
