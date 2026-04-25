@@ -231,29 +231,8 @@
     height: 0; /* flex grows this */
   }
 
-  /* ── LOADING ── */
-  #frame-loader {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #111;
-    z-index: 10;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 150ms;
-  }
-  #frame-loader.show { opacity: 1; pointer-events: all; }
-  .loader-spinner {
-    width: 28px;
-    height: 28px;
-    border: 2px solid #1e1e1e;
-    border-top-color: #00AFF0;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* ── LOADING (overlay removed — iframe renders directly) ── */
+  #frame-loader { display: none; }
 </style>
 </head>
 <body>
@@ -329,4 +308,8 @@
 // ── TOOL REGISTRY ──────────────────────────────────────────────────────────────
 const TOOLS = {
   command:          { href: 'command.html',              label: 'Command Center',     sb: 'sl-command'       },
-  crm:             
+  crm:              { href: 'crm.html',                  label: 'Lead Tracker',       sb: 'sl-crm'           },
+  divas:            { href: 'admin-divas.html',          label: 'DwarfDivas Admin',   sb: 'sl-divas'         },
+  hub:              { href: 'hub.html',                  label: 'Empire Hub',         sb: 'sl-hub'           },
+  quote:            { href: 'quote.html',                label: 'Quote Calculator',   sb: 'sl-quote'         },
+  pages:            { href: 'pages-m
