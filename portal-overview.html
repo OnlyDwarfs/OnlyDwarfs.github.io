@@ -104,10 +104,10 @@
 
   <!-- Stats -->
   <div class="stats-row">
-    <div class="stat"><div class="num">14</div><div class="lbl">Active accounts</div></div>
-    <div class="stat"><div class="num" style="color:#fb923c">3</div><div class="lbl">Pending approval</div></div>
-    <div class="stat"><div class="num">6</div><div class="lbl">Incomplete profiles</div></div>
-    <div class="stat"><div class="num">4</div><div class="lbl">Logged in this week</div></div>
+    <div class="stat"><div class="num">—</div><div class="lbl">Active accounts</div></div>
+    <div class="stat"><div class="num">—</div><div class="lbl">Pending approval</div></div>
+    <div class="stat"><div class="num">—</div><div class="lbl">Incomplete profiles</div></div>
+    <div class="stat"><div class="num">—</div><div class="lbl">Logged in this week</div></div>
   </div>
 
   <!-- Quick Actions -->
@@ -119,40 +119,8 @@
 
   <!-- Pending Approvals -->
   <div class="pending-card">
-    <div class="card-title">⚠ Pending Approvals (3)</div>
-    <div class="pending-row">
-      <div class="avatar">N</div>
-      <div style="flex:1">
-        <div class="pending-name">New Signup</div>
-        <div class="pending-sub">newsignup@example.com — joined Apr 22 — profile incomplete</div>
-      </div>
-      <div class="pending-actions">
-        <button class="btn-approve" onclick="this.closest('.pending-row').style.opacity='0.4'; this.textContent='Approved ✓'">Approve</button>
-        <button class="btn-decline" onclick="this.closest('.pending-row').style.opacity='0.4'; this.textContent='Declined'">Decline</button>
-      </div>
-    </div>
-    <div class="pending-row">
-      <div class="avatar">?</div>
-      <div style="flex:1">
-        <div class="pending-name">Another Applicant</div>
-        <div class="pending-sub">applicant2@example.com — joined Apr 24 — profile not started</div>
-      </div>
-      <div class="pending-actions">
-        <button class="btn-approve" onclick="this.closest('.pending-row').style.opacity='0.4'; this.textContent='Approved ✓'">Approve</button>
-        <button class="btn-decline" onclick="this.closest('.pending-row').style.opacity='0.4'; this.textContent='Declined'">Decline</button>
-      </div>
-    </div>
-    <div class="pending-row">
-      <div class="avatar">M</div>
-      <div style="flex:1">
-        <div class="pending-name">Maria V.</div>
-        <div class="pending-sub">maria@example.com — joined Apr 25 — profile incomplete</div>
-      </div>
-      <div class="pending-actions">
-        <button class="btn-approve" onclick="this.closest('.pending-row').style.opacity='0.4'; this.textContent='Approved ✓'">Approve</button>
-        <button class="btn-decline" onclick="this.closest('.pending-row').style.opacity='0.4'; this.textContent='Declined'">Decline</button>
-      </div>
-    </div>
+    <div class="card-title">⚠ Pending Approvals</div>
+    <div style="padding:20px 0;text-align:center;color:#3a3a3a;font-size:12px;">No data yet.</div>
   </div>
 
   <!-- Two-column: Activity + Profile Completion -->
@@ -162,67 +130,15 @@
     <div class="card">
       <div class="card-title">Recent Activity</div>
       <div class="activity-list">
-        <div class="activity-item">
-          <div class="activity-dot dot-green"></div>
-          <div class="activity-text">Crystal Lockhart logged in</div>
-          <div class="activity-time">Yesterday</div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot dot-blue"></div>
-          <div class="activity-text">Jovana Rosales updated her profile</div>
-          <div class="activity-time">3 days ago</div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot dot-blue"></div>
-          <div class="activity-text">Ali Chapman uploaded 4 photos</div>
-          <div class="activity-time">4 days ago</div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot dot-orange"></div>
-          <div class="activity-text">Christy McGinity profile still incomplete</div>
-          <div class="activity-time">1 wk ago</div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot dot-green"></div>
-          <div class="activity-text">New Signup registered an account</div>
-          <div class="activity-time">Apr 22</div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot dot-green"></div>
-          <div class="activity-text">Another Applicant registered an account</div>
-          <div class="activity-time">Apr 24</div>
-        </div>
-      </div>
+        <div style="padding:20px 0;text-align:center;color:#3a3a3a;font-size:12px;">No data yet.</div>
+      </div>      </div>
     </div>
 
     <!-- Profile Completion Breakdown -->
     <div class="card">
       <div class="card-title">Profile Completion Breakdown</div>
-      <div class="progress-item">
-        <div class="progress-label"><span>Crystal Lockhart</span><span>100%</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
-      </div>
-      <div class="progress-item">
-        <div class="progress-label"><span>Jovana Rosales</span><span>100%</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
-      </div>
-      <div class="progress-item">
-        <div class="progress-label"><span>Ali Chapman</span><span>100%</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
-      </div>
-      <div class="progress-item">
-        <div class="progress-label"><span>Anae Ayala</span><span>89%</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width:89%"></div></div>
-      </div>
-      <div class="progress-item">
-        <div class="progress-label"><span>Christy McGinity</span><span>44%</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width:44%; background:#fb923c"></div></div>
-      </div>
-      <div class="progress-item">
-        <div class="progress-label"><span>New Signup</span><span>11%</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width:11%; background:#f87171"></div></div>
-      </div>
-    </div>
+      <div style="padding:20px 0;text-align:center;color:#3a3a3a;font-size:12px;">No data yet.</div>
+        </div>
   </div>
 
   <!-- Two-column: Roster snapshot + Gig interest -->
@@ -232,72 +148,14 @@
     <div class="card">
       <div class="card-title">Active Talent — DwarfDivas Cast</div>
       <div class="perf-list">
-        <div class="perf-row">
-          <div class="avatar">C</div>
-          <div style="flex:1"><div class="perf-name">Crystal Lockhart</div><div class="perf-sub">Lil Miss Firefly</div></div>
-          <span class="tag tag-green">Active</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">J</div>
-          <div style="flex:1"><div class="perf-name">Jovana Rosales</div><div class="perf-sub">Lil Jojo</div></div>
-          <span class="tag tag-green">Active</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">A</div>
-          <div style="flex:1"><div class="perf-name">Ali Chapman</div><div class="perf-sub">Miss Amazing</div></div>
-          <span class="tag tag-green">Active</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">A</div>
-          <div style="flex:1"><div class="perf-name">Anae Ayala</div><div class="perf-sub">—</div></div>
-          <span class="tag tag-green">Active</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">C</div>
-          <div style="flex:1"><div class="perf-name">Christy McGinity</div><div class="perf-sub">—</div></div>
-          <span class="tag tag-orange">Incomplete</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">M</div>
-          <div style="flex:1"><div class="perf-name">Maria Virgen</div><div class="perf-sub">—</div></div>
-          <span class="tag tag-green">Active</span>
-        </div>
-      </div>
-    </div>
+        <div style="padding:20px 0;text-align:center;color:#3a3a3a;font-size:12px;">No data yet.</div>
+      </div>    </div>
 
     <!-- Open Gig Interest -->
     <div class="card">
-      <div class="card-title">Flash Mob — May 1 — Gig Interest</div>
-      <div class="perf-list">
-        <div class="perf-row">
-          <div class="avatar">C</div>
-          <div style="flex:1"><div class="perf-name">Crystal Lockhart</div></div>
-          <span class="tag tag-green">Interested ✓</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">J</div>
-          <div style="flex:1"><div class="perf-name">Jovana Rosales</div></div>
-          <span class="tag tag-green">Interested ✓</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">A</div>
-          <div style="flex:1"><div class="perf-name">Anae Ayala</div></div>
-          <span class="tag tag-green">Interested ✓</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">M</div>
-          <div style="flex:1"><div class="perf-name">Mike D.</div></div>
-          <span class="tag tag-grey">No response</span>
-        </div>
-        <div class="perf-row">
-          <div class="avatar">S</div>
-          <div style="flex:1"><div class="perf-name">Sam T.</div></div>
-          <span class="tag tag-grey">No response</span>
-        </div>
-      </div>
-      <div style="margin-top:12px">
-        <button class="btn btn-dark btn-sm" onclick="window.parent.navigate && window.parent.navigate('gigs')">View All Gigs →</button>
-      </div>
+      <div class="card-title">Open Gig Interest</div>
+      <div style="padding:20px 0;text-align:center;color:#3a3a3a;font-size:12px;">No data yet.</div>
+      <div style="margin-top:12px"><button class="btn btn-dark btn-sm" onclick="window.parent.navigate && window.parent.navigate('gigs')">View All Gigs →</button></div>
     </div>
 
   </div>
