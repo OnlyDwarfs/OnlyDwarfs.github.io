@@ -303,89 +303,165 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px;
   }
-  .avail-banner-text {
-    font-size: 13px; color: rgba(200,168,248,0.8);
-  }
+  .avail-banner-text { font-size: 13px; color: rgba(200,168,248,0.8); }
   .avail-banner-link {
     font-size: 12px; font-weight: 700;
     color: #9B59F5; white-space: nowrap;
     transition: opacity 140ms;
   }
   .avail-banner-link:hover { opacity: 0.75; }
+  .avail-empty {
+    padding: 32px; text-align: center;
+    font-size: 13px; color: rgba(255,255,255,0.25); font-style: italic;
+  }
 
-  .avail-table-wrap { overflow-x: auto; }
-  .avail-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 500px;
+  /* performer filter pills */
+  .avail-pills {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 20px;
   }
-  .avail-table th {
+  .avail-pill {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-size: 12.5px; font-weight: 700;
+    color: rgba(255,255,255,0.45);
+    cursor: pointer; font-family: inherit;
+    transition: all 140ms ease;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .avail-pill:hover { border-color: rgba(155,89,245,0.4); color: #fff; }
+  .avail-pill.active {
+    background: rgba(155,89,245,0.18);
+    border-color: #9B59F5;
+    color: #fff;
+  }
+  .avail-pill.no-data { opacity: 0.4; cursor: default; }
+  .avail-pill-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #22C55E; flex-shrink: 0;
+  }
+  .avail-pill-dot.missing { background: rgba(239,68,68,0.7); }
+
+  /* calendar */
+  .avail-cal-wrap { }
+  .avail-cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .avail-cal-title {
+    font-size: 16px; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .avail-cal-legend {
+    display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+  }
+  .avail-cal-legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: rgba(255,255,255,0.4);
+  }
+  .avail-cal-legend-swatch {
+    width: 12px; height: 12px; border-radius: 3px;
+  }
+
+  .avail-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+  }
+  .avail-cal-dow {
+    text-align: center;
     font-size: 10px; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
+    letter-spacing: 0.08em; text-transform: uppercase;
     color: rgba(255,255,255,0.28);
-    padding: 0 8px 10px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    white-space: nowrap;
+    padding-bottom: 8px;
   }
-  .avail-table th.name-col { text-align: left; padding-left: 0; }
-  .avail-table td {
-    padding: 10px 8px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 13px;
-    vertical-align: middle;
+  .avail-cal-day {
+    aspect-ratio: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border-radius: 9px;
+    border: 1.5px solid transparent;
+    cursor: default;
+    position: relative;
+    transition: all 120ms ease;
+    gap: 2px;
   }
-  .avail-table td.name-col {
-    text-align: left; padding-left: 0;
-    font-size: 13px; font-weight: 600;
-    color: #E8EDF5; white-space: nowrap;
+  .avail-cal-day-num {
+    font-size: 14px; font-weight: 700;
+    line-height: 1;
   }
-  .avail-dot {
-    width: 20px; height: 20px; border-radius: 50%;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    margin: auto;
+  .avail-cal-day-sub {
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
   }
-  .avail-dot.yes {
-    background: rgba(34,197,94,0.2);
+
+  /* default all-view coloring */
+  .avail-cal-day.count-all {
+    background: rgba(34,197,94,0.18);
+    border-color: rgba(34,197,94,0.35);
     color: #22C55E;
   }
-  .avail-dot.no {
-    background: rgba(255,255,255,0.04);
-    color: rgba(255,255,255,0.15);
+  .avail-cal-day.count-most {
+    background: rgba(155,89,245,0.15);
+    border-color: rgba(155,89,245,0.3);
+    color: #C8A8F8;
   }
-  .avail-count {
-    font-size: 11px; font-weight: 800;
-    padding: 3px 8px; border-radius: 999px;
-    display: inline-block;
+  .avail-cal-day.count-some {
+    background: rgba(249,115,22,0.1);
+    border-color: rgba(249,115,22,0.25);
+    color: #F97316;
   }
-  .avail-count.all { background: rgba(34,197,94,0.15); color: #22C55E; }
-  .avail-count.most { background: rgba(155,89,245,0.15); color: #9B59F5; }
-  .avail-count.some { background: rgba(249,115,22,0.12); color: #F97316; }
-  .avail-count.few { background: rgba(239,68,68,0.1); color: #F87171; }
-  .avail-empty {
-    padding: 32px;
-    text-align: center;
-    font-size: 13px; color: rgba(255,255,255,0.25);
-    font-style: italic;
+  .avail-cal-day.count-few {
+    background: rgba(239,68,68,0.08);
+    border-color: rgba(239,68,68,0.2);
+    color: #F87171;
   }
+  .avail-cal-day.count-none {
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* person-view coloring */
+  .avail-cal-day.person-yes {
+    background: rgba(34,197,94,0.2);
+    border-color: #22C55E;
+    color: #22C55E;
+    box-shadow: 0 0 12px rgba(34,197,94,0.15);
+  }
+  .avail-cal-day.person-no {
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.18);
+  }
+
+  /* show day */
+  .avail-cal-day.show-day {
+    background: rgba(0,175,240,0.1);
+    border-color: rgba(0,175,240,0.35);
+    color: rgba(0,175,240,0.8);
+  }
+  .avail-cal-day.empty {
+    background: transparent; border-color: transparent;
+  }
+
+  /* notes */
   .avail-notes {
-    margin-top: 16px;
-    display: flex; flex-direction: column; gap: 8px;
+    margin-top: 16px; display: flex; flex-direction: column; gap: 8px;
   }
   .avail-note-row {
     display: flex; gap: 10px;
     padding: 10px 14px;
     background: rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 8px;
-    font-size: 12.5px;
+    border-radius: 8px; font-size: 12.5px;
   }
   .avail-note-name {
     font-weight: 700; color: rgba(200,168,248,0.9);
-    flex-shrink: 0;
-    min-width: 120px;
+    flex-shrink: 0; min-width: 120px;
   }
   .avail-note-text { color: rgba(255,255,255,0.5); }
 
@@ -586,7 +662,7 @@
         <span>🎟️ Eventbrite Listing</span>
         <span style="font-size:10px;color:rgba(255,255,255,0.3);">↗</span>
       </a>
-      <a href="/cueboard.html" target="_top"
+      <a href="cueboard.html" target="_top"
          style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:9px;font-size:13px;font-weight:600;color:#E8EDF5;transition:border-color 140ms;"
          onmouseover="this.style.borderColor='rgba(155,89,245,0.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
         <span>🎬 Cue Board</span>
@@ -705,11 +781,18 @@ async function loadAvailability() {
   }
 }
 
-function renderAvailabilityGrid(data) {
-  const el = document.getElementById('avail-content');
-  const { submissions = {}, allDates = [] } = data;
+// ── STATE ──
+let availData = { submissions: {}, allDates: [] };
+let activePerformer = 'all'; // 'all' or a cast name
 
-  // Check who has submitted
+const SHOW_DAYS = ['2026-05-28', '2026-05-29'];
+const TOTAL_CAST = CAST_NAMES.filter(n => n !== 'Ryder Warbrick').length;
+
+function renderAvailabilityGrid(data) {
+  availData = data;
+  const el = document.getElementById('avail-content');
+  const { submissions = {} } = data;
+
   const submittedNames = Object.keys(submissions);
   const pending = CAST_NAMES.filter(n => n !== 'Ryder Warbrick' && !submittedNames.includes(n));
 
@@ -723,87 +806,27 @@ function renderAvailabilityGrid(data) {
     </div>`;
   } else if (submittedNames.length > 0) {
     html += `<div class="avail-banner" style="background:rgba(34,197,94,0.06);border-color:rgba(34,197,94,0.2);">
-      <div class="avail-banner-text" style="color:rgba(34,197,94,0.8);">✓ All cast have submitted their availability</div>
+      <div class="avail-banner-text" style="color:rgba(34,197,94,0.8);">✓ All cast submitted — tap a name to see their days</div>
     </div>`;
   }
 
-  if (allDates.length === 0) {
-    html += '<div class="avail-empty">No availability submissions yet. Share the form with the cast.</div>';
-    el.innerHTML = html;
-    return;
-  }
-
-  // Sort dates
-  const dates = [...allDates].sort();
-
-  // Format date header
-  function fmtDate(d) {
-    const [y,m,day] = d.split('-');
-    return new Date(parseInt(y), parseInt(m)-1, parseInt(day)).toLocaleDateString('en-US', {month:'short', day:'numeric'});
-  }
-
-  // Build grid
-  html += `<div class="avail-table-wrap"><table class="avail-table"><thead><tr>
-    <th class="name-col">Performer</th>
-    ${dates.map(d => `<th>${fmtDate(d)}</th>`).join('')}
-  </tr></thead><tbody>`;
+  // Performer pills
+  html += `<div class="avail-pills">
+    <button class="avail-pill active" id="pill-all" onclick="selectPerformer('all')">
+      Everyone
+    </button>`;
 
   CAST_NAMES.forEach(name => {
-    const sub = submissions[name];
-    const availDates = sub ? new Set(sub.dates) : null;
-    html += `<tr><td class="name-col">${name}</td>`;
-    dates.forEach(d => {
-      if (!sub) {
-        html += `<td><div class="avail-dot no">—</div></td>`;
-      } else if (availDates.has(d)) {
-        html += `<td><div class="avail-dot yes">✓</div></td>`;
-      } else {
-        html += `<td><div class="avail-dot no">✗</div></td>`;
-      }
-    });
-    html += '</tr>';
+    const hasSub = !!submissions[name];
+    const dotClass = hasSub ? '' : 'missing';
+    html += `<button class="avail-pill${hasSub ? '' : ' no-data'}" id="pill-${name.replace(/\s/g,'-')}" onclick="${hasSub ? `selectPerformer('${name}')` : ''}">
+      <span class="avail-pill-dot ${dotClass}"></span>
+      ${name.split(' ')[0]}
+    </button>`;
   });
+  html += '</div>';
 
-  // Count row
-  html += '<tr><td class="name-col" style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);padding-top:12px;">Available</td>';
-  const totalPerformers = CAST_NAMES.filter(n => n !== 'Ryder Warbrick').length;
-  dates.forEach(d => {
-    const count = CAST_NAMES.filter(name => {
-      const sub = submissions[name];
-      return sub && sub.dates.includes(d);
-    }).length;
-    let cls = 'few';
-    if (count >= totalPerformers) cls = 'all';
-    else if (count >= Math.ceil(totalPerformers * 0.7)) cls = 'most';
-    else if (count >= Math.ceil(totalPerformers * 0.4)) cls = 'some';
-    html += `<td><span class="avail-count ${cls}">${count}</span></td>`;
-  });
-  html += '</tr></tbody></table></div>';
-
-  // Notes section
-  const notesEntries = CAST_NAMES.filter(n => submissions[n] && submissions[n].notes);
-  if (notesEntries.length > 0) {
-    html += `<div style="margin-top:16px;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:8px;">Notes</div>
-    <div class="avail-notes">`;
-    notesEntries.forEach(name => {
-      html += `<div class="avail-note-row">
-        <div class="avail-note-name">${name}</div>
-        <div class="avail-note-text">${submissions[name].notes}</div>
-      </div>`;
-    });
-    html += '</div>';
-  }
-
-  // Last refreshed
-  html += `<div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.2);text-align:right;">
-    Last refreshed: ${new Date().toLocaleTimeString()}
-  </div>`;
-
-  el.innerHTML = html;
-}
-
-// Auto-load on page load
-loadAvailability();
-</script>
-</body>
-</html>
+  // Calendar + legend
+  html += `
+  <div class="avail-cal-wrap">
+    <div clas
