@@ -244,7 +244,7 @@
         if (email.trim().toLowerCase() === ADMIN_EMAIL || email.trim().toLowerCase() === ADMIN_FULL) {
           if (hash === ADMIN_HASH) {
             localStorage.setItem('od_auth', hash);
-            window.location.href = 'command.html';
+            window.location.href = 'admin.html';
           } else {
             setLoad(false);
             setErr('Incorrect password.');
@@ -265,7 +265,7 @@
             // Admin role → command center; everyone else → performer dashboard
             if (data.role === 'Admin') {
               localStorage.setItem('od_auth', hash);
-              window.location.href = 'command.html';
+              window.location.href = 'admin.html';
             } else {
               window.location.href = 'performer-dashboard.html';
             }
