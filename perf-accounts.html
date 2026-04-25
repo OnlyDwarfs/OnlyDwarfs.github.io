@@ -117,15 +117,156 @@
     <input class="search-box" type="text" id="search-box" placeholder="Search by name or email…" oninput="applyFilter()">
     <div class="filter-tabs">
       <button class="ftab active" onclick="setFilter('all',this)">All</button>
-      <button class="ftab"        onclick="setFilter('Pending',this)">Pending</button>
-      <button class="ftab"        onclick="setFilter('Active',this)">Active</button>
-      <button class="ftab"        onclick="setFilter('Inactive',this)">Inactive</button>
+      <button class="ftab" onclick="setFilter('Pending',this)">Pending</button>
+      <button class="ftab" onclick="setFilter('Active',this)">Active</button>
+      <button class="ftab" onclick="setFilter('Inactive',this)">Inactive</button>
     </div>
     <button class="btn btn-dark" onclick="loadAccounts()" style="margin-left:auto">↻ Refresh</button>
   </div>
 
   <div class="detail-panel" id="detail-panel"></div>
 
-  <table>
-    <thead>
-      <tr>
+  <div id="table-wrap">
+    <div class="state-msg"><div class="spinner"></div>Loading accounts…</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+if (!localStorage.getItem('od_auth')) { window.top.location.href = 'login.html'; }
+
+const CRM_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec';
+let allAccounts = [];
+let currentFilter = 'all';
+
+async function loadAccounts() {
+  const wrap = document.getElementById('table-wrap');
+  wrap.innerHTML = '<div class="state-msg"><div class="spinner"></div>Loading…</div>';
+  try {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 30000);
+    const data = await fetch(CRM_URL + '?action=getAllTalent', { signal: ctrl.signal }).then(r => r.json());
+    if (!data.talent) throw new Error(data.error || 'No data returned');
+    allAccounts = data.talent;
+    updateStats();
+    renderTable();
+  } catch(e) {
+    wrap.innerHTML = '<div class="state-msg">⚠️ ' + (e.name === 'AbortError' ? 'Request timed out — try Refresh.' : e.message) + '</div>';
+  }
+}
+
+function updateStats() {
+  const active     = allAccounts.filter(p => p.status === 'Active').length;
+  const pending    = allAccounts.filter(p => p.status === 'Pending' || p.status === 'Applied').length;
+  const incomplete = allAccounts.filter(p => !p.bio || !p.photo).length;
+  document.getElementById('stat-active').textContent     = active;
+  document.getElementById('stat-pending').textContent    = pending;
+  document.getElementById('stat-incomplete').textContent = incomplete;
+  document.getElementById('stat-total').textContent      = allAccounts.length;
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function applyFilter() { renderTable(); }
+
+function renderTable() {
+  const q = document.getElementById('search-box').value.toLowerCase();
+  let rows = allAccounts;
+  if (currentFilter !== 'all') rows = rows.filter(p => p.status === currentFilter || (currentFilter === 'Pending' && p.status === 'Applied'));
+  if (q) rows = rows.filter(p => (p.name||'').toLowerCase().includes(q) || (p.email||'').toLowerCase().includes(q));
+
+  if (!rows.length) {
+    document.getElementById('table-wrap').innerHTML = '<div class="state-msg"><div class="icon">🔍</div>No accounts match.</div>';
+    return;
+  }
+
+  const rowsHTML = rows.map(p => {
+    const init = (p.name || '?')[0].toUpperCase();
+    const statusTag = {
+      'Active':   '<span class="tag tag-green">Active</span>',
+      'Pending':  '<span class="tag tag-orange">Pending</span>',
+      'Applied':  '<span class="tag tag-orange">Pending</span>',
+      'Inactive': '<span class="tag tag-grey">Inactive</span>',
+    }[p.status] || '<span class="tag tag-grey">' + (p.status||'Unknown') + '</span>';
+
+    const approveBtn = (p.status === 'Pending' || p.status === 'Applied')
+      ? '<button class="btn btn-green btn-sm" onclick="setStatus('' + p.id + '','Active',this)">Approve</button>'
+        + '<button class="btn btn-red btn-sm" onclick="setStatus('' + p.id + '','Inactive',this)">Decline</button>'
+      : p.status === 'Active'
+        ? '<button class="btn btn-grey btn-sm" onclick="setStatus('' + p.id + '','Inactive',this)">Deactivate</button>'
+        : '<button class="btn btn-blue btn-sm" onclick="setStatus('' + p.id + '','Active',this)">Reactivate</button>';
+
+    return '<tr onclick="toggleDetail('' + p.id + '')" style="cursor:pointer">'
+      + '<td><div class="name-cell"><div class="avatar">' + init + '</div><div><div>' + (p.name||'—') + '</div><div class="name-sub">' + (p.email||'—') + '</div></div></div></td>'
+      + '<td>' + (p.performerType||'—') + '</td>'
+      + '<td>' + (p.location||'—') + '</td>'
+      + '<td>' + statusTag + '</td>'
+      + '<td><div class="actions">' + approveBtn + '</div></td>'
+      + '</tr>';
+  }).join('');
+
+  document.getElementById('table-wrap').innerHTML =
+    '<table><thead><tr><th>Performer</th><th>Type</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>'
+    + '<tbody>' + rowsHTML + '</tbody></table>';
+}
+
+function toggleDetail(id) {
+  const p = allAccounts.find(x => x.id === id);
+  if (!p) return;
+  const panel = document.getElementById('detail-panel');
+  if (panel.dataset.open === id) {
+    panel.classList.remove('open');
+    panel.dataset.open = '';
+    return;
+  }
+  panel.dataset.open = id;
+  panel.innerHTML = '<div class="detail-grid">'
+    + '<div class="detail-field"><label>Name</label><span>' + (p.name||'—') + '</span></div>'
+    + '<div class="detail-field"><label>Email</label><span>' + (p.email||'—') + '</span></div>'
+    + '<div class="detail-field"><label>Phone</label><span>' + (p.phone||'—') + '</span></div>'
+    + '<div class="detail-field"><label>Location</label><span>' + (p.location||'—') + '</span></div>'
+    + '<div class="detail-field"><label>Type</label><span>' + (p.performerType||'—') + '</span></div>'
+    + '<div class="detail-field"><label>Rate</label><span>' + (p.rate ? '$'+p.rate+'/hr' : '—') + '</span></div>'
+    + '<div class="detail-field"><label>Bio</label><span>' + (p.bio||'Not set') + '</span></div>'
+    + '<div class="detail-field"><label>Status</label><span>' + (p.status||'—') + '</span></div>'
+    + '<div class="detail-field"><label>ID</label><span style="font-size:10px;color:#444">' + p.id + '</span></div>'
+    + '</div>';
+  panel.classList.add('open');
+}
+
+async function setStatus(id, status, btn) {
+  btn.disabled = true;
+  btn.textContent = '…';
+  try {
+    const r = await fetch(CRM_URL + '?action=setTalentStatus&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status)).then(r => r.json());
+    if (!r.success) throw new Error(r.error || 'Failed');
+    const p = allAccounts.find(x => x.id === id);
+    if (p) p.status = status;
+    updateStats();
+    renderTable();
+    toast(status === 'Active' ? 'Approved ✓' : status === 'Inactive' ? 'Deactivated' : 'Updated', 'success');
+  } catch(e) {
+    toast('Error: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = status === 'Active' ? 'Approve' : 'Decline';
+  }
+}
+
+let toastTimer;
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'show ' + (type||'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+loadAccounts();
+</script>
+</body>
+</html>
