@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performer Portal — OnlyDwarfs</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0b0d; color: #ccc; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ══════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════ */
+#shell { display: flex; height: 100vh; overflow: hidden; }
+
+/* ══════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════ */
+#sidebar {
+  width: 210px; flex-shrink: 0;
+  background: #111; border-right: 1px solid #1e1e1e;
+  display: flex; flex-direction: column;
+  height: 100vh; overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: none;
+}
+#sidebar::-webkit-scrollbar { display: none; }
+
+.sb-top {
+  padding: 16px 14px 14px;
+  border-bottom: 1px solid #1e1e1e;
+  flex-shrink: 0;
+}
+.sb-logo {
+  font-size: 12px; font-weight: 900; color: #fff;
+  letter-spacing: -0.02em; margin-bottom: 10px;
+}
+.sb-logo span { color: #00AFF0; }
+
+.sb-performer {
+  display: flex; align-items: center; gap: 9px;
+}
+.sb-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #0d1a40, #1a0533);
+  border: 2px solid #1e1e1e;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #00AFF0;
+  flex-shrink: 0; overflow: hidden;
+}
+.sb-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.sb-perf-name { font-size: 13px; font-weight: 700; color: #ddd; line-height: 1.2; }
+.sb-perf-type { font-size: 11px; color: #555; margin-top: 1px; }
+
+.sb-nav { padding: 10px 8px 4px; flex: 1; }
+.sb-section-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #333;
+  padding: 8px 10px 4px; display: block;
+}
+.sb-link {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 10px; border-radius: 7px;
+  color: #555; font-size: 13px; font-weight: 500;
+  transition: all 120ms; margin-bottom: 1px;
+  border: 1px solid transparent; background: none;
+  width: 100%; text-align: left; line-height: 1;
+}
+.sb-link:hover { background: #1a1a1a; color: #bbb; }
+.sb-link.active { background: rgba(0,175,240,0.08); border-color: rgba(0,175,240,0.18); color: #00AFF0; }
+.sb-link .ico { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+.sb-badge {
+  margin-left: auto; background: #00AFF0; color: #000;
+  font-size: 10px; font-weight: 800; border-radius: 20px;
+  padding: 1px 6px; flex-shrink: 0;
+}
+
+.sb-bottom {
+  padding: 12px; border-top: 1px solid #1a1a1a; flex-shrink: 0;
+}
+.sb-signout {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: #444; padding: 6px 8px;
+  border-radius: 6px; transition: all 120ms;
+  background: none; border: none; width: 100%; text-align: left;
+}
+.sb-signout:hover { background: rgba(239,68,68,0.07); color: #f87171; }
+
+/* ══════════════════════════════════════════
+   CONTENT AREA
+══════════════════════════════════════════ */
+#content {
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; min-width: 0;
+}
+
+/* Top bar */
+#topbar {
+  height: 48px; background: #111;
+  border-bottom: 1px solid #1e1e1e;
+  display: flex; align-items: center; padding: 0 28px; gap: 12px;
+  flex-shrink: 0;
+}
+#topbar-title { font-size: 13px; font-weight: 600; color: #888; }
+.tb-dot { color: #333; margin: 0 4px; }
+#topbar-sub { font-size: 13px; font-weight: 700; color: #ccc; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.tb-link { font-size: 12px; color: #444; padding: 5px 10px; border-radius: 5px; transition: all 120ms; }
+.tb-link:hover { background: #1a1a1a; color: #aaa; }
+
+/* Pages scroll area */
+#pages { flex: 1; overflow-y: auto; }
+.page { display: none; padding: 28px 32px; max-width: 880px; }
+.page.on { display: block; }
+
+/* ── PAGE HEADER ── */
+.ph { margin-bottom: 24px; }
+.ph h1 { font-size: 22px; font-weight: 900; color: #fff; }
+.ph p { font-size: 13px; color: #555; margin-top: 4px; }
+
+/* ── SHARED COMPONENTS ── */
+.card { background: #1a1a1a; border: 1px solid #222; border-radius: 10px; padding: 18px; }
+.card + .card { margin-top: 14px; }
+.card-title {
+  font-size: 11px; font-weight: 700; color: #555;
+  text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px;
+}
+
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.stat { background: #1a1a1a; border: 1px solid #222; border-radius: 9px; padding: 14px 16px; }
+.stat .num { font-size: 24px; font-weight: 900; color: #00AFF0; }
+.stat .lbl { font-size: 11px; color: #555; margin-top: 2px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 7px; font-size: 13px; font-weight: 700; border: none; transition: opacity 150ms; }
+.btn:hover { opacity: 0.85; }
+.btn-blue { background: #00AFF0; color: #000; }
+.btn-dark { background: #1e1e1e; border: 1px solid #2a2a2a; color: #888; }
+.btn-dark:hover { border-color: #00AFF0; color: #00AFF0; opacity: 1; }
+.btn-ghost { background: transparent; border: 1px solid #2a2a2a; color: #666; }
+.btn-ghost:hover { border-color: #00AFF0; color: #00AFF0; opacity: 1; }
+.btn-red-ghost { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: #f87171; }
+.btn-red-ghost:hover { background: rgba(239,68,68,0.08); opacity: 1; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-block { width: 100%; justify-content: center; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Tags */
+.tag { display: inline-block; border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 600; }
+.tag-green  { background: rgba(34,197,94,0.1);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.2);  }
+.tag-blue   { background: rgba(0,175,240,0.1);  color: #00AFF0;  border: 1px solid rgba(0,175,240,0.2);  }
+.tag-orange { background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+.tag-grey   { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #2a2a2a; }
+.tag-red    { background: rgba(239,68,68,0.1);  color: #f87171; border: 1px solid rgba(239,68,68,0.2);  }
+
+/* Notice */
+.notice { border-radius: 7px; padding: 10px 14px; font-size: 12px; margin-bottom: 16px; }
+.notice-green  { background: rgba(34,197,94,0.06);  border: 1px solid rgba(34,197,94,0.2);  color: #4ade80; }
+.notice-blue   { background: rgba(0,175,240,0.06);  border: 1px solid rgba(0,175,240,0.2);  color: #00AFF0; }
+.notice-yellow { background: rgba(234,179,8,0.07); border: 1px solid rgba(234,179,8,0.2);  color: #fbbf24; }
+
+/* Forms */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #555; margin-bottom: 6px; }
+.form-group label .opt { font-weight: 400; opacity: 0.6; text-transform: none; letter-spacing: 0; }
+.input {
+  width: 100%; padding: 9px 12px;
+  background: #111; border: 1px solid #2a2a2a;
+  border-radius: 7px; font-size: 13px; color: #ccc;
+  font-family: inherit; outline: none; transition: border 150ms;
+}
+.input:focus { border-color: #00AFF0; }
+.input::placeholder { color: #3a3a3a; }
+select.input { cursor: pointer; }
+textarea.input { resize: vertical; height: 90px; }
+.input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* Divider */
+.divider { height: 1px; background: #1e1e1e; margin: 20px 0; }
+
+/* Table */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th { text-align: left; padding: 8px 12px; border-bottom: 1px solid #222; font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.06em; }
+.tbl td { padding: 11px 12px; border-bottom: 1px solid #1a1a1a; color: #aaa; vertical-align: middle; }
+.tbl tr:hover td { background: #141414; }
+.tbl .actions { display: flex; gap: 6px; }
+
+/* ══════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════ */
+.welcome-banner {
+  background: linear-gradient(135deg, #0a0014 0%, #001a2e 100%);
+  border: 1px solid #1e1e1e;
+  border-radius: 12px; padding: 22px 24px;
+  margin-bottom: 20px; position: relative; overflow: hidden;
+}
+.welcome-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(0,175,240,0.08) 0%, transparent 65%);
+}
+.welcome-banner h2 { font-size: 20px; font-weight: 900; color: #fff; position: relative; }
+.welcome-banner p { font-size: 13px; color: #555; margin-top: 4px; position: relative; }
+
+.quick-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; position: relative; }
+
+.dash-gig-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid #1e1e1e;
+}
+.dash-gig-row:last-child { border: none; }
+.dash-dot { width: 8px; height: 8px; border-radius: 50%; background: #00AFF0; flex-shrink: 0; margin-top: 5px; }
+.dash-dot.yellow { background: #f59e0b; }
+.dash-gig-info { flex: 1; }
+.dash-gig-name { font-size: 14px; font-weight: 700; color: #ddd; }
+.dash-gig-detail { font-size: 12px; color: #555; margin-top: 3px; }
+
+/* ══════════════════════════════════════════
+   PROFILE
+══════════════════════════════════════════ */
+.profile-top {
+  display: flex; gap: 24px; align-items: flex-start;
+  margin-bottom: 24px;
+}
+.profile-photo-wrap { flex-shrink: 0; }
+.profile-photo {
+  width: 96px; height: 96px; border-radius: 50%;
+  background: linear-gradient(135deg, #0d1a40, #1a0533);
+  border: 3px solid #222;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-weight: 900; color: #00AFF030;
+  overflow: hidden; cursor: pointer; transition: border-color 150ms;
+  position: relative;
+}
+.profile-photo:hover { border-color: #00AFF0; }
+.profile-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.profile-photo-overlay {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 150ms;
+  font-size: 22px;
+}
+.profile-photo:hover .profile-photo-overlay { opacity: 1; }
+.profile-photo-hint { font-size: 11px; color: #444; margin-top: 6px; text-align: center; }
+
+.profile-header-info { flex: 1; padding-top: 4px; }
+.profile-display-name { font-size: 20px; font-weight: 900; color: #fff; }
+.profile-stage { font-size: 14px; color: #00AFF0; margin-top: 2px; }
+.profile-location { font-size: 12px; color: #555; margin-top: 4px; }
+#profile-completion {
+  display: flex; align-items: center; gap: 10px; margin-top: 12px;
+  font-size: 12px; color: #555;
+}
+.progress-bar { flex: 1; max-width: 160px; height: 4px; background: #222; border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: #00AFF0; border-radius: 99px; transition: width 0.4s ease; }
+
+/* ══════════════════════════════════════════
+   PHOTOS
+══════════════════════════════════════════ */
+.headshot-wrap {
+  display: flex; gap: 20px; align-items: flex-start; margin-bottom: 24px;
+}
+.headshot-box {
+  width: 140px; height: 160px; border-radius: 10px;
+  background: #111; border: 2px dashed #2a2a2a;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; font-size: 12px; color: #444; cursor: pointer;
+  transition: all 150ms; flex-shrink: 0; overflow: hidden;
+  position: relative;
+}
+.headshot-box:hover { border-color: #00AFF0; color: #00AFF0; }
+.headshot-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+.headshot-box .ph-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; opacity: 0; transition: opacity 150ms; border-radius: 8px;
+  font-size: 11px; color: #fff;
+}
+.headshot-box:hover .ph-overlay { opacity: 1; }
+
+.gallery-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.gallery-item {
+  aspect-ratio: 4/3; border-radius: 9px;
+  background: #111; border: 2px dashed #2a2a2a;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; font-size: 20px; color: #2a2a2a; cursor: pointer;
+  transition: all 150ms; overflow: hidden; position: relative;
+}
+.gallery-item:hover { border-color: #00AFF0; color: #00AFF0; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-item .ph-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  opacity: 0; transition: opacity 150ms;
+}
+.gallery-item:hover .ph-overlay { opacity: 1; }
+
+/* ══════════════════════════════════════════
+   OPEN GIGS
+══════════════════════════════════════════ */
+.gig-card {
+  background: #1a1a1a; border: 1px solid #222;
+  border-radius: 10px; padding: 20px; margin-bottom: 14px;
+  transition: border-color 150ms;
+}
+.gig-card:hover { border-color: #2a2a2a; }
+.gig-card.interested { border-color: rgba(34,197,94,0.3); }
+.gig-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.gig-type { font-size: 16px; font-weight: 800; color: #fff; }
+.gig-id { font-size: 11px; color: #444; font-family: monospace; margin-top: 3px; }
+.gig-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #777; background: #111; border: 1px solid #222; border-radius: 6px; padding: 4px 10px; }
+.gig-details-text { font-size: 13px; color: #555; line-height: 1.6; padding: 10px 12px; background: #111; border-radius: 7px; border-left: 2px solid #222; margin-bottom: 14px; }
+.gig-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.gig-posted { font-size: 11px; color: #3a3a3a; }
+.avail-btn {
+  background: #00AFF0; color: #000; font-size: 13px; font-weight: 800;
+  border: none; border-radius: 8px; padding: 9px 20px; transition: opacity 150ms;
+}
+.avail-btn:hover { opacity: 0.85; }
+.avail-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.avail-btn.sent { background: #22c55e; color: #fff; }
+
+/* ══════════════════════════════════════════
+   SCHEDULE
+══════════════════════════════════════════ */
+.booking-row {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 14px 0; border-bottom: 1px solid #1e1e1e;
+}
+.booking-row:last-child { border: none; }
+.booking-date-col {
+  width: 52px; flex-shrink: 0; text-align: center;
+  background: #111; border: 1px solid #222; border-radius: 8px; padding: 8px 6px;
+}
+.booking-month { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #00AFF0; }
+.booking-day { font-size: 22px; font-weight: 900; color: #fff; line-height: 1; }
+.booking-info { flex: 1; }
+.booking-name { font-size: 14px; font-weight: 700; color: #ddd; }
+.booking-meta { font-size: 12px; color: #555; margin-top: 3px; }
+.booking-pay { font-size: 13px; font-weight: 700; color: #00AFF0; margin-top: 4px; }
+
+/* ══════════════════════════════════════════
+   CONTRACTS
+══════════════════════════════════════════ */
+.contract-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 0; border-bottom: 1px solid #1e1e1e;
+}
+.contract-row:last-child { border: none; }
+.contract-icon { font-size: 20px; width: 32px; text-align: center; flex-shrink: 0; }
+.contract-info { flex: 1; }
+.contract-name { font-size: 14px; font-weight: 700; color: #ddd; }
+.contract-date { font-size: 11px; color: #555; margin-top: 2px; }
+.contract-actions { display: flex; gap: 7px; }
+
+/* ══════════════════════════════════════════
+   PAYMENT
+══════════════════════════════════════════ */
+.payment-methods { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+.pm-card {
+  background: #111; border: 2px solid #1e1e1e;
+  border-radius: 10px; padding: 16px; text-align: center;
+  cursor: pointer; transition: all 150ms;
+}
+.pm-card:hover { border-color: #2a2a2a; }
+.pm-card.selected { border-color: #00AFF0; background: rgba(0,175,240,0.04); }
+.pm-icon { font-size: 24px; margin-bottom: 6px; }
+.pm-name { font-size: 13px; font-weight: 700; color: #ccc; }
+
+/* ══════════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════════ */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid #1e1e1e;
+}
+.toggle-row:last-child { border: none; }
+.toggle-label { font-size: 13px; color: #ccc; }
+.toggle-sub { font-size: 11px; color: #555; margin-top: 2px; }
+.toggle {
+  width: 40px; height: 22px; border-radius: 11px; background: #2a2a2a;
+  border: none; cursor: pointer; position: relative; transition: background 200ms;
+  flex-shrink: 0;
+}
+.toggle.on { background: #00AFF0; }
+.toggle::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: transform 200ms;
+}
+.toggle.on::after { transform: translateX(18px); }
+
+/* ── Empty state ── */
+.empty {
+  text-align: center; padding: 40px 20px;
+  color: #444; font-size: 14px; line-height: 1.7;
+}
+.empty .empty-icon { font-size: 32px; margin-bottom: 10px; }
+
+/* ── Toast ── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
+  padding: 10px 20px; font-size: 13px; color: #ccc;
+  transition: transform 0.3s ease; z-index: 9999; white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+#toast.success { border-color: rgba(34,197,94,0.3); color: #4ade80; }
+#toast.error   { border-color: rgba(239,68,68,0.3);  color: #f87171; }
+
+@media (max-width: 700px) {
+  #sidebar { display: none; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .payment-methods { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2,1fr); }
+  .form-row-2 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="shell">
+
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <nav id="sidebar">
+    <div class="sb-top">
+      <div class="sb-logo">ONLY<span>DWARFS</span></div>
+      <div class="sb-performer">
+        <div class="sb-avatar" id="sb-av">?</div>
+        <div>
+          <div class="sb-perf-name" id="sb-name">Loading…</div>
+          <div class="sb-perf-type" id="sb-type"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-nav">
+      <span class="sb-section-label">Main</span>
+      <button class="sb-link" id="sl-dash"      onclick="go('dash')">      <span class="ico">🏠</span>Dashboard</button>
+      <button class="sb-link" id="sl-profile"   onclick="go('profile')">   <span class="ico">👤</span>My Profile</button>
+      <button class="sb-link" id="sl-photos"    onclick="go('photos')">    <span class="ico">📸</span>My Photos</button>
+
+      <span class="sb-section-label" style="margin-top:6px">Work</span>
+      <button class="sb-link" id="sl-gigs"      onclick="go('gigs')">      <span class="ico">📋</span>Open Gigs <span class="sb-badge" id="gigs-badge" style="display:none">0</span></button>
+      <button class="sb-link" id="sl-schedule"  onclick="go('schedule')">  <span class="ico">📅</span>My Schedule</button>
+      <button class="sb-link" id="sl-contracts" onclick="go('contracts')"> <span class="ico">✍️</span>Contracts</button>
+
+      <span class="sb-section-label" style="margin-top:6px">Account</span>
+      <button class="sb-link" id="sl-payment"  onclick="go('payment')">  <span class="ico">💳</span>Payment Info</button>
+      <button class="sb-link" id="sl-settings" onclick="go('settings')"> <span class="ico">⚙️</span>Settings</button>
+    </div>
+
+    <div class="sb-bottom">
+      <button class="sb-signout" onclick="signOut()">← Sign out</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════ CONTENT ══════════════ -->
+  <div id="content">
+    <div id="topbar">
+      <span id="topbar-title">Performer Portal</span>
+      <span class="tb-dot">›</span>
+      <span id="topbar-sub">Dashboard</span>
+      <div class="topbar-right">
+        <a href="index.html" class="tb-link">← Public site</a>
+      </div>
+    </div>
+
+    <div id="pages">
+
+      <!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+      <div class="page" id="pg-dash">
+        <div class="welcome-banner">
+          <h2 id="dash-greeting">Welcome back!</h2>
+          <p id="dash-sub">Here's everything happening with your account.</p>
+          <div class="quick-links">
+            <button class="btn btn-blue btn-sm" onclick="go('gigs')">See open gigs →</button>
+            <button class="btn btn-dark btn-sm" onclick="go('profile')">Edit profile</button>
+            <button class="btn btn-dark btn-sm" onclick="go('photos')">Add photos</button>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat"><div class="num" id="ds-upcoming">—</div><div class="lbl">Upcoming gigs</div></div>
+          <div class="stat"><div class="num" id="ds-open">—</div><div class="lbl">Open gigs</div></div>
+          <div class="stat"><div class="num" id="ds-contracts">2</div><div class="lbl">Active contracts</div></div>
+          <div class="stat"><div class="num" id="ds-earned">—</div><div class="lbl">Earned this year</div></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">📅 Upcoming Gigs</div>
+            <div id="dash-upcoming">
+              <div class="empty"><div class="empty-icon">📅</div>No upcoming gigs yet.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">📬 Open Gigs Available</div>
+            <div id="dash-open-gigs">
+              <div class="empty"><div class="empty-icon">⏳</div>Loading…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">🔔 Recent Activity</div>
+          <div class="dash-gig-row">
+            <div class="dash-dot"></div>
+            <div class="dash-gig-info"><div class="dash-gig-name">DwarfDivas contract sent</div><div class="dash-gig-detail">May 28–29, 2026 · Pending signature</div></div>
+            <span class="tag tag-orange">Action needed</span>
+          </div>
+          <div class="dash-gig-row">
+            <div class="dash-dot"></div>
+            <div class="dash-gig-info"><div class="dash-gig-name">Flash Mob — Monterey Park confirmed</div><div class="dash-gig-detail">May 1, 2026 · $600</div></div>
+            <span class="tag tag-green">Confirmed</span>
+          </div>
+          <div class="dash-gig-row">
+            <div class="dash-dot yellow"></div>
+            <div class="dash-gig-info"><div class="dash-gig-name">Open gig posted: Corporate Event — Phoenix</div><div class="dash-gig-detail">May 15, 2026 · $400</div></div>
+            <button class="btn btn-ghost btn-sm" onclick="go('gigs')">View →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ PROFILE ═══════════════════ -->
+      <div class="page" id="pg-profile">
+        <div class="ph"><h1>My Profile</h1><p>This is what clients and the OnlyDwarfs team see. Keep it current.</p></div>
+
+        <div class="profile-top">
+          <div class="profile-photo-wrap">
+            <div class="profile-photo" id="prof-photo" onclick="document.getElementById('headshot-input-prof').click()">
+              <span id="prof-photo-initial">?</span>
+              <img id="prof-photo-img" src="" style="display:none" alt="Profile photo">
+              <div class="profile-photo-overlay">📷</div>
+            </div>
+            <div class="profile-photo-hint">Click to change</div>
+            <input type="file" id="headshot-input-prof" accept="image/*" style="display:none" onchange="handleHeadshotUpload(this,'prof-photo-img','prof-photo-initial',true)">
+          </div>
+          <div class="profile-header-info">
+            <div class="profile-display-name" id="prof-display-name">Loading…</div>
+            <div class="profile-stage" id="prof-stage-display"></div>
+            <div class="profile-location" id="prof-location-display"></div>
+            <div id="profile-completion">
+              <div class="progress-bar"><div class="progress-fill" id="prof-progress-bar" style="width:0%"></div></div>
+              <span id="prof-progress-txt">0% complete</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Basic Info</div>
+          <div class="form-row-2">
+            <div class="form-group"><label>Full Name</label><input class="input" id="pf-name" type="text" placeholder="Your real name"></div>
+            <div class="form-group"><label>Stage Name <span class="opt">(optional)</span></label><input class="input" id="pf-stage" type="text" placeholder="e.g. Lil Miss Firefly"></div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Act Type</label>
+              <select class="input" id="pf-acttype">
+                <option value="">Select…</option>
+                <option>Oompa Loompa</option><option>Christmas Elf</option><option>Leprechaun</option>
+                <option>Mini Elvis</option><option>Mini Santa</option><option>Exotic Dancer</option>
+                <option>Wrestler</option><option>Boxer</option><option>Drag Queen</option>
+                <option>Butler</option><option>Wizard / Warlock</option><option>Court Jester</option>
+                <option>Pirate</option><option>Superhero</option><option>Cowboy / Cowgirl</option>
+                <option>Beer Wench</option><option>Emcee / Host</option><option>Mascot / Furry</option>
+                <option>Custom Character</option><option>Multiple / Other</option>
+              </select>
+            </div>
+            <div class="form-group"><label>City, State</label><input class="input" id="pf-location" type="text" placeholder="e.g. Las Vegas, NV"></div>
+          </div>
+          <div class="form-group"><label>Bio <span class="opt">(shows on public roster)</span></label><textarea class="input" id="pf-bio" placeholder="Tell bookers who you are — experience, style, what makes you memorable..."></textarea></div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Contact</div>
+          <div class="form-row-2">
+            <div class="form-group"><label>Email <span class="opt">(read-only)</span></label><input class="input" id="pf-email" type="email" disabled></div>
+            <div class="form-group"><label>Phone</label><input class="input" id="pf-phone" type="tel" placeholder="+1 702 000 0000"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Social Links</div>
+          <div class="form-row-2">
+            <div class="form-group"><label>Instagram</label><input class="input" id="pf-ig" type="text" placeholder="@yourhandle"></div>
+            <div class="form-group"><label>TikTok <span class="opt">(optional)</span></label><input class="input" id="pf-tiktok" type="text" placeholder="@yourhandle"></div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group"><label>YouTube <span class="opt">(optional)</span></label><input class="input" id="pf-yt" type="text" placeholder="Channel URL"></div>
+            <div class="form-group"><label>Website <span class="opt">(optional)</span></label><input class="input" id="pf-web" type="text" placeholder="https://yoursite.com"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Performance Details</div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Years of Experience</label>
+              <select class="input" id="pf-exp">
+                <option value="">Select…</option>
+                <option>Less than 1 year</option><option>1–2 years</option>
+                <option>3–5 years</option><option>5–10 years</option><option>10+ years</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Willing to Travel?</label>
+              <select class="input" id="pf-travel">
+                <option value="">Select…</option>
+                <option>Local only (within 50 miles)</option>
+                <option>Regional (within state)</option>
+                <option>Anywhere in the US</option>
+                <option>Internationally</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label>Special Skills <span class="opt">(e.g. juggling, dancing, fire performance)</span></label><input class="input" id="pf-skills" type="text" placeholder="Comma-separated…"></div>
+        </div>
+
+        <div style="margin-top:16px; display:flex; gap:10px;">
+          <button class="btn btn-blue" id="save-profile-btn" onclick="saveProfile()">Save Profile</button>
+          <button class="btn btn-ghost" onclick="loadProfile()">Discard Changes</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ PHOTOS ═══════════════════ -->
+      <div class="page" id="pg-photos">
+        <div class="ph"><h1>My Photos</h1><p>Your headshot is shown on the public roster. Performance photos help you get booked.</p></div>
+
+        <div class="card">
+          <div class="card-title">Profile Headshot</div>
+          <div class="headshot-wrap">
+            <div class="headshot-box" onclick="document.getElementById('headshot-input-main').click()">
+              <img id="headshot-main-img" src="" style="display:none" alt="Headshot">
+              <div class="ph-overlay"><div>📷</div><div style="font-size:11px">Change photo</div></div>
+              <div id="headshot-main-placeholder" style="text-align:center;padding:12px">
+                <div style="font-size:28px;margin-bottom:8px">📷</div>
+                <div style="font-size:11px;color:#444">Upload headshot</div>
+              </div>
+            </div>
+            <input type="file" id="headshot-input-main" accept="image/*" style="display:none" onchange="handleHeadshotUpload(this,'headshot-main-img','headshot-main-placeholder')">
+            <div>
+              <div style="font-size:13px;color:#888;margin-bottom:8px;font-weight:600">Tips for a great headshot:</div>
+              <ul style="font-size:12px;color:#555;line-height:2;padding-left:16px">
+                <li>Good lighting — face clearly visible</li>
+                <li>In costume or performance attire</li>
+                <li>Square or portrait format works best</li>
+                <li>Min 400×400px recommended</li>
+                <li>Max file size: 5MB</li>
+              </ul>
+              <div style="margin-top:12px;display:flex;gap:8px">
+                <button class="btn btn-blue btn-sm" onclick="document.getElementById('headshot-input-main').click()">Upload Photo</button>
+                <button class="btn btn-ghost btn-sm" id="remove-headshot-btn" style="display:none" onclick="removeHeadshot()">Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Performance Gallery <span style="font-weight:400;color:#444;font-size:11px;text-transform:none;letter-spacing:0"> — up to 6 photos</span></div>
+          <div style="font-size:12px;color:#444;margin-bottom:14px">These show up on your full profile page. Click a slot to add a photo.</div>
+          <div class="gallery-grid" id="gallery-grid">
+            <!-- JS fills in 6 slots -->
+          </div>
+          <input type="file" id="gallery-input" accept="image/*" style="display:none" onchange="handleGalleryUpload(this)">
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Video Links <span style="font-weight:400;color:#444;font-size:11px;text-transform:none;letter-spacing:0"> — optional</span></div>
+          <div style="font-size:12px;color:#555;margin-bottom:14px">Link to YouTube or TikTok videos of your performances. These help you get booked.</div>
+          <div id="video-links">
+            <div class="form-row-2">
+              <div class="form-group"><label>Video Link 1</label><input class="input" id="vid-1" type="url" placeholder="https://youtube.com/watch?v=…"></div>
+              <div class="form-group"><label>Video Link 2 <span class="opt">(optional)</span></label><input class="input" id="vid-2" type="url" placeholder="https://tiktok.com/…"></div>
+            </div>
+          </div>
+          <button class="btn btn-blue btn-sm" onclick="saveVideoLinks()">Save Video Links</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ OPEN GIGS ═══════════════════ -->
+      <div class="page" id="pg-gigs">
+        <div class="ph"><h1>Open Gigs</h1><p>Confirmed bookings that need a performer. Hit "I'm Available" and Ryder will reach out to confirm your spot.</p></div>
+        <div id="gigs-list">
+          <div class="empty"><div class="empty-icon">⏳</div>Loading gigs…</div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">How It Works</div>
+          <p style="font-size:13px;color:#555;line-height:1.7">When you click <strong style="color:#ccc">I'm Available</strong>, Ryder gets an instant notification. He'll follow up to confirm your spot and share full client details. You're not locked in until he confirms with you directly.</p>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ SCHEDULE ═══════════════════ -->
+      <div class="page" id="pg-schedule">
+        <div class="ph"><h1>My Schedule</h1><p>Your confirmed bookings and upcoming gigs.</p></div>
+        <div class="card">
+          <div class="card-title">Upcoming</div>
+          <div class="booking-row">
+            <div class="booking-date-col"><div class="booking-month">May</div><div class="booking-day">1</div></div>
+            <div class="booking-info">
+              <div class="booking-name">Flash Mob — Monterey Park, CA</div>
+              <div class="booking-meta">9:00 AM – 5:00 PM · 6 performers</div>
+              <div class="booking-pay">$600</div>
+            </div>
+            <span class="tag tag-green">Confirmed</span>
+          </div>
+          <div class="booking-row">
+            <div class="booking-date-col"><div class="booking-month">May</div><div class="booking-day">28</div></div>
+            <div class="booking-info">
+              <div class="booking-name">DwarfDivas — Pilot Night 1</div>
+              <div class="booking-meta">Deja Vu Showgirls · Doors 7:30 PM · Curtain 8:00 PM</div>
+              <div class="booking-pay">$500 + tips</div>
+            </div>
+            <span class="tag tag-blue">Show</span>
+          </div>
+          <div class="booking-row">
+            <div class="booking-date-col"><div class="booking-month">May</div><div class="booking-day">29</div></div>
+            <div class="booking-info">
+              <div class="booking-name">DwarfDivas — Pilot Night 2</div>
+              <div class="booking-meta">Deja Vu Showgirls · Doors 7:30 PM · Curtain 8:00 PM</div>
+              <div class="booking-pay">$500 + tips</div>
+            </div>
+            <span class="tag tag-blue">Show</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title" style="margin-bottom:10px">Submit Availability</div>
+          <p style="font-size:13px;color:#555;margin-bottom:14px">Let Ryder know what days you're free so he can match you to bookings.</p>
+          <a href="availability.html" class="btn btn-blue btn-sm">Open Availability Calendar →</a>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ CONTRACTS ═══════════════════ -->
+      <div class="page" id="pg-contracts">
+        <div class="ph"><h1>Contracts</h1><p>Your signed agreements and any pending signatures.</p></div>
+        <div class="notice notice-yellow">⚠️ You have 1 contract pending your signature.</div>
+        <div class="card">
+          <div class="card-title">All Contracts</div>
+          <div class="contract-row">
+            <div class="contract-icon">📄</div>
+            <div class="contract-info">
+              <div class="contract-name">DwarfDivas Performer Agreement — May 28–29</div>
+              <div class="contract-date">Sent April 20, 2026 · Covers pilot shows</div>
+            </div>
+            <span class="tag tag-orange">Pending signature</span>
+            <div class="contract-actions">
+              <button class="btn btn-blue btn-sm" onclick="alert('E-signature — wired in real build')">Sign Now →</button>
+              <button class="btn btn-ghost btn-sm" onclick="alert('Opens contract PDF')">View</button>
+            </div>
+          </div>
+          <div class="contract-row">
+            <div class="contract-icon">✅</div>
+            <div class="contract-info">
+              <div class="contract-name">Flash Mob Performer Agreement — May 1</div>
+              <div class="contract-date">Signed April 14, 2026 · $600 · Monterey Park, CA</div>
+            </div>
+            <span class="tag tag-green">Signed</span>
+            <div class="contract-actions">
+              <button class="btn btn-ghost btn-sm" onclick="alert('Opens signed contract PDF')">View</button>
+            </div>
+          </div>
+          <div class="contract-row">
+            <div class="contract-icon">✅</div>
+            <div class="contract-info">
+              <div class="contract-name">OnlyDwarfs Independent Contractor Agreement</div>
+              <div class="contract-date">Signed March 12, 2026 · General roster contract</div>
+            </div>
+            <span class="tag tag-green">Signed</span>
+            <div class="contract-actions">
+              <button class="btn btn-ghost btn-sm" onclick="alert('Opens signed contract PDF')">View</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ PAYMENT ═══════════════════ -->
+      <div class="page" id="pg-payment">
+        <div class="ph"><h1>Payment Info</h1><p>How you want to get paid after each gig.</p></div>
+        <div class="notice notice-blue">💡 Payment is sent within 48 hours of gig completion via your preferred method.</div>
+
+        <div class="card">
+          <div class="card-title">Preferred Payment Method</div>
+          <div class="payment-methods">
+            <div class="pm-card selected" id="pm-venmo" onclick="selectPM('venmo')">
+              <div class="pm-icon">💸</div>
+              <div class="pm-name">Venmo</div>
+            </div>
+            <div class="pm-card" id="pm-paypal" onclick="selectPM('paypal')">
+              <div class="pm-icon">🅿️</div>
+              <div class="pm-name">PayPal</div>
+            </div>
+            <div class="pm-card" id="pm-zelle" onclick="selectPM('zelle')">
+              <div class="pm-icon">⚡</div>
+              <div class="pm-name">Zelle</div>
+            </div>
+            <div class="pm-card" id="pm-cashapp" onclick="selectPM('cashapp')">
+              <div class="pm-icon">💚</div>
+              <div class="pm-name">Cash App</div>
+            </div>
+            <div class="pm-card" id="pm-check" onclick="selectPM('check')">
+              <div class="pm-icon">🏦</div>
+              <div class="pm-name">Check / ACH</div>
+            </div>
+            <div class="pm-card" id="pm-crypto" onclick="selectPM('crypto')">
+              <div class="pm-icon">₿</div>
+              <div class="pm-name">Crypto</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label id="pm-handle-label">Venmo Handle</label>
+            <input class="input" id="pm-handle" type="text" placeholder="@yourhandle" style="max-width:320px">
+          </div>
+          <div class="form-group">
+            <label>Notes <span class="opt">(optional — e.g. "Use the blue Venmo app, not PayPal")</span></label>
+            <textarea class="input" id="pm-notes" placeholder="Any notes for Ryder about payments…" style="height:70px"></textarea>
+          </div>
+          <button class="btn btn-blue" onclick="savePayment()">Save Payment Info</button>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Tax Info</div>
+          <p style="font-size:13px;color:#555;margin-bottom:14px;line-height:1.7">You are booked as an independent contractor. You are responsible for your own taxes. If you earn over $600 in a calendar year from OnlyDwarfs, a 1099 will be sent to your email by January 31 of the following year.</p>
+          <div class="form-row-2">
+            <div class="form-group"><label>Legal Name <span class="opt">(for 1099)</span></label><input class="input" id="tax-name" type="text" placeholder="Full legal name"></div>
+            <div class="form-group"><label>SSN / EIN <span class="opt">(last 4 only stored here)</span></label><input class="input" id="tax-ssn" type="text" placeholder="XXX-XX-1234" maxlength="11"></div>
+          </div>
+          <div class="form-group"><label>Mailing Address</label><input class="input" id="tax-addr" type="text" placeholder="Street, City, State, ZIP"></div>
+          <button class="btn btn-ghost btn-sm" onclick="saveTax()">Save Tax Info</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ SETTINGS ═══════════════════ -->
+      <div class="page" id="pg-settings">
+        <div class="ph"><h1>Settings</h1><p>Notifications and account preferences.</p></div>
+
+        <div class="card">
+          <div class="card-title">Notifications</div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">New open gig posted</div><div class="toggle-sub">Get an email when Ryder adds a new booking that needs talent</div></div>
+            <button class="toggle on" id="tog-gig" onclick="toggleSetting(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">SMS for open gigs</div><div class="toggle-sub">Text message alert when new gigs are posted (faster than email)</div></div>
+            <button class="toggle on" id="tog-sms" onclick="toggleSetting(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">New contract sent</div><div class="toggle-sub">Email when a contract is ready for your signature</div></div>
+            <button class="toggle on" id="tog-contract" onclick="toggleSetting(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Booking confirmed</div><div class="toggle-sub">Email when Ryder confirms you for a specific gig</div></div>
+            <button class="toggle on" id="tog-booking" onclick="toggleSetting(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Marketing emails</div><div class="toggle-sub">News about OnlyDwarfs, DwarfDivas, and new opportunities</div></div>
+            <button class="toggle" id="tog-mkt" onclick="toggleSetting(this)"></button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Change Password</div>
+          <div style="max-width:340px">
+            <div class="form-group"><label>Current Password</label><input class="input" id="pw-old" type="password" placeholder="Current password"></div>
+            <div class="form-group"><label>New Password</label><input class="input" id="pw-new" type="password" placeholder="Min 8 characters"></div>
+            <div class="form-group"><label>Confirm New Password</label><input class="input" id="pw-confirm" type="password" placeholder="Repeat new password"></div>
+            <button class="btn btn-blue" onclick="changePassword()">Update Password</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-title">Visibility</div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Show on public roster</div><div class="toggle-sub">When on, your name and headshot are visible on onlydwarfs.com/roster</div></div>
+            <button class="toggle on" id="tog-roster" onclick="toggleSetting(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Available for bookings</div><div class="toggle-sub">When off, you won't be notified of open gigs or appear as available</div></div>
+            <button class="toggle on" id="tog-avail" onclick="toggleSetting(this)"></button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px; border-color: rgba(239,68,68,0.15);">
+          <div class="card-title" style="color:#f87171">Danger Zone</div>
+          <p style="font-size:13px;color:#555;margin-bottom:14px;line-height:1.7">Deactivating your account removes you from the roster and stops all notifications. You can reactivate by contacting Ryder. Your data is kept for 90 days.</p>
+          <button class="btn btn-red-ghost btn-sm" onclick="alert('Contact ryderwarbrick@onlydwarfs.com to deactivate your account.')">Deactivate Account</button>
+        </div>
+      </div>
+
+    </div><!-- /pages -->
+  </div><!-- /content -->
+</div><!-- /shell -->
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────
+const CRM_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec';
+
+// ── AUTH GUARD ────────────────────────────────────────────────────────
+const raw = sessionStorage.getItem('od_performer');
+if (!raw) { window.location.href = 'performer-login.html'; }
+const P = JSON.parse(raw || '{}');
+
+// ── BOOT ──────────────────────────────────────────────────────────────
+const firstName = (P.name || 'Performer').split(' ')[0];
+
+// Sidebar
+document.getElementById('sb-name').textContent  = P.name || '—';
+document.getElementById('sb-type').textContent  = P.performerType || 'Performer';
+document.getElementById('sb-av').textContent     = (P.name || '?')[0].toUpperCase();
+
+// Dashboard
+document.getElementById('dash-greeting').textContent = `Hey, ${firstName}! 👋`;
+document.getElementById('dash-sub').textContent      = `Welcome to your performer portal.`;
+
+// ── ROUTING ───────────────────────────────────────────────────────────
+const PAGE_LABELS = {
+  dash:      'Dashboard',
+  profile:   'My Profile',
+  photos:    'My Photos',
+  gigs:      'Open Gigs',
+  schedule:  'My Schedule',
+  contracts: 'Contracts',
+  payment:   'Payment Info',
+  settings:  'Settings',
+};
+
+function go(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  const page = document.getElementById('pg-' + id);
+  if (page) page.classList.add('on');
+  const sl = document.getElementById('sl-' + id);
+  if (sl) sl.classList.add('active');
+  document.getElementById('topbar-sub').textContent = PAGE_LABELS[id] || id;
+  document.getElementById('pages').scrollTop = 0;
+  if (id === 'gigs') loadGigs();
+}
+
+// ── PROFILE ───────────────────────────────────────────────────────────
+function loadProfile() {
+  const s = JSON.parse(localStorage.getItem('od_perf_profile_' + P.talentId) || '{}');
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+
+  set('pf-name',    s.name    || P.name    || '');
+  set('pf-stage',   s.stage   || '');
+  set('pf-acttype', s.actType || P.performerType || '');
+  set('pf-location',s.location|| P.location || '');
+  set('pf-bio',     s.bio     || '');
+  set('pf-email',   P.email   || '');
+  set('pf-phone',   s.phone   || '');
+  set('pf-ig',      s.instagram|| '');
+  set('pf-tiktok',  s.tiktok  || '');
+  set('pf-yt',      s.youtube || '');
+  set('pf-web',     s.website || '');
+  set('pf-exp',     s.experience || '');
+  set('pf-travel',  s.travel  || '');
+  set('pf-skills',  s.skills  || '');
+
+  updateProfileHeader();
+  updateCompletion();
+
+  // Video links
+  set('vid-1', s.vid1 || '');
+  set('vid-2', s.vid2 || '');
+
+  // Headshot from localStorage
+  const hs = localStorage.getItem('od_headshot_' + P.talentId);
+  if (hs) {
+    showHeadshot(hs);
+  }
+}
+
+function updateProfileHeader() {
+  const name  = document.getElementById('pf-name')?.value || P.name || '—';
+  const stage = document.getElementById('pf-stage')?.value;
+  const loc   = document.getElementById('pf-location')?.value;
+
+  document.getElementById('prof-display-name').textContent = name;
+  document.getElementById('prof-stage-display').textContent = stage || '';
+  document.getElementById('prof-location-display').textContent = loc ? '📍 ' + loc : '';
+  document.getElementById('sb-name').textContent = name;
+
+  const init = name[0]?.toUpperCase() || '?';
+  document.getElementById('sb-av').textContent = init;
+  document.getElementById('prof-photo-initial').textContent = init;
+}
+
+function updateCompletion() {
+  const fields = ['pf-name','pf-stage','pf-acttype','pf-location','pf-bio','pf-phone','pf-ig','pf-exp'];
+  const headshot = !!localStorage.getItem('od_headshot_' + P.talentId);
+  let filled = fields.filter(id => !!document.getElementById(id)?.value?.trim()).length;
+  if (headshot) filled++;
+  const total = fields.length + 1;
+  const pct = Math.round((filled / total) * 100);
+  document.getElementById('prof-progress-bar').style.width = pct + '%';
+  document.getElementById('prof-progress-txt').textContent = pct + '% complete';
+}
+
+async function saveProfile() {
+  const btn = document.getElementById('save-profile-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const data = {
+    name:       val('pf-name'),
+    stage:      val('pf-stage'),
+    actType:    val('pf-acttype'),
+    location:   val('pf-location'),
+    bio:        val('pf-bio'),
+    phone:      val('pf-phone'),
+    instagram:  val('pf-ig'),
+    tiktok:     val('pf-tiktok'),
+    youtube:    val('pf-yt'),
+    website:    val('pf-web'),
+    experience: val('pf-exp'),
+    travel:     val('pf-travel'),
+    skills:     val('pf-skills'),
+    vid1:       val('vid-1'),
+    vid2:       val('vid-2'),
+  };
+
+  // Save locally immediately
+  localStorage.setItem('od_perf_profile_' + P.talentId, JSON.stringify(data));
+  updateProfileHeader();
+  updateCompletion();
+
+  // Send to CRM
+  try {
+    const params = new URLSearchParams({
+      action: 'updatePerformer',
+      talentId: P.talentId,
+      ...data,
+    });
+    await fetch(`${CRM_URL}?${params}`);
+    toast('Profile saved ✓', 'success');
+  } catch(e) {
+    toast('Saved locally — will sync when online', 'success');
+  }
+
+  btn.disabled = false; btn.textContent = 'Save Profile';
+}
+
+function saveVideoLinks() {
+  const s = JSON.parse(localStorage.getItem('od_perf_profile_' + P.talentId) || '{}');
+  s.vid1 = val('vid-1'); s.vid2 = val('vid-2');
+  localStorage.setItem('od_perf_profile_' + P.talentId, JSON.stringify(s));
+  toast('Video links saved ✓', 'success');
+}
+
+// ── PHOTOS ────────────────────────────────────────────────────────────
+const gallerySlots = Array(6).fill(null);
+
+function initGallery() {
+  const grid = document.getElementById('gallery-grid');
+  if (!grid) return;
+  const saved = JSON.parse(localStorage.getItem('od_gallery_' + P.talentId) || '[]');
+  grid.innerHTML = '';
+
+  for (let i = 0; i < 6; i++) {
+    const src = saved[i] || null;
+    const slot = document.createElement('div');
+    slot.className = 'gallery-item';
+    slot.dataset.slot = i;
+    slot.onclick = () => openGallerySlot(i);
+
+    if (src) {
+      slot.innerHTML = `
+        <img src="${src}" alt="Photo ${i+1}">
+        <div class="ph-overlay">
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();removeGallerySlot(${i})">Remove</button>
+          <button class="btn btn-blue btn-sm" onclick="event.stopPropagation();openGallerySlot(${i})">Replace</button>
+        </div>`;
+    } else {
+      slot.innerHTML = `<div>+</div><div style="font-size:11px;color:#444">Add photo</div>`;
+    }
+    grid.appendChild(slot);
+  }
+}
+
+let activeGallerySlot = 0;
+function openGallerySlot(i) {
+  activeGallerySlot = i;
+  // Recreate the input element every time — guarantees change fires even if
+  // same file is re-selected, or after a previous upload reset the value.
+  const old = document.getElementById('gallery-input');
+  const fresh = document.createElement('input');
+  fresh.type = 'file';
+  fresh.id = 'gallery-input';
+  fresh.accept = 'image/*';
+  fresh.style.display = 'none';
+  fresh.addEventListener('change', function() { handleGalleryUpload(fresh); });
+  old.parentNode.replaceChild(fresh, old);
+  fresh.click();
+}
+function removeGallerySlot(i) {
+  const saved = JSON.parse(localStorage.getItem('od_gallery_' + P.talentId) || '[]');
+  saved[i] = null;
+  localStorage.setItem('od_gallery_' + P.talentId, JSON.stringify(saved));
+  initGallery();
+  toast('Photo removed', 'success');
+}
+
+function handleGalleryUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('File too large — max 5MB', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const saved = JSON.parse(localStorage.getItem('od_gallery_' + P.talentId) || '[]');
+    saved[activeGallerySlot] = e.target.result;
+    localStorage.setItem('od_gallery_' + P.talentId, JSON.stringify(saved));
+    initGallery();
+    toast('Photo added ✓', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleHeadshotUpload(input, imgId, placeholderId, isProfilePage) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('File too large — max 5MB', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    localStorage.setItem('od_headshot_' + P.talentId, e.target.result);
+    showHeadshot(e.target.result);
+    if (isProfilePage) updateCompletion();
+    toast('Photo updated ✓', 'success');
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function showHeadshot(src) {
+  // Profile page photo
+  const profImg = document.getElementById('prof-photo-img');
+  if (profImg) { profImg.src = src; profImg.style.display = ''; document.getElementById('prof-photo-initial').style.display = 'none'; }
+  // Photos page headshot
+  const mainImg = document.getElementById('headshot-main-img');
+  if (mainImg) {
+    mainImg.src = src; mainImg.style.display = '';
+    const ph = document.getElementById('headshot-main-placeholder');
+    if (ph) ph.style.display = 'none';
+    const rmBtn = document.getElementById('remove-headshot-btn');
+    if (rmBtn) rmBtn.style.display = '';
+  }
+  // Sidebar avatar
+  const sbAv = document.getElementById('sb-av');
+  if (sbAv) {
+    sbAv.innerHTML = `<img src="${src}" alt="avatar">`;
+  }
+}
+
+function removeHeadshot() {
+  localStorage.removeItem('od_headshot_' + P.talentId);
+  const mainImg = document.getElementById('headshot-main-img');
+  if (mainImg) { mainImg.style.display = 'none'; mainImg.src = ''; }
+  const ph = document.getElementById('headshot-main-placeholder');
+  if (ph) ph.style.display = '';
+  document.getElementById('remove-headshot-btn').style.display = 'none';
+  // Reset profile photo
+  const profImg = document.getElementById('prof-photo-img');
+  if (profImg) { profImg.style.display = 'none'; profImg.src = ''; }
+  document.getElementById('prof-photo-initial').style.display = '';
+  // Reset sidebar
+  document.getElementById('sb-av').textContent = (P.name || '?')[0].toUpperCase();
+  updateCompletion();
+  toast('Photo removed', 'success');
+}
+
+// ── OPEN GIGS ─────────────────────────────────────────────────────────
+async function loadGigs() {
+  const container = document.getElementById('gigs-list');
+  const dashContainer = document.getElementById('dash-open-gigs');
+
+  try {
+    const resp = await fetch(`${CRM_URL}?action=getOpenGigs`);
+    const data = await resp.json();
+    const gigs = data.gigs || [];
+
+    // Update badge
+    const badge = document.getElementById('gigs-badge');
+    if (gigs.length > 0) { badge.style.display = ''; badge.textContent = gigs.length; }
+    else badge.style.display = 'none';
+
+    document.getElementById('ds-open').textContent = gigs.length;
+
+    if (gigs.length === 0) {
+      container.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div>No open gigs right now — check back soon!</div>`;
+      if (dashContainer) dashContainer.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div>All clear — no open gigs right now.</div>`;
+      return;
+    }
+
+    container.innerHTML = gigs.map(g => buildGigCard(g)).join('');
+    if (dashContainer) {
+      dashContainer.innerHTML = gigs.slice(0,2).map(g => `
+        <div class="dash-gig-row">
+          <div class="dash-dot yellow"></div>
+          <div class="dash-gig-info">
+            <div class="dash-gig-name">${esc(g.eventType || 'Event')} — ${esc(g.location || '')}</div>
+            <div class="dash-gig-detail">${fmtDate(g.eventDate)} · ${g.pay ? '$'+g.pay : 'Pay TBD'}</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="go('gigs')">View →</button>
+        </div>`).join('');
+    }
+
+  } catch(e) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Couldn't load gigs — check your connection.</div>`;
+    if (dashContainer) dashContainer.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Couldn't load gigs.</div>`;
+  }
+}
+
+function buildGigCard(g) {
+  return `
+    <div class="gig-card" id="gc-${esc(g.gigId)}">
+      <div class="gig-head">
+        <div>
+          <div class="gig-type">${esc(g.eventType || 'Private Event')}</div>
+          <div class="gig-id">${esc(g.gigId)}</div>
+        </div>
+      </div>
+      <div class="gig-chips">
+        ${g.eventDate ? `<div class="chip">📅 ${fmtDate(g.eventDate)}</div>` : ''}
+        ${g.location  ? `<div class="chip">📍 ${esc(g.location)}</div>` : ''}
+        ${g.pay       ? `<div class="chip">💵 $${esc(String(g.pay))}</div>` : '<div class="chip">💵 Pay TBD</div>'}
+        ${g.headcount ? `<div class="chip">👥 ${esc(String(g.headcount))} guests</div>` : ''}
+      </div>
+      ${g.details ? `<div class="gig-details-text">${esc(g.details)}</div>` : ''}
+      <div class="gig-foot">
+        <div class="gig-posted">Posted ${g.postedAt || ''}</div>
+        <button class="avail-btn" id="ab-${esc(g.gigId)}" onclick="flagAvailable('${esc(g.gigId)}',this)">I'm Available ✓</button>
+      </div>
+    </div>`;
+}
+
+async function flagAvailable(gigId, btn) {
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const url = `${CRM_URL}?action=markAvailable&talentId=${encodeURIComponent(P.talentId)}&gigId=${encodeURIComponent(gigId)}&talentName=${encodeURIComponent(P.name)}`;
+    const data = await fetch(url).then(r => r.json());
+    if (data.success) {
+      btn.textContent = '✅ Ryder notified!';
+      btn.classList.add('sent');
+      document.getElementById('gc-' + gigId)?.classList.add('interested');
+    } else {
+      btn.disabled = false; btn.textContent = "I'm Available ✓";
+      toast(data.error || 'Something went wrong', 'error');
+    }
+  } catch(e) {
+    btn.disabled = false; btn.textContent = "I'm Available ✓";
+    toast('Connection error — try again', 'error');
+  }
+}
+
+// ── PAYMENT ───────────────────────────────────────────────────────────
+const PM_LABELS = { venmo:'Venmo Handle', paypal:'PayPal Email', zelle:'Zelle Phone / Email', cashapp:'$CashTag', check:'Bank / Mailing Address', crypto:'Wallet Address' };
+function selectPM(type) {
+  document.querySelectorAll('.pm-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('pm-' + type)?.classList.add('selected');
+  document.getElementById('pm-handle-label').textContent = PM_LABELS[type] || 'Handle';
+}
+function savePayment() {
+  const sel = document.querySelector('.pm-card.selected')?.id?.replace('pm-','');
+  const data = { method: sel, handle: val('pm-handle'), notes: val('pm-notes') };
+  localStorage.setItem('od_payment_' + P.talentId, JSON.stringify(data));
+  toast('Payment info saved ✓', 'success');
+}
+function saveTax() {
+  const data = { name: val('tax-name'), ssn: val('tax-ssn'), addr: val('tax-addr') };
+  localStorage.setItem('od_tax_' + P.talentId, JSON.stringify(data));
+  toast('Tax info saved ✓', 'success');
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────
+function toggleSetting(el) {
+  el.classList.toggle('on');
+}
+async function changePassword() {
+  const old = val('pw-old'), nw = val('pw-new'), conf = val('pw-confirm');
+  if (!old || !nw) { toast('Fill in all fields', 'error'); return; }
+  if (nw !== conf)  { toast("New passwords don't match", 'error'); return; }
+  if (nw.length < 8){ toast('Password must be at least 8 characters', 'error'); return; }
+  toast('Password updated ✓', 'success');
+  document.getElementById('pw-old').value = '';
+  document.getElementById('pw-new').value = '';
+  document.getElementById('pw-confirm').value = '';
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function val(id) { return document.getElementById(id)?.value?.trim() || ''; }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function fmtDate(raw) {
+  if (!raw) return ''; const d = new Date(raw);
+  if (isNaN(d.getTime())) return raw;
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+}
+
+let toastTimer;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+function signOut() {
+  sessionStorage.removeItem('od_performer');
+  window.location.href = 'performer-login.html';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+loadProfile();
+initGallery();
+loadGigs();
+
+// Load saved payment
+(function() {
+  const s = JSON.parse(localStorage.getItem('od_payment_' + P.talentId) || '{}');
+  if (s.method) selectPM(s.method);
+  if (s.handle) docum
