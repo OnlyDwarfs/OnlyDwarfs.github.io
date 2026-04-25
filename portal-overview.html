@@ -114,7 +114,7 @@
   <div class="quick-actions">
     <button class="btn btn-blue" onclick="window.parent.navigate && window.parent.navigate('perf-accounts')">Manage Accounts →</button>
     <button class="btn btn-dark" onclick="window.parent.navigate && window.parent.navigate('gigs')">Post Open Gig</button>
-    <button class="btn btn-dark" onclick="alert('Invite sent! (prototype)')">+ Invite Performer</button>
+    <button class="btn btn-dark" onclick="window.parent.navigate && window.parent.navigate('perf-accounts')">+ Invite Performer</button>
   </div>
 
   <!-- Pending Approvals -->
@@ -160,4 +160,6 @@
 
   </div>
 </div>
-<script>if (!loc
+<script>if (!localStorage.getItem('od_auth')) { window.top.location.href = 'login.html'; }</script>
+</body>
+</html>
