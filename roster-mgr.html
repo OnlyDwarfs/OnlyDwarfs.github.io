@@ -187,14 +187,28 @@ let editingId = null;
 
 /* ── LOAD ── */
 async function load() {
-  document.getElementById('main-content').innerHTML = '<div class="state-msg"><div class="spinner"></div>Loading…</div>';
+  const mc = document.getElementById('main-content');
+  mc.innerHTML = '<div class="state-msg"><div class="spinner"></div>Loading roster…</div>';
+
+  // slow-load warning after 8 seconds
+  const slowTimer = setTimeout(() => {
+    const s = mc.querySelector('.state-msg');
+    if (s) s.innerHTML = '<div class="spinner"></div>Still loading — Apps Script cold start can take 15–30 sec…';
+  }, 8000);
+
   try {
-    const data = await fetch(CRM_URL + '?action=getAllTalent').then(r => r.json());
-    if (!data.talent) throw new Error(data.error || 'No data');
+    const ctrl = new AbortController();
+    const kill = setTimeout(() => ctrl.abort(), 35000);
+    const resp = await fetch(CRM_URL + '?action=getAllTalent', { signal: ctrl.signal });
+    clearTimeout(kill);
+    const data = await resp.json();
+    clearTimeout(slowTimer);
+    if (!data.talent) throw new Error(data.error || 'No talent array in response');
     allTalent = data.talent;
     renderAll();
   } catch(e) {
-    document.getElementById('main-content').innerHTML = `<div class="state-msg">⚠️ ${e.message}</div>`;
+    clearTimeout(slowTimer);
+    mc.innerHTML = `<div class="state-msg">⚠️ ${e.name === 'AbortError' ? 'Request timed out (35s). Apps Script may be down — try Refresh.' : e.message}</div>`;
   }
 }
 
@@ -565,21 +579,4 @@ async function toggleVisibility(id, newStatus) {
     const url = `${CRM_URL}?action=setTalentStatus&id=${encodeURIComponent(id)}&status=${encodeURIComponent(newStatus)}`;
     const r = await fetch(url).then(r => r.json());
     if (!r.success) throw new Error(r.error || 'Failed');
-    const p = allTalent.find(x => x.id === id);
-    if (p) p.status = newStatus;
-    // If edit panel is open for this card, update the visibility button
-    if (editingId === id) openEdit(id);
-    renderAll();
-    toast(newStatus === 'Active' ? 'Added to public roster ✓' : 'Removed from public roster', 'success');
-  } catch(e) {
-    toast('Error: ' + e.message, 'error');
-  }
-}
-
-/* ── TOAST ── */
-let toastTimer;
-function toast(msg, type) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = s
+    const p = allTal
