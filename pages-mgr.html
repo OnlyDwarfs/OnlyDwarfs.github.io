@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Public Pages</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #0d0d0d; color: #ccc; font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+  .page { padding: 28px 32px; max-width: 960px; }
+  .page-header { margin-bottom: 24px; }
+  .breadcrumb { font-size: 11px; color: #444; margin-bottom: 6px; }
+  .breadcrumb span { color: #888; }
+  .page-title { font-size: 22px; font-weight: 900; color: #fff; }
+  .page-sub { font-size: 13px; color: #555; margin-top: 4px; }
+
+  .notice { border-radius: 7px; padding: 10px 14px; font-size: 12px; margin-bottom: 20px; }
+  .notice-yellow { background: rgba(234,179,8,0.07); border: 1px solid rgba(234,179,8,0.2); color: #fbbf24; }
+
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  .pcard {
+    background: #1a1a1a;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 18px;
+    cursor: pointer;
+    transition: border-color 150ms;
+  }
+  .pcard:hover { border-color: #00AFF0; }
+  .pcard-icon { font-size: 20px; margin-bottom: 10px; }
+  .pcard-title { font-size: 13px; font-weight: 700; color: #ddd; margin-bottom: 4px; }
+  .pcard-desc { font-size: 12px; color: #555; line-height: 1.6; margin-bottom: 12px; }
+  .pcard-foot { display: flex; align-items: center; gap: 8px; }
+  .tag { display: inline-block; border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 600; }
+  .tag-green { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+  .tag-grey  { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #2a2a2a; }
+
+  .btn { display: inline-block; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; }
+  .btn-blue { background: #00AFF0; color: #000; }
+  .btn-dark { background: #222; border: 1px solid #333; color: #888; }
+  .btn-dark:hover { border-color: #00AFF0; color: #00AFF0; }
+
+  h2 { font-size: 14px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin: 28px 0 12px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <div class="breadcrumb">Site Manager › <span>Edit Public Pages</span></div>
+    <div class="page-title">Edit Public Pages</div>
+    <div class="page-sub">Control what appears on each public-facing page of the website.</div>
+  </div>
+
+  <div class="notice notice-yellow">⚠️ Live edits — changes here update the live site. Coming in next build: inline editing.</div>
+
+  <h2>Main Pages</h2>
+  <div class="grid-3">
+    <div class="pcard" onclick="alert('Inline editor — next build')">
+      <div class="pcard-icon">🏠</div>
+      <div class="pcard-title">Homepage</div>
+      <div class="pcard-desc">Headline, hero copy, featured services, call-to-action button.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-dark">Edit</button></div>
+    </div>
+    <div class="pcard" onclick="alert('Inline editor — next build')">
+      <div class="pcard-icon">🛎</div>
+      <div class="pcard-title">Services</div>
+      <div class="pcard-desc">Service cards, descriptions, pricing, icons.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-dark">Edit</button></div>
+    </div>
+    <div class="pcard" onclick="window.parent.navigate && window.parent.navigate('roster')">
+      <div class="pcard-icon">👤</div>
+      <div class="pcard-title">Roster Page</div>
+      <div class="pcard-desc">Which performers show publicly, bios, photos, availability badges.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-blue">Manage →</button></div>
+    </div>
+    <div class="pcard" onclick="alert('Inline editor — next build')">
+      <div class="pcard-icon">📋</div>
+      <div class="pcard-title">How It Works</div>
+      <div class="pcard-desc">The booking process steps and descriptions.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-dark">Edit</button></div>
+    </div>
+    <div class="pcard" onclick="alert('Inline editor — next build')">
+      <div class="pcard-icon">🎭</div>
+      <div class="pcard-title">DwarfDivas Show</div>
+      <div class="pcard-desc">Show dates, ticket link, cast bios, countdown, description.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-dark">Edit</button></div>
+    </div>
+    <div class="pcard" onclick="alert('Inline editor — next build')">
+      <div class="pcard-icon">📝</div>
+      <div class="pcard-title">Booking Form</div>
+      <div class="pcard-desc">Intake form fields, event type options, SMS consent text.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-dark">Edit</button></div>
+    </div>
+  </div>
+
+  <h2>Supporting Pages</h2>
+  <div class="grid-3">
+    <div class="pcard">
+      <div class="pcard-icon">❓</div>
+      <div class="pcard-title">FAQ</div>
+      <div class="pcard-desc">Frequently asked questions and answers.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-dark">Edit</button></div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-icon">🔐</div>
+      <div class="pcard-title">Privacy Policy</div>
+      <div class="pcard-desc">Legal privacy policy document.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-dark">Edit</button></div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-icon">📄</div>
+      <div class="pcard-title">Terms & Conditions</div>
+      <div class="pcard-desc">Legal terms and conditions document.</div>
+      <div class="pcard-foot"><span class="tag tag-green">Live</span><button class="btn btn-dark">Edit</button></div>
+    </div>
+  </div>
+</div>
+<script>if (!loc
