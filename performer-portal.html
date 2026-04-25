@@ -1332,4 +1332,17 @@ loadGigs();
 (function() {
   const s = JSON.parse(localStorage.getItem('od_payment_' + P.talentId) || '{}');
   if (s.method) selectPM(s.method);
-  if (s.handle) docum
+  if (s.handle) document.getElementById('pm-handle').value = s.handle;
+  if (s.notes)  document.getElementById('pm-notes') && (document.getElementById('pm-notes').value = s.notes);
+})();
+
+// Load saved tax info
+(function() {
+  const t = JSON.parse(localStorage.getItem('od_tax_' + P.talentId) || '{}');
+  if (t.name) { const el = document.getElementById('tax-name'); if (el) el.value = t.name; }
+  if (t.ssn)  { const el = document.getElementById('tax-ssn');  if (el) el.value = t.ssn;  }
+  if (t.addr) { const el = document.getElementById('tax-addr'); if (el) el.value = t.addr; }
+})();
+</script>
+</body>
+</html>
