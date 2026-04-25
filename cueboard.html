@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dwarf Divas — Show Cue Board</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 16px;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #2a2a2a;
+    }
+    .title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff69b4;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .subtitle { font-size: 11px; color: #666; letter-spacing: 1px; margin-top: 2px; }
+
+    .controls-bar {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .now-playing {
+      background: #111;
+      border: 1px solid #ff69b4;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: #ff69b4;
+      min-width: 220px;
+      max-width: 340px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .master-vol {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #888;
+      font-size: 12px;
+    }
+    input[type="range"] { accent-color: #ff69b4; cursor: pointer; }
+    .stop-all-btn {
+      background: #aa0000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.15s;
+    }
+    .stop-all-btn:hover { background: #dd0000; }
+    .stop-all-btn:active { background: #ff2222; }
+
+    /* ── FADE CONTROL ── */
+    .fade-ctrl {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .fade-btn {
+      background: #2a1a00;
+      color: #ffaa33;
+      border: 1px solid #664400;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .fade-btn:hover { background: #442200; }
+    .fade-btn.fading { background: #663300; border-color: #ffaa33; animation: fadeFlash 0.6s infinite; }
+    @keyframes fadeFlash { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+    .fade-dur-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #664400;
+    }
+    .fade-dur-wrap input[type="number"] {
+      width: 44px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #ffaa33;
+      font-size: 11px;
+      padding: 2px 4px;
+      text-align: center;
+    }
+    .fade-dur-wrap span { color: #555; font-size: 10px; }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 16px; border-radius: 10px; overflow: hidden; border: 1px solid #1e1e1e; }
+    .section-header {
+      padding: 9px 14px;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ── CUE ROW ── */
+    .cue-row {
+      display: grid;
+      grid-template-columns: 220px 1fr 74px 74px 52px 52px 58px 28px;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      background: #0f0f0f;
+      border-top: 1px solid #1a1a1a;
+      transition: background 0.2s;
+    }
+    .cue-row:first-of-type { border-top: none; }
+    .cue-row.playing { background: #0f1a0f; }
+
+    .cue-name {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .cue-sub {
+      font-size: 10px;
+      color: #555;
+      font-weight: normal;
+      margin-top: 1px;
+    }
+
+    /* ── DROP ZONE ── */
+    .drop-zone {
+      border: 1px dashed #333;
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 11px;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .drop-zone:hover { border-color: #777; color: #aaa; }
+    .drop-zone.loaded { border-color: #2e7d32; color: #66bb6a; background: #0a120a; }
+    .drop-zone.dragover { border-color: #ff69b4; background: #180010; color: #ff69b4; border-style: solid; }
+
+    /* ── BUTTONS ── */
+    .play-btn {
+      background: #1b5e20;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 4px;
+      font-size: 20px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+      line-height: 1;
+    }
+    .play-btn:hover:not(:disabled) { background: #2e7d32; }
+    .play-btn.paused { background: #e65100; }
+    .play-btn.paused:hover:not(:disabled) { background: #f57c00; }
+    .play-btn:disabled { background: #1a1a1a; color: #333; cursor: not-allowed; }
+
+    .stop-btn {
+      background: #4a0000;
+      color: #ccc;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 4px;
+      font-size: 18px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+      line-height: 1;
+    }
+    .stop-btn:hover:not(:disabled) { background: #7a0000; }
+    .stop-btn:disabled { background: #1a1a1a; color: #333; cursor: not-allowed; }
+
+    .loop-btn {
+      background: #111;
+      color: #444;
+      border: 1px solid #222;
+      border-radius: 6px;
+      padding: 6px 4px;
+      font-size: 10px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+    .loop-btn.active { background: #0d0d2a; color: #8888ff; border-color: #5555cc; }
+    .loop-btn:hover { border-color: #555; }
+
+    .row-fade-btn {
+      background: #2a1a00;
+      color: #ffaa33;
+      border: 1px solid #664400;
+      border-radius: 6px;
+      padding: 6px 4px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      transition: background 0.15s;
+      line-height: 1.4;
+    }
+    .row-fade-btn:hover:not(:disabled) { background: #442200; }
+    .row-fade-btn:disabled { background: #1a1a1a; color: #333; border-color: #222; cursor: not-allowed; }
+    .row-fade-btn.fading { background: #663300; border-color: #ffaa33; animation: fadeFlash 0.6s infinite; }
+
+    @keyframes screechFlash { 0%,100% { opacity:1; } 50% { opacity:0.25; } }
+
+    .row-screech-btn {
+      background: #001a1a;
+      color: #00cccc;
+      border: 1px solid #005555;
+      border-radius: 6px;
+      padding: 6px 4px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      transition: background 0.15s;
+      line-height: 1.4;
+    }
+    .row-screech-btn:hover:not(:disabled) { background: #003333; }
+    .row-screech-btn:disabled { background: #1a1a1a; color: #333; border-color: #222; cursor: not-allowed; }
+    .row-screech-btn.screeching { background: #004444; border-color: #00cccc; animation: screechFlash 0.25s infinite; }
+
+    /* ── SECTION COLOR THEMES ── */
+    .sec-pre .section-header       { background: #141420; color: #8888aa; }
+    .sec-opening .section-header   { background: #0d1433; color: #7799ff; }
+    .sec-solo .section-header      { background: #1a0a1a; color: #dd88ff; }
+    .sec-act1 .section-header      { background: #1a0a0a; color: #ff7777; }
+    .sec-act2 .section-header      { background: #0a1a0a; color: #77ff77; }
+    .sec-act3 .section-header      { background: #1a0a1a; color: #ee88ff; }
+    .sec-intermission .section-header { background: #1a1700; color: #ffee66; }
+    .sec-finale .section-header    { background: #001a1a; color: #66eeff; }
+
+    /* ── HIDDEN FILE INPUT ── */
+    input[type="file"] { display: none; }
+
+    /* ── INSTRUCTIONS ── */
+    .instructions {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.8;
+    }
+    .instructions strong { color: #aaa; }
+    .instructions .tip { color: #ff69b4; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .cue-row { grid-template-columns: 1fr 1fr 50px 50px 40px 40px 44px 24px; }
+      .cue-name { grid-column: 1 / -1; font-size: 12px; padding-bottom: 2px; }
+    }
+
+    /* ── WAVEFORM ── */
+    .cue-waveform-row {
+      grid-column: 1 / -1;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 4px 7px;
+    }
+    .cue-waveform-row.visible { display: flex; }
+
+    .waveform-wrap {
+      flex: 1;
+      position: relative;
+      height: 38px;
+      border-radius: 5px;
+      overflow: hidden;
+      cursor: crosshair;
+      background: #0d0d0d;
+    }
+    .waveform-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    /* hover scrub line */
+    .waveform-wrap:hover::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: rgba(255,255,255,0.25);
+      pointer-events: none;
+      left: var(--hover-x, -10px);
+    }
+
+    .waveform-times {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1px;
+      min-width: 72px;
+    }
+    .wftime-elapsed  { font-size: 12px; color: #ff69b4; font-variant-numeric: tabular-nums; }
+    .wftime-remain   { font-size: 10px; color: #555;    font-variant-numeric: tabular-nums; }
+
+    /* ── SFX SOUNDBOARD ── */
+    .sfx-panel {
+      background: #0e0a14;
+      border: 1px solid #3a1a5a;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .sfx-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 10px 14px;
+      background: #1a0a2a;
+      border-bottom: 1px solid #3a1a5a;
+      font-size: 13px;
+      font-weight: bold;
+      color: #cc88ff;
+      letter-spacing: 1px;
+    }
+    .sfx-hint { font-size: 10px; color: #665577; font-weight: normal; letter-spacing: 0; flex: 1; }
+    .sfx-stop-all {
+      background: #3a0050;
+      color: #cc88ff;
+      border: 1px solid #5a1a8a;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .sfx-stop-all:hover { background: #5a0080; }
+    .sfx-add-btn {
+      background: #1a0a2a;
+      color: #cc88ff;
+      border: 1px dashed #5a2a8a;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .sfx-add-btn:hover { border-color: #cc88ff; }
+
+    .sfx-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    /* individual SFX card */
+    .sfx-card {
+      background: #130a1e;
+      border: 1px solid #2a1040;
+      border-radius: 10px;
+      width: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 8px 8px;
+      position: relative;
+      transition: border-color 0.15s;
+    }
+    .sfx-card.loaded { border-color: #6a2aaa; }
+    .sfx-card.firing { border-color: #ff88ff; background: #1e0a2a; }
+
+    .sfx-card-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #bb88ee;
+      text-align: center;
+      line-height: 1.3;
+      width: 100%;
+      word-break: break-word;
+    }
+    .sfx-card-name[contenteditable="true"] {
+      outline: 1px solid #cc88ff;
+      border-radius: 3px;
+      padding: 1px 3px;
+      cursor: text;
+    }
+
+    .sfx-drop {
+      border: 1px dashed #3a1a5a;
+      border-radius: 6px;
+      padding: 5px 6px;
+      font-size: 9px;
+      color: #553366;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+    .sfx-drop:hover { border-color: #aa66dd; color: #aa66dd; }
+    .sfx-drop.loaded { border-color: #7744aa; color: #aa77dd; background: #0e0518; }
+    .sfx-drop.dragover { border-color: #ff88ff; color: #ff88ff; background: #1a0028; border-style: solid; }
+
+    .sfx-fire-btn {
+      background: #3a0a5a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      padding: 10px 4px;
+      font-size: 22px;
+      cursor: pointer;
+      transition: background 0.1s, transform 0.05s;
+      line-height: 1;
+    }
+    .sfx-fire-btn:hover:not(:disabled) { background: #6a1aaa; }
+    .sfx-fire-btn:active:not(:disabled) { transform: scale(0.95); background: #9933cc; }
+    .sfx-fire-btn:disabled { background: #1a0a28; color: #332244; cursor: not-allowed; }
+
+    .sfx-vol {
+      width: 100%;
+      accent-color: #cc88ff;
+    }
+    .sfx-vol-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+      font-size: 9px;
+      color: #553366;
+    }
+
+    .sfx-del {
+      position: absolute;
+      top: 4px;
+      right: 5px;
+      background: none;
+      border: none;
+      color: #3a1a5a;
+      font-size: 11px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px;
+    }
+    .sfx-del:hover { color: #cc3366; }
+
+    /* ── ADD CUE / ADD SECTION ── */
+    .section-footer {
+      padding: 7px 12px;
+      background: #0a0a0a;
+      border-top: 1px solid #1a1a1a;
+    }
+    .add-cue-btn, .add-section-btn {
+      background: none;
+      border: 1px dashed #333;
+      border-radius: 6px;
+      color: #555;
+      font-size: 12px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.5px;
+    }
+    .add-cue-btn:hover { border-color: #ff69b4; color: #ff69b4; }
+    .add-section-btn { font-size: 13px; padding: 8px 18px; margin-top: 12px; width: 100%; }
+    .add-section-btn:hover { border-color: #ff69b4; color: #ff69b4; }
+
+    /* inline add form */
+    .add-form {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .add-form.open { display: flex; }
+    .add-form input[type="text"] {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 12px;
+      padding: 5px 10px;
+      flex: 1;
+      min-width: 160px;
+      outline: none;
+    }
+    .add-form input[type="text"]:focus { border-color: #ff69b4; }
+    .add-form label { font-size: 11px; color: #666; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+    .add-form .confirm-btn {
+      background: #1b5e20;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .add-form .confirm-btn:hover { background: #2e7d32; }
+    .add-form .cancel-btn {
+      background: #222;
+      color: #888;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .add-form .cancel-btn:hover { background: #333; }
+
+    /* rename on double-click */
+    .cue-name[contenteditable="true"] {
+      outline: 1px solid #ff69b4;
+      border-radius: 3px;
+      padding: 1px 4px;
+      cursor: text;
+    }
+
+    /* delete cue button */
+    .delete-cue-btn {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      line-height: 1;
+      transition: color 0.15s;
+      align-self: flex-start;
+    }
+    .delete-cue-btn:hover { color: #cc3333; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="title">🎭 Dwarf Divas — Show Cue Board</div>
+    <div class="subtitle">DEJA VU · EVERY THU & FRI · STARTS 8:00 PM</div>
+  </div>
+  <div class="controls-bar">
+    <div class="master-vol">
+      <span>🔊 MASTER</span>
+      <input type="range" id="masterVol" min="0" max="1" step="0.02" value="1" style="width:90px">
+      <span id="volPct">100%</span>
+    </div>
+    <div class="now-playing" id="nowPlaying">▬ NO TRACK PLAYING ▬</div>
+    <span id="saveStatus" style="font-size:11px;color:#4caf50;opacity:0;transition:opacity 0.3s;min-width:80px;text-align:center;"></span>
+    <button class="stop-all-btn" onclick="stopAll()">⏹ STOP ALL</button>
+    <div class="fade-dur-wrap" style="border:1px solid #333;border-radius:6px;padding:6px 10px;background:#111;">
+      <span style="color:#ffaa33;font-size:11px;font-weight:bold;letter-spacing:1px;">⬇ FADE</span>
+      <input type="number" id="fadeDuration" value="3" min="0.5" max="30" step="0.5" title="Fade duration in seconds">
+      <span>sec</span>
+    </div>
+    <button class="stop-all-btn" style="background:#1a2a3a;color:#66aaff;font-size:12px;padding:8px 12px;border:1px solid #335577;" onclick="exportBundle()" title="Download all loaded audio + board as a zip for use on another machine">💾 Export</button>
+    <label class="stop-all-btn" style="background:#1a2a1a;color:#66cc66;font-size:12px;padding:8px 12px;cursor:pointer;border:1px solid #335533;" title="Import a previously exported bundle zip">
+      📥 Import
+      <input type="file" id="importFileInput" accept=".zip" style="display:none" onchange="importBundle(event)">
+    </label>
+    <button class="stop-all-btn" style="background:#222;color:#666;font-size:12px;padding:8px 12px;" onclick="confirmClearAll()" title="Wipe all saved audio from browser storage">🗑 Clear</button>
+  </div>
+</div>
+
+<!-- INSTRUCTIONS -->
+<div class="instructions">
+  <strong>SETUP (before show):</strong> Drag an MP3/WAV onto each cue slot, or click the slot to browse. Loaded cues turn green. &nbsp;|&nbsp;
+  <strong>DURING SHOW:</strong> ▶ = Play/Pause &nbsp; ⏹ = Stop &amp; Rewind &nbsp; 🔁 = Loop on/off &nbsp;|&nbsp;
+  <span class="tip">Playing a new cue automatically stops the previous one. SFX fire independently on top of any music.</span>
+</div>
+
+<!-- SFX SOUNDBOARD -->
+<div class="sfx-panel">
+  <div class="sfx-header">
+    <span>💥 SFX SOUNDBOARD</span>
+    <span class="sfx-hint">Fires on top of music · won't stop the current track</span>
+    <button class="sfx-stop-all" onclick="stopAllSfx()">⏹ Stop All SFX</button>
+    <button class="sfx-add-btn" onclick="addSfxSlot()">＋ Add SFX</button>
+  </div>
+  <div class="sfx-grid" id="sfxGrid"></div>
+</div>
+
+<!-- CUE BOARD -->
+<div id="cueBoard"></div>
+
+<!-- ADD SECTION -->
+<button class="add-section-btn" onclick="openAddSection()">＋ Add New Section</button>
+<div class="add-form" id="addSectionForm" style="margin-top:8px;">
+  <input type="text" id="newSectionName" placeholder="Section name, e.g. ENCORE" maxlength="60">
+  <button class="confirm-btn" onclick="confirmAddSection()">Add Section</button>
+  <button class="cancel-btn" onclick="closeAddSection()">Cancel</button>
+</div>
+
+<script>
+// ── CUE DATA (matches DwarfDivas.pdf show bible) ──────────────────────────
+const SECTIONS = [
+  {
+    label: 'PRE-SHOW', cls: 'sec-pre',
+    cues: [
+      { id: 'preshow',     name: 'House / Pre-Show Atmosphere', sub: 'Loop until lights dim', loop: true },
+    ]
+  },
+  {
+    label: 'OPENING', cls: 'sec-opening',
+    cues: [
+      { id: 'show_open',   name: 'Show Open — Host Intro Energy', sub: '8:00 – 8:05 PM · ~3 min', loop: false },
+    ]
+  },
+  {
+    label: 'SOLO 1', cls: 'sec-solo',
+    cues: [
+      { id: 'solo1',       name: 'Solo 1 Track', sub: '8:05 – 8:10 PM · ~4–5 min', loop: false },
+    ]
+  },
+  {
+    label: 'ACT 1 — COPS & GANGSTERS', cls: 'sec-act1',
+    cues: [
+      { id: 'act1_gangster', name: 'Gangster Entrance',         sub: 'Scene 1 · loud, strut energy', loop: false },
+      { id: 'act1_cops',     name: 'Cop Arrival Sting',         sub: 'Scene 2 · authoritative hit', loop: false },
+      { id: 'act1_search',   name: 'Search / Strip Sequence',   sub: 'Scenes 4–7 · main burlesque beat', loop: false },
+      { id: 'act1_escape',   name: 'Escape Ending Sting',       sub: 'Scene 8 · chaotic exit', loop: false },
+    ]
+  },
+  {
+    label: 'HOST RESET 1', cls: 'sec-pre',
+    cues: [
+      { id: 'host1',       name: 'Host Reset 1 Background',   sub: '8:24 – 8:27 PM · optional, low mix', loop: true },
+    ]
+  },
+  {
+    label: 'SOLO 2', cls: 'sec-solo',
+    cues: [
+      { id: 'solo2',       name: 'Solo 2 Track',               sub: '8:27 – 8:32 PM · ~4–5 min', loop: false },
+    ]
+  },
+  {
+    label: 'ACT 2 — SAILORS / BOOTCAMP', cls: 'sec-act2',
+    cues: [
+      { id: 'act2_sailors',    name: 'Sailor Party Track',               sub: 'Scene 1 · playful, disorganized energy', loop: false },
+      { id: 'act2_sarge',      name: 'Drill Sergeant Interruption Sting',sub: 'Scene 2 · authority hit', loop: false },
+      { id: 'act2_training',   name: 'Training Sequence Beat',           sub: 'Scene 3 · push-ups → twerk energy', loop: false },
+      { id: 'act2_cleaning',   name: 'Cleaning Sequence Beat',           sub: 'Scene 4 · sponge chaos in crowd', loop: false },
+      { id: 'act2_punishment', name: 'Punishment Sequence Beat',         sub: 'Scenes 5–7 · spanking routine + volunteer', loop: false },
+    ]
+  },
+  {
+    label: 'HOST RESET 2', cls: 'sec-pre',
+    cues: [
+      { id: 'host2',       name: 'Host Reset 2 Background',   sub: '8:46 – 8:49 PM · optional, low mix', loop: true },
+    ]
+  },
+  {
+    label: 'SOLO 3', cls: 'sec-solo',
+    cues: [
+      { id: 'solo3',       name: 'Solo 3 Track — High Energy', sub: '8:49 – 8:54 PM · must hold room pre-intermission', loop: false },
+    ]
+  },
+  {
+    label: 'INTERMISSION', cls: 'sec-intermission',
+    cues: [
+      { id: 'intermission', name: 'Intermission Music',         sub: '8:54 – 9:06 PM · loop · fly swatter upsell window', loop: true },
+    ]
+  },
+  {
+    label: 'ACT 3 — PIRATES', cls: 'sec-act3',
+    cues: [
+      { id: 'act3_entrance', name: 'Pirate Entrance / Takeover', sub: 'Scene 1 · biggest entrance of the night', loop: false },
+      { id: 'act3_hostage',  name: 'Hostage Capture Sting',      sub: 'Scene 2 · theatrical hit', loop: false },
+      { id: 'act3_ransom',   name: 'Ransom / Dance Sequence',    sub: 'Scenes 3–4 · money escalation beat', loop: false },
+      { id: 'act3_big',      name: 'Final Dance Break Track',    sub: 'Scene 5 · release the hostage energy', loop: false },
+    ]
+  },
+  {
+    label: 'FINALE & BOWS', cls: 'sec-finale',
+    cues: [
+      { id: 'finale_bows', name: 'Curtain Call / Bows Music',   sub: '9:20 – 9:25 PM · full cast', loop: false },
+      { id: 'post_vip',    name: 'VIP / Post-Show Club Music',  sub: 'After bows · loop into regular club night', loop: true },
+    ]
+  },
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────
+const store = {};   // id → { audio, url }
+let activeCue = null;
+
+// ── BUILD UI ─────────────────────────────────────────────────────────────
+function buildBoard() {
+  const board = document.getElementById('cueBoard');
+  SECTIONS.forEach(sec => {
+    board.appendChild(buildSectionEl(sec, sec.cues));
+  });
+}
+
+// ── DRAG & DROP ───────────────────────────────────────────────────────────
+function onDragOver(e, id) { e.preventDefault(); document.getElementById(`dz_${id}`).classList.add('dragover'); }
+function onDragLeave(id)    { document.getElementById(`dz_${id}`).classList.remove('dragover'); }
+function onDrop(e, id) {
+  e.preventDefault();
+  document.getElementById(`dz_${id}`).classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('audio/')) loadAudio(f, id);
+}
+function loadFromInput(e, id) { const f = e.target.files[0]; if (f) loadAudio(f, id); }
+
+// ── LOAD AUDIO FILE ───────────────────────────────────────────────────────
+async function loadAudio(file, id) {
+  if (store[id]) { store[id].audio.pause(); URL.revokeObjectURL(store[id].url); }
+  const url   = URL.createObjectURL(file);
+  const audio = new Audio(url);
+  audio.volume = parseFloat(document.getElementById('masterVol').value);
+  audio.loop   = document.getElementById(`loop_${id}`).classList.contains('active');
+  audio.addEventListener('ended', () => { if (!audio.loop) cueEnded(id); });
+  store[id] = { audio, url };
+
+  const dz   = document.getElementById(`dz_${id}`);
+  const play = document.getElementById(`play_${id}`);
+  const stop = document.getElementById(`stop_${id}`);
+  dz.classList.add('loaded');
+  dz.classList.remove('dragover');
+  dz.textContent = '✓ ' + file.name;
+  play.disabled  = false;
+  stop.disabled  = false;
+  const fade = document.getElementById(`rfade_${id}`);
+  if (fade) fade.disabled = false;
+  const screech = document.getElementById(`rscreech_${id}`);
+  if (screech) screech.disabled = false;
+
+  // Save to IDB for persistence, then generate waveform from same buffer
+  try {
+    const buf = await fileToArrayBuffer(file);
+    await idbSave(STORE_MUSIC, id, file.name, buf);
+    showSaveStatus('✓ Saved');
+    setTimeout(() => showSaveStatus(''), 1500);
+    generateWaveform(id, buf); // buf.slice(0) handled inside generateWaveform
+  } catch(e) { console.warn('IDB save failed', e); }
+}
+
+// ── PLAYBACK ──────────────────────────────────────────────────────────────
+function togglePlay(id, name) {
+  if (!store[id]) return;
+  const audio = store[id].audio;
+
+  if (!audio.paused) {
+    // Pause
+    audio.pause();
+    stopPlayheadLoop(id);
+    document.getElementById(`play_${id}`).textContent = '▶';
+    document.getElementById(`play_${id}`).classList.remove('paused');
+    document.getElementById(`row_${id}`).classList.remove('playing');
+    if (activeCue === id) activeCue = null;
+    setNowPlaying('▌▌ PAUSED — ' + name);
+    return;
+  }
+
+  // Stop whatever is currently playing
+  if (activeCue && activeCue !== id && store[activeCue]) {
+    const prev = store[activeCue].audio;
+    prev.pause();
+    prev.currentTime = 0;
+    stopPlayheadLoop(activeCue);
+    resetWaveformUI(activeCue);
+    document.getElementById(`play_${activeCue}`).textContent = '▶';
+    document.getElementById(`play_${activeCue}`).classList.remove('paused');
+    document.getElementById(`row_${activeCue}`).classList.remove('playing');
+  }
+
+  audio.play();
+  activeCue = id;
+  document.getElementById(`play_${id}`).textContent = '⏸';
+  document.getElementById(`play_${id}`).classList.add('paused');
+  document.getElementById(`row_${id}`).classList.add('playing');
+  setNowPlaying('▶  ' + name);
+  startPlayheadLoop(id);
+}
+
+let _fadeInterval = null;
+
+function fadeOut(id) {
+  if (!id || !store[id]) return;
+  const audio = store[id].audio;
+  if (audio.paused) return;
+
+  // Cancel any in-progress fade and reset its button
+  if (_fadeInterval) {
+    clearInterval(_fadeInterval);
+    _fadeInterval = null;
+    document.querySelectorAll('.row-fade-btn.fading').forEach(b => {
+      b.classList.remove('fading');
+      b.innerHTML = '⬇<br>FADE';
+    });
+  }
+
+  const fadeSecs  = Math.max(0.1, parseFloat(document.getElementById('fadeDuration').value) || 3);
+  const steps     = Math.round(fadeSecs * 60);
+  const interval  = (fadeSecs * 1000) / steps;
+  const startVol  = audio.volume;
+  const volStep   = startVol / steps;
+  const masterVol = parseFloat(document.getElementById('masterVol').value);
+  let   current   = startVol;
+
+  const fadeBtn = document.getElementById(`rfade_${id}`);
+  if (fadeBtn) { fadeBtn.classList.add('fading'); fadeBtn.innerHTML = '⬇<br>…'; }
+
+  _fadeInterval = setInterval(() => {
+    current -= volStep;
+    if (current <= 0) {
+      audio.volume = 0;
+      clearInterval(_fadeInterval);
+      _fadeInterval = null;
+      // Pause in place — keep playhead position (don't rewind)
+      audio.pause();
+      const playBtnF = document.getElementById(`play_${id}`);
+      if (playBtnF) { playBtnF.textContent = '▶'; playBtnF.classList.remove('paused'); }
+      const rowElF = document.getElementById(`row_${id}`);
+      if (rowElF) rowElF.classList.remove('playing');
+      if (activeCue === id) { activeCue = null; setNowPlaying('▬ NO TRACK PLAYING ▬'); }
+      if (store[id]) store[id].audio.volume = masterVol;
+      if (fadeBtn) { fadeBtn.classList.remove('fading'); fadeBtn.innerHTML = '⬇<br>FADE'; }
+    } else {
+      audio.volume = current;
+    }
+  }, interval);
+}
+
+let _screechInterval = null;
+
+// Synthesise a vinyl-scratch noise burst via Web Audio API
+function makeScratchNoise() {
+  try {
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const sr   = ctx.sampleRate;
+    const dur  = 0.28; // 280ms burst
+
+    // White noise buffer
+    const buf  = ctx.createBuffer(1, Math.floor(sr * dur), sr);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+
+    // Bandpass ~3 kHz = vinyl needle texture
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 3200;
+    bp.Q.value = 1.5;
+
+    // Envelope: instant attack, exponential decay
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.55, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+
+    src.connect(bp);
+    bp.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+    src.stop(ctx.currentTime + dur);
+    setTimeout(() => { try { ctx.close(); } catch(e) {} }, 500);
+  } catch(e) {} // silently skip if AudioContext unavailable
+}
+
+function screechPause(id) {
+  if (!id || !store[id]) return;
+  const audio = store[id].audio;
+  if (audio.paused) return;
+
+  // Cancel any in-progress screech
+  if (_screechInterval) {
+    clearInterval(_screechInterval);
+    _screechInterval = null;
+    audio.volume = parseFloat(document.getElementById('masterVol').value);
+    document.querySelectorAll('.row-screech-btn.screeching').forEach(b => {
+      b.classList.remove('screeching');
+      b.innerHTML = '◀<br>SCRCH';
+    });
+  }
+
+  const masterVol = parseFloat(document.getElementById('masterVol').value);
+  const screechBtn = document.getElementById(`rscreech_${id}`);
+  if (screechBtn) { screechBtn.classList.add('screeching'); screechBtn.innerHTML = '◀<br>…'; }
+
+  // Fire the synthetic scratch noise
+  makeScratchNoise();
+
+  // Simultaneously quick-fade the main audio and pause (~250ms total)
+  const steps      = 18;
+  const intervalMs = 14;
+  let   step       = 0;
+  const startVol   = audio.volume;
+
+  _screechInterval = setInterval(() => {
+    step++;
+    audio.volume = Math.max(0, startVol * (1 - step / steps));
+
+    if (step >= steps) {
+      audio.pause();
+      audio.volume = masterVol; // restore for next play
+      const playBtnS = document.getElementById(`play_${id}`);
+      if (playBtnS) { playBtnS.textContent = '▶'; playBtnS.classList.remove('paused'); }
+      const rowElS = document.getElementById(`row_${id}`);
+      if (rowElS) rowElS.classList.remove('playing');
+      if (activeCue === id) { activeCue = null; setNowPlaying('▬ NO TRACK PLAYING ▬'); }
+      clearInterval(_screechInterval);
+      _screechInterval = null;
+      if (screechBtn) { screechBtn.classList.remove('screeching'); screechBtn.innerHTML = '◀<br>SCRCH'; }
+    }
+  }, intervalMs);
+}
+
+function stopCue(id) {
+  if (!store[id]) return;
+  store[id].audio.pause();
+  store[id].audio.currentTime = 0;
+  resetWaveformUI(id);
+  document.getElementById(`play_${id}`).textContent = '▶';
+  document.getElementById(`play_${id}`).classList.remove('paused');
+  document.getElementById(`row_${id}`).classList.remove('playing');
+  if (activeCue === id) { activeCue = null; setNowPlaying('▬ NO TRACK PLAYING ▬'); }
+}
+
+function cueEnded(id) {
+  stopPlayheadLoop(id);
+  drawWaveformWithPlayhead(id, 1); // show fully played
+  document.getElementById(`play_${id}`).textContent = '▶';
+  document.getElementById(`play_${id}`).classList.remove('paused');
+  document.getElementById(`row_${id}`).classList.remove('playing');
+  if (activeCue === id) { activeCue = null; setNowPlaying('▬ NO TRACK PLAYING ▬'); }
+}
+
+function stopAll() {
+  Object.keys(store).forEach(id => {
+    const s = store[id];
+    if (!s) return;
+    s.audio.pause();
+    s.audio.currentTime = 0;
+    resetWaveformUI(id);
+    const p = document.getElementById(`play_${id}`);
+    const r = document.getElementById(`row_${id}`);
+    if (p) { p.textContent = '▶'; p.classList.remove('paused'); }
+    if (r) r.classList.remove('playing');
+  });
+  activeCue = null;
+  setNowPlaying('▬ NO TRACK PLAYING ▬');
+  if (_fadeInterval) { clearInterval(_fadeInterval); _fadeInterval = null; }
+  document.querySelectorAll('.row-fade-btn.fading').forEach(b => { b.classList.remove('fading'); b.innerHTML = '⬇<br>FADE'; });
+  if (_screechInterval) {
+    clearInterval(_screechInterval);
+    _screechInterval = null;
+    Object.values(store).forEach(s => { if (s) s.audio.playbackRate = 1; });
+  }
+  document.querySelectorAll('.row-screech-btn.screeching').forEach(b => { b.classList.remove('screeching'); b.innerHTML = '◀<br>SCRCH'; });
+}
+
+function toggleLoop(id) {
+  const btn = document.getElementById(`loop_${id}`);
+  btn.classList.toggle('active');
+  if (store[id]) store[id].audio.loop = btn.classList.contains('active');
+}
+
+// ── MASTER VOLUME ─────────────────────────────────────────────────────────
+document.getElementById('masterVol').addEventListener('input', function () {
+  const v = parseFloat(this.value);
+  document.getElementById('volPct').textContent = Math.round(v * 100) + '%';
+  Object.values(store).forEach(s => { if (s) s.audio.volume = v; });
+});
+
+function setNowPlaying(txt) { document.getElementById('nowPlaying').textContent = txt; }
+
+// ── PERSISTENCE (IndexedDB — survives page reloads & browser restarts) ───
+const IDB_NAME    = 'DwarfDivasCueBoard';
+const IDB_VERSION = 1;
+const STORE_MUSIC = 'musicFiles';
+const STORE_SFX   = 'sfxFiles';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_MUSIC)) db.createObjectStore(STORE_MUSIC);
+      if (!db.objectStoreNames.contains(STORE_SFX))   db.createObjectStore(STORE_SFX);
+    };
+    req.onsuccess  = e => resolve(e.target.result);
+    req.onerror    = e => reject(e.target.error);
+  });
+}
+
+async function idbSave(storeName, id, name, arrayBuffer) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(storeName, 'readwrite');
+    tx.objectStore(storeName).put({ name, data: arrayBuffer }, id);
+    tx.oncomplete = resolve;
+    tx.onerror    = e => reject(e.target.error);
+  });
+}
+
+async function idbGet(storeName, id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(storeName, 'readonly');
+    const req = tx.objectStore(storeName).get(id);
+    req.onsuccess = e => resolve(e.target.result);  // { name, data } or undefined
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+async function idbGetAll(storeName) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx      = db.transaction(storeName, 'readonly');
+    const store   = tx.objectStore(storeName);
+    const results = [];
+    store.openCursor().onsuccess = e => {
+      const cursor = e.target.result;
+      if (cursor) { results.push({ id: cursor.key, ...cursor.value }); cursor.continue(); }
+      else resolve(results);
+    };
+    tx.onerror = e => reject(e.target.error);
+  });
+}
+
+async function idbDelete(storeName, id) {
+  const db = await openDB();
+  return new Promise(resolve => {
+    const tx = db.transaction(storeName, 'readwrite');
+    tx.objectStore(storeName).delete(id);
+    tx.oncomplete = resolve;
+  });
+}
+
+async function idbClearAll() {
+  const db = await openDB();
+  return new Promise(resolve => {
+    const tx = db.transaction([STORE_MUSIC, STORE_SFX], 'readwrite');
+    tx.objectStore(STORE_MUSIC).clear();
+    tx.objectStore(STORE_SFX).clear();
+    tx.oncomplete = resolve;
+  });
+}
+
+// Read a File object into an ArrayBuffer for storage
+function fileToArrayBuffer(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = e => resolve(e.target.result);
+    reader.onerror = e => reject(e);
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+// Convert stored ArrayBuffer back to an object URL
+function arrayBufferToObjectURL(arrayBuffer, mimeType = 'audio/mpeg') {
+  const blob = new Blob([arrayBuffer], { type: mimeType });
+  return URL.createObjectURL(blob);
+}
+
+// Restore all saved music + SFX from IDB on page load
+async function restoreFromIDB() {
+  showSaveStatus('Restoring saved files…');
+  try {
+    const [musicEntries, sfxEntries] = await Promise.all([
+      idbGetAll(STORE_MUSIC),
+      idbGetAll(STORE_SFX),
+    ]);
+
+    for (const entry of musicEntries) {
+      const url   = arrayBufferToObjectURL(entry.data);
+      const audio = new Audio(url);
+      audio.volume = parseFloat(document.getElementById('masterVol').value);
+      const loopBtn = document.getElementById(`loop_${entry.id}`);
+      if (loopBtn) audio.loop = loopBtn.classList.contains('active');
+      audio.addEventListener('ended', () => { if (!audio.loop) cueEnded(entry.id); });
+      store[entry.id] = { audio, url };
+      // Update UI
+      const dz   = document.getElementById(`dz_${entry.id}`);
+      const play = document.getElementById(`play_${entry.id}`);
+      const stop = document.getElementById(`stop_${entry.id}`);
+      if (dz)   { dz.classList.add('loaded'); dz.textContent = '✓ ' + entry.name; }
+      if (play) play.disabled = false;
+      if (stop) stop.disabled = false;
+      const fade = document.getElementById(`rfade_${entry.id}`);
+      if (fade) fade.disabled = false;
+      const screech = document.getElementById(`rscreech_${entry.id}`);
+      if (screech) screech.disabled = false;
+      generateWaveform(entry.id, entry.data);
+    }
+
+    for (const entry of sfxEntries) {
+      const url = arrayBufferToObjectURL(entry.data);
+      sfxStore[entry.id] = { url, vol: 1 };
+      const dz  = document.getElementById(`sfxdz_${entry.id}`);
+      const btn = document.getElementById(`sfxbtn_${entry.id}`);
+      const card= document.getElementById(`sfxcard_${entry.id}`);
+      if (dz)   { dz.classList.add('loaded'); dz.textContent = '✓ ' + entry.name.replace(/\.[^/.]+$/, ''); }
+      if (btn)  btn.disabled = false;
+      if (card) card.classList.add('loaded');
+    }
+
+    const total = musicEntries.length + sfxEntries.length;
+    showSaveStatus(total > 0 ? `✓ ${total} file${total !== 1 ? 's' : ''} restored` : 'No saved files');
+    setTimeout(() => showSaveStatus(''), 3000);
+  } catch (err) {
+    console.warn('IDB restore failed:', err);
+    showSaveStatus('');
+  }
+}
+
+function showSaveStatus(msg) {
+  let el = document.getElementById('saveStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.opacity = msg ? '1' : '0';
+}
+
+// ── SFX SYSTEM (plays independently on top of music) ─────────────────────
+const SFX_DEFAULTS = [
+  { id: 'sfx_tommy1',   name: 'Tommy Gun\nBurst',    emoji: '🔫' },
+  { id: 'sfx_tommy2',   name: 'Tommy Gun\nExtended', emoji: '💥' },
+  { id: 'sfx_siren',    name: 'Police\nSiren',       emoji: '🚨' },
+  { id: 'sfx_cuffs',    name: 'Handcuffs\nClick',    emoji: '⛓️'  },
+  { id: 'sfx_whistle',  name: 'Drill\nWhistle',      emoji: '📣' },
+  { id: 'sfx_airhorn',  name: 'Air Horn',            emoji: '📯' },
+  { id: 'sfx_rimshot',  name: 'Rimshot\n(comedy)',   emoji: '🥁' },
+  { id: 'sfx_cannon',   name: 'Cannon\nBlast',       emoji: '💣' },
+];
+
+const sfxStore = {}; // id → { audio, url }
+
+function buildSfxCard(sfx) {
+  const card = document.createElement('div');
+  card.className = 'sfx-card';
+  card.id = `sfxcard_${sfx.id}`;
+  card.innerHTML = `
+    <button class="sfx-del" onclick="deleteSfx('${sfx.id}')" title="Remove">✕</button>
+    <div class="sfx-card-name" title="Double-click to rename"
+         ondblclick="makeEditable(this)">${sfx.emoji ? sfx.emoji + ' ' : ''}${sfx.name}</div>
+    <div class="sfx-drop" id="sfxdz_${sfx.id}"
+         ondragover="sfxDragOver(event,'${sfx.id}')"
+         ondragleave="sfxDragLeave('${sfx.id}')"
+         ondrop="sfxDrop(event,'${sfx.id}')"
+         onclick="document.getElementById('sfxfi_${sfx.id}').click()">
+      Drop or click<br>to load
+    </div>
+    <button class="sfx-fire-btn" id="sfxbtn_${sfx.id}"
+            onclick="fireSfx('${sfx.id}')"
+            disabled title="Fire SFX">▶</button>
+    <div class="sfx-vol-row">
+      🔊 <input type="range" class="sfx-vol" id="sfxvol_${sfx.id}"
+               min="0" max="1" step="0.05" value="1"
+               oninput="setSfxVol('${sfx.id}', this.value)">
+    </div>
+    <input type="file" id="sfxfi_${sfx.id}" accept="audio/*"
+           onchange="loadSfxFromInput(event,'${sfx.id}')">
+  `;
+  return card;
+}
+
+function buildSfxBoard() {
+  const grid = document.getElementById('sfxGrid');
+  SFX_DEFAULTS.forEach(sfx => grid.appendChild(buildSfxCard(sfx)));
+}
+
+function addSfxSlot() {
+  const id = 'sfx_' + Date.now();
+  const card = buildSfxCard({ id, name: 'New SFX', emoji: '🎵' });
+  document.getElementById('sfxGrid').appendChild(card);
+  // Auto-open rename
+  setTimeout(() => makeEditable(card.querySelector('.sfx-card-name')), 50);
+}
+
+function deleteSfx(id) {
+  if (sfxStore[id]?.playing) sfxStore[id].playing.forEach(a => a.pause());
+  if (sfxStore[id]?.url) URL.revokeObjectURL(sfxStore[id].url);
+  delete sfxStore[id];
+  const card = document.getElementById(`sfxcard_${id}`);
+  if (card) card.remove();
+  idbDelete(STORE_SFX, id).catch(() => {});
+}
+
+// Drag & drop for SFX
+function sfxDragOver(e, id) { e.preventDefault(); document.getElementById(`sfxdz_${id}`).classList.add('dragover'); }
+function sfxDragLeave(id)    { document.getElementById(`sfxdz_${id}`).classList.remove('dragover'); }
+function sfxDrop(e, id) {
+  e.preventDefault();
+  document.getElementById(`sfxdz_${id}`).classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('audio/')) loadSfxFile(f, id);
+}
+function loadSfxFromInput(e, id) { const f = e.target.files[0]; if (f) loadSfxFile(f, id); }
+
+async function loadSfxFile(file, id) {
+  if (sfxStore[id]?.url) URL.revokeObjectURL(sfxStore[id].url);
+  const url     = URL.createObjectURL(file);
+  sfxStore[id]  = { url, vol: 1 };
+
+  const dz   = document.getElementById(`sfxdz_${id}`);
+  const btn  = document.getElementById(`sfxbtn_${id}`);
+  const card = document.getElementById(`sfxcard_${id}`);
+  dz.classList.add('loaded');
+  dz.classList.remove('dragover');
+  dz.textContent = '✓ ' + file.name.replace(/\.[^/.]+$/, '');
+  btn.disabled   = false;
+  card.classList.add('loaded');
+
+  // Save to IDB
+  try {
+    const buf = await fileToArrayBuffer(file);
+    await idbSave(STORE_SFX, id, file.name, buf);
+    showSaveStatus('✓ Saved');
+    setTimeout(() => showSaveStatus(''), 1500);
+  } catch(e) { console.warn('IDB SFX save failed', e); }
+}
+
+function fireSfx(id) {
+  if (!sfxStore[id]) return;
+  // Each fire creates a fresh Audio instance so rapid-fire works
+  const audio = new Audio(sfxStore[id].url);
+  audio.volume = sfxStore[id].vol ?? 1;
+  audio.play();
+
+  // Flash the button
+  const btn = document.getElementById(`sfxbtn_${id}`);
+  const card = document.getElementById(`sfxcard_${id}`);
+  btn.textContent = '💥';
+  card.classList.add('firing');
+  audio.addEventListener('ended', () => {
+    btn.textContent = '▶';
+    card.classList.remove('firing');
+  });
+  // Track for stop-all
+  if (!sfxStore[id].playing) sfxStore[id].playing = [];
+  sfxStore[id].playing.push(audio);
+  audio.addEventListener('ended', () => {
+    sfxStore[id].playing = sfxStore[id].playing.filter(a => a !== audio);
+  });
+}
+
+function setSfxVol(id, val) {
+  if (sfxStore[id]) sfxStore[id].vol = parseFloat(val);
+}
+
+function stopAllSfx() {
+  Object.values(sfxStore).forEach(s => {
+    if (s.playing) { s.playing.forEach(a => { a.pause(); a.currentTime = 0; }); s.playing = []; }
+  });
+  // Reset all fire buttons
+  document.querySelectorAll('.sfx-fire-btn').forEach(b => b.textContent = '▶');
+  document.querySelectorAll('.sfx-card').forEach(c => c.classList.remove('firing'));
+}
+
+// ── UNIQUE ID GENERATOR ───────────────────────────────────────────────────
+let _uidCounter = 1000;
+function uid() { return 'cue_' + (++_uidCounter) + '_' + Date.now(); }
+
+// ── BUILD ONE CUE ROW (used by buildBoard AND addCue) ──────────────────────
+function buildCueRow(id, name, sub, loopDefault) {
+  const row = document.createElement('div');
+  row.className = 'cue-row';
+  row.id = `row_${id}`;
+  row.innerHTML = `
+    <div class="cue-name" title="Double-click to rename" ondblclick="makeEditable(this)">
+      ${name}
+      ${sub ? `<div class="cue-sub">${sub}</div>` : ''}
+    </div>
+    <div class="drop-zone" id="dz_${id}"
+         ondragover="onDragOver(event,'${id}')"
+         ondragleave="onDragLeave('${id}')"
+         ondrop="onDrop(event,'${id}')"
+         onclick="document.getElementById('fi_${id}').click()">
+      Drop audio file here · or click to browse
+    </div>
+    <button class="play-btn" id="play_${id}"
+            onclick="togglePlay('${id}','${name}')"
+            disabled title="Play / Pause">▶</button>
+    <button class="stop-btn" id="stop_${id}"
+            onclick="stopCue('${id}')"
+            disabled title="Stop & Rewind">⏹</button>
+    <button class="row-fade-btn" id="rfade_${id}"
+            onclick="fadeOut('${id}')"
+            disabled title="Fade out &amp; pause (keeps position)">⬇<br>FADE</button>
+    <button class="row-screech-btn" id="rscreech_${id}"
+            onclick="screechPause('${id}')"
+            disabled title="Record scratch to pause (keeps position)">◀<br>SCRCH</button>
+    <button class="loop-btn ${loopDefault ? 'active' : ''}"
+            id="loop_${id}"
+            onclick="toggleLoop('${id}')"
+            title="Toggle Loop">🔁<br>LOOP</button>
+    <button class="delete-cue-btn" onclick="deleteCue('${id}')" title="Remove cue">✕</button>
+    <input type="file" id="fi_${id}" accept="audio/*"
+           onchange="loadFromInput(event,'${id}')">
+    <div class="cue-waveform-row" id="wv_${id}">
+      <div class="waveform-wrap" id="wvwrap_${id}"
+           onclick="seekWaveform(event,'${id}')"
+           onmousemove="updateHoverLine(event,this)">
+        <canvas class="waveform-canvas" id="wvcanvas_${id}" width="1000" height="76"></canvas>
+      </div>
+      <div class="waveform-times">
+        <span class="wftime-elapsed" id="wvel_${id}">0:00</span>
+        <span class="wftime-remain"  id="wvrem_${id}">--:--</span>
+      </div>
+    </div>
+  `;
+  return row;
+}
+
+// ── ADD CUE TO A SECTION ──────────────────────────────────────────────────
+function openAddCue(secEl) {
+  // Close any other open forms first
+  document.querySelectorAll('.add-form.open').forEach(f => f.classList.remove('open'));
+  const form = secEl.querySelector('.add-cue-form');
+  form.classList.add('open');
+  form.querySelector('input[type="text"]').focus();
+}
+
+function confirmAddCue(secEl) {
+  const form = secEl.querySelector('.add-cue-form');
+  const nameInput = form.querySelector('input[type="text"]');
+  const loopInput = form.querySelector('input[type="checkbox"]');
+  const name = nameInput.value.trim();
+  if (!name) { nameInput.focus(); return; }
+
+  const id = uid();
+  const row = buildCueRow(id, name, '', loopInput.checked);
+
+  // Insert before the footer
+  const footer = secEl.querySelector('.section-footer');
+  secEl.insertBefore(row, footer);
+
+  // Reset form
+  nameInput.value = '';
+  loopInput.checked = false;
+  form.classList.remove('open');
+}
+
+function cancelAddCue(secEl) {
+  const form = secEl.querySelector('.add-cue-form');
+  form.querySelector('input[type="text"]').value = '';
+  form.classList.remove('open');
+}
+
+// ── DELETE A CUE ─────────────────────────────────────────────────────────
+function deleteCue(id) {
+  if (store[id]) { store[id].audio.pause(); URL.revokeObjectURL(store[id].url); delete store[id]; }
+  stopPlayheadLoop(id);
+  delete waveformStore[id];
+  if (activeCue === id) { activeCue = null; setNowPlaying('▬ NO TRACK PLAYING ▬'); }
+  const row = document.getElementById(`row_${id}`);
+  if (row) row.remove();
+  idbDelete(STORE_MUSIC, id).catch(() => {});
+}
+
+// ── RENAME CUE ON DOUBLE-CLICK ────────────────────────────────────────────
+function makeEditable(el) {
+  el.contentEditable = 'true';
+  el.focus();
+  // Select all text
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  el.addEventListener('blur', () => { el.contentEditable = 'false'; }, { once: true });
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+    if (e.key === 'Escape') { el.blur(); }
+  }, { once: true });
+}
+
+// ── ADD NEW SECTION ───────────────────────────────────────────────────────
+function openAddSection() {
+  const form = document.getElementById('addSectionForm');
+  form.classList.add('open');
+  document.getElementById('newSectionName').focus();
+}
+
+function confirmAddSection() {
+  const input = document.getElementById('newSectionName');
+  const name = input.value.trim().toUpperCase();
+  if (!name) { input.focus(); return; }
+
+  const board = document.getElementById('cueBoard');
+  const secEl = buildSectionEl({ label: name, cls: 'sec-pre' }, []);
+  board.appendChild(secEl);
+
+  input.value = '';
+  document.getElementById('addSectionForm').classList.remove('open');
+
+  // Scroll to new section
+  secEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeAddSection() {
+  document.getElementById('newSectionName').value = '';
+  document.getElementById('addSectionForm').classList.remove('open');
+}
+
+// ── BUILD A WHOLE SECTION ELEMENT ─────────────────────────────────────────
+function buildSectionEl(sec, cues) {
+  const secEl = document.createElement('div');
+  secEl.className = `section ${sec.cls}`;
+
+  const hdr = document.createElement('div');
+  hdr.className = 'section-header';
+  hdr.textContent = sec.label;
+  secEl.appendChild(hdr);
+
+  cues.forEach(cue => {
+    secEl.appendChild(buildCueRow(cue.id, cue.name, cue.sub || '', cue.loop || false));
+  });
+
+  // Footer with "+ Add Cue" button
+  const footer = document.createElement('div');
+  footer.className = 'section-footer';
+  footer.innerHTML = `
+    <button class="add-cue-btn" onclick="openAddCue(this.closest('.section'))">＋ Add Cue to This Section</button>
+    <div class="add-form add-cue-form" style="margin-top:6px;">
+      <input type="text" placeholder="Cue name, e.g. Encore Dance Track" maxlength="80">
+      <label><input type="checkbox"> Loop</label>
+      <button class="confirm-btn" onclick="confirmAddCue(this.closest('.section'))">Add</button>
+      <button class="cancel-btn" onclick="cancelAddCue(this.closest('.section'))">Cancel</button>
+    </div>
+  `;
+  secEl.appendChild(footer);
+  return secEl;
+}
+
+// ── CLEAR ALL SAVED FILES ─────────────────────────────────────────────────
+async function confirmClearAll() {
+  if (!confirm('Delete all saved audio from browser storage?\n\nThe board layout stays — only the loaded audio files will be cleared. You\'ll need to re-load files next time.')) return;
+  stopAll();
+  stopAllSfx();
+  // Revoke all object URLs
+  Object.values(store).forEach(s => { if (s?.url) URL.revokeObjectURL(s.url); });
+  Object.values(sfxStore).forEach(s => { if (s?.url) URL.revokeObjectURL(s.url); });
+  // Clear in-memory stores
+  for (const k in store)    delete store[k];
+  for (const k in sfxStore) delete sfxStore[k];
+  // Clear IDB
+  await idbClearAll();
+  // Reset all UI drop zones
+  document.querySelectorAll('.drop-zone').forEach(dz => {
+    dz.classList.remove('loaded', 'dragover');
+    dz.textContent = 'Drop audio file here · or click to browse';
+  });
+  document.querySelectorAll('.sfx-drop').forEach(dz => {
+    dz.classList.remove('loaded', 'dragover');
+    dz.textContent = 'Drop or click\nto load';
+  });
+  document.querySelectorAll('.play-btn, .stop-btn, .row-fade-btn, .row-screech-btn').forEach(b => b.disabled = true);
+  document.querySelectorAll('.row-fade-btn.fading').forEach(b => { b.classList.remove('fading'); b.innerHTML = '⬇<br>FADE'; });
+  if (_screechInterval) { clearInterval(_screechInterval); _screechInterval = null; }
+  Object.values(store).forEach(s => { if (s) s.audio.playbackRate = 1; });
+  document.querySelectorAll('.row-screech-btn.screeching').forEach(b => { b.classList.remove('screeching'); b.innerHTML = '◀<br>SCRCH'; });
+  document.querySelectorAll('.sfx-fire-btn').forEach(b => b.disabled = true);
+  document.querySelectorAll('.sfx-card').forEach(c => c.classList.remove('loaded', 'firing'));
+  setNowPlaying('▬ NO TRACK PLAYING ▬');
+  showSaveStatus('🗑 Cleared');
+  setTimeout(() => showSaveStatus(''), 2000);
+}
+
+// ── WAVEFORM ──────────────────────────────────────────────────────────────
+const waveformStore = {}; // id → { peaks: Float32Array, duration, raf: null }
+const PEAK_SAMPLES  = 500;
+
+function formatTime(sec) {
+  if (!isFinite(sec) || sec < 0) sec = 0;
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return m + ':' + String(s).padStart(2, '0');
+}
+
+async function generateWaveform(id, arrayBuffer) {
+  try {
+    const actx    = new (window.AudioContext || window.webkitAudioContext)();
+    const decoded = await actx.decodeAudioData(arrayBuffer.slice(0));
+    actx.close();
+
+    const channelData = decoded.getChannelData(0);
+    const blockSize   = Math.floor(channelData.length / PEAK_SAMPLES);
+    const peaks       = new Float32Array(PEAK_SAMPLES);
+    for (let i = 0; i < PEAK_SAMPLES; i++) {
+      const start = i * blockSize;
+      let max = 0;
+      for (let j = 0; j < blockSize; j++) {
+        const abs = Math.abs(channelData[start + j] || 0);
+        if (abs > max) max = abs;
+      }
+      peaks[i] = max;
+    }
+
+    waveformStore[id] = { peaks, duration: decoded.duration, raf: null };
+
+    const wvRow = document.getElementById(`wv_${id}`);
+    if (wvRow) wvRow.classList.add('visible');
+
+    const remEl = document.getElementById(`wvrem_${id}`);
+    if (remEl) remEl.textContent = '-' + formatTime(decoded.duration);
+
+    drawWaveformWithPlayhead(id, 0);
+  } catch (err) {
+    console.warn('Waveform generation failed for', id, err);
+  }
+}
+
+function drawWaveformWithPlayhead(id, progress) {
+  const wv     = waveformStore[id];
+  const canvas = document.getElementById(`wvcanvas_${id}`);
+  if (!wv || !canvas) return;
+
+  const w      = canvas.width;
+  const h      = canvas.height;
+  const ctx2d  = canvas.getContext('2d');
+  ctx2d.clearRect(0, 0, w, h);
+
+  const cutX     = Math.floor(progress * w);
+  const barWidth = Math.max(1, w / PEAK_SAMPLES);
+
+  for (let i = 0; i < PEAK_SAMPLES; i++) {
+    const x    = i * barWidth;
+    const amp  = wv.peaks[i];
+    const barH = Math.max(2, amp * h * 0.92);
+    const y    = (h - barH) / 2;
+    ctx2d.fillStyle = x < cutX ? '#ff69b4' : '#2a2a4a';
+    ctx2d.fillRect(x, y, Math.max(1, barWidth - 0.8), barH);
+  }
+
+  // White playhead line
+  if (progress > 0 && progress < 1) {
+    ctx2d.fillStyle = 'rgba(255,255,255,0.88)';
+    ctx2d.fillRect(cutX - 1, 0, 2, h);
+  }
+}
+
+function startPlayheadLoop(id) {
+  const wv = waveformStore[id];
+  if (!wv) return;
+  if (wv.raf) cancelAnimationFrame(wv.raf);
+
+  function tick() {
+    const audio = store[id]?.audio;
+    if (!audio || audio.paused) { wv.raf = null; return; }
+
+    const progress  = audio.duration ? audio.currentTime / audio.duration : 0;
+    const remaining = audio.duration ? audio.duration - audio.currentTime : 0;
+
+    drawWaveformWithPlayhead(id, progress);
+
+    const elEl  = document.getElementById(`wvel_${id}`);
+    const remEl = document.getElementById(`wvrem_${id}`);
+    if (elEl)  elEl.textContent  = formatTime(audio.currentTime);
+    if (remEl) remEl.textContent = '-' + formatTime(remaining);
+
+    wv.raf = requestAnimationFrame(tick);
+  }
+  wv.raf = requestAnimationFrame(tick);
+}
+
+function stopPlayheadLoop(id) {
+  const wv = waveformStore[id];
+  if (wv?.raf) { cancelAnimationFrame(wv.raf); wv.raf = null; }
+}
+
+function resetWaveformUI(id) {
+  stopPlayheadLoop(id);
+  drawWaveformWithPlayhead(id, 0);
+  const elEl  = document.getElementById(`wvel_${id}`);
+  const remEl = document.getElementById(`wvrem_${id}`);
+  if (elEl)  elEl.textContent  = '0:00';
+  if (remEl && waveformStore[id]) remEl.textContent = '-' + formatTime(waveformStore[id].duration);
+}
+
+function seekWaveform(e, id) {
+  const audio = store[id]?.audio;
+  const wv    = waveformStore[id];
+  if (!audio || !wv) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  audio.currentTime = frac * audio.duration;
+  drawWaveformWithPlayhead(id, frac);
+  // Update time displays immediately
+  const elEl  = document.getElementById(`wvel_${id}`);
+  const remEl = document.getElementById(`wvrem_${id}`);
+  if (elEl)  elEl.textContent  = formatTime(audio.currentTime);
+  if (remEl) remEl.textContent = '-' + formatTime(audio.duration - audio.currentTime);
+}
+
+function updateHoverLine(e, el) {
+  const rect = el.getBoundingClientRect();
+  const pct  = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
+  el.style.setProperty('--hover-x', pct + '%');
+}
+
+// ── EXPORT / IMPORT BUNDLE ────────────────────────────────────────────────
+async function exportBundle() {
+  if (typeof JSZip === 'undefined') {
+    alert('JSZip library not loaded — check your internet connection and try again.');
+    return;
+  }
+
+  showSaveStatus('Building bundle…');
+  try {
+    const zip = new JSZip();
+    const [musicEntries, sfxEntries] = await Promise.all([
+      idbGetAll(STORE_MUSIC),
+      idbGetAll(STORE_SFX),
+    ]);
+
+    if (musicEntries.length + sfxEntries.length === 0) {
+      alert('No audio files loaded yet — load some cues first, then export.');
+      showSaveStatus('');
+      return;
+    }
+
+    // Build manifest so import knows what goes where
+    const manifest = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      music: [],
+      sfx: [],
+    };
+
+    const musicFolder = zip.folder('music');
+    for (const entry of musicEntries) {
+      const safeName = entry.id + '__' + entry.name.replace(/[^a-zA-Z0-9._\- ]/g, '_');
+      musicFolder.file(safeName, entry.data);
+      manifest.music.push({ id: entry.id, name: entry.name, file: safeName });
+    }
+
+    const sfxFolder = zip.folder('sfx');
+    for (const entry of sfxEntries) {
+      const safeName = entry.id + '__' + entry.name.replace(/[^a-zA-Z0-9._\- ]/g, '_');
+      sfxFolder.file(safeName, entry.data);
+      manifest.sfx.push({ id: entry.id, name: entry.name, file: safeName });
+    }
+
+    zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+
+    // Also bundle the HTML file itself so the laptop gets the latest version
+    const htmlSource = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    zip.file('DwarfDivas_CueBoard.html', htmlSource);
+
+    showSaveStatus('Compressing…');
+    const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 3 } });
+
+    // Trigger download
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement('a');
+    const ts  = new Date().toISOString().slice(0, 10);
+    a.href     = url;
+    a.download = `DwarfDivas_Bundle_${ts}.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    const totalFiles = musicEntries.length + sfxEntries.length;
+    showSaveStatus(`✓ Exported ${totalFiles} file${totalFiles !== 1 ? 's' : ''}`);
+    setTimeout(() => showSaveStatus(''), 3000);
+  } catch (err) {
+    console.error('Export failed:', err);
+    alert('Export failed: ' + err.message);
+    showSaveStatus('');
+  }
+}
+
+async function importBundle(event) {
+  const file = event.target.files[0];
+  event.target.value = ''; // reset so same file can be re-imported
+  if (!file) return;
+
+  if (typeof JSZip === 'undefined') {
+    alert('JSZip library not loaded — check your internet connection and try again.');
+    return;
+  }
+
+  if (!confirm(`Import bundle "${file.name}"?\n\nThis will REPLACE all currently saved audio with the files from this bundle. The board layout stays the same.`)) return;
+
+  showSaveStatus('Importing…');
+  try {
+    // Stop all playback first
+    stopAll();
+    stopAllSfx();
+
+    const zip = await JSZip.loadAsync(file);
+
+    // Read manifest
+    const manifestFile = zip.file('manifest.json');
+    if (!manifestFile) { alert('Invalid bundle — manifest.json not found.'); showSaveStatus(''); return; }
+    const manifest = JSON.parse(await manifestFile.async('string'));
+
+    // Clear existing IDB and in-memory stores
+    Object.values(store).forEach(s => { if (s?.url) URL.revokeObjectURL(s.url); });
+    Object.values(sfxStore).forEach(s => { if (s?.url) URL.revokeObjectURL(s.url); });
+    for (const k in store)    delete store[k];
+    for (const k in sfxStore) delete sfxStore[k];
+    for (const k in waveformStore) { stopPlayheadLoop(k); delete waveformStore[k]; }
+    await idbClearAll();
+
+    let count = 0;
+
+    // Restore music entries
+    for (const entry of manifest.music) {
+      const zipEntry = zip.file('music/' + entry.file);
+      if (!zipEntry) { console.warn('Missing music file in zip:', entry.file); continue; }
+      const arrayBuffer = await zipEntry.async('arraybuffer');
+      await idbSave(STORE_MUSIC, entry.id, entry.name, arrayBuffer);
+
+      const url   = arrayBufferToObjectURL(arrayBuffer);
+      const audio = new Audio(url);
+      audio.volume = parseFloat(document.getElementById('masterVol').value);
+      const loopBtn = document.getElementById(`loop_${entry.id}`);
+      if (loopBtn) audio.loop = loopBtn.classList.contains('active');
+      audio.addEventListener('ended', () => { if (!audio.loop) cueEnded(entry.id); });
+      store[entry.id] = { audio, url };
+
+      const dz   = document.getElementById(`dz_${entry.id}`);
+      const play = document.getElementById(`play_${entry.id}`);
+      const stop = document.getElementById(`stop_${entry.id}`);
+      if (dz)   { dz.classList.add('loaded'); dz.textContent = '✓ ' + entry.name; }
+      if (play) play.disabled = false;
+      if (stop) stop.disabled = false;
+      const fadeBtn2 = document.getElementById(`rfade_${entry.id}`);
+      if (fadeBtn2) fadeBtn2.disabled = false;
+      const screechBtn2 = document.getElementById(`rscreech_${entry.id}`);
+      if (screechBtn2) screechBtn2.disabled = false;
+      generateWaveform(entry.id, arrayBuffer);
+      count++;
+    }
+
+    // Restore SFX entries
+    for (const entry of manifest.sfx) {
+      const zipEntry = zip.file('sfx/' + entry.file);
+      if (!zipEntry) { console.warn('Missing SFX file in zip:', entry.file); continue; }
+      const arrayBuffer = await zipEntry.async('arraybuffer');
+      await idbSave(STORE_SFX, entry.id, entry.name, arrayBuffer);
+
+      const url = arrayBufferToObjectURL(arrayBuffer);
+      sfxStore[entry.id] = { url, vol: 1 };
+
+      const dz   = document.getElementById(`sfxdz_${entry.id}`);
+      const btn  = document.getElementById(`sfxbtn_${entry.id}`);
+      const card = document.getElementById(`sfxcard_${entry.id}`);
+      if (dz)   { dz.classList.add('loaded'); dz.textContent = '✓ ' + entry.name.replace(/\.[^/.]+$/, ''); }
+      if (btn)  btn.disabled = false;
+      if (card) card.classList.add('loaded');
+      count++;
+    }
+
+    showSaveStatus(`✓ Imported ${count} file${count !== 1 ? 's' : ''}`);
+    setTimeout(() => showSaveStatus(''), 3000);
+  } catch (err) {
+    console.error('Import failed:', err);
+    alert('Import failed: ' + err.message);
+    showSaveStatus('');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+buildSfxBoard();
+buildBoard();
+restoreFromIDB();
+</script>
+</body>
+</html>
