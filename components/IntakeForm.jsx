@@ -312,4 +312,9 @@ const Field = ({ label, required, focused, hint, children }) => (
       <span>{label}</span>
       {required && <span className="od-intake-field-req">Required</span>}
     </div>
-    {children}
+    {children}
+    {hint && <div className="od-intake-field-hint">{hint}</div>}
+  </label>
+);
+
+window.IntakeForm = IntakeForm;
