@@ -26,7 +26,7 @@ const Hero = () => {
           <span style={{position:'absolute',width:'1px',height:'1px',padding:'0',margin:'-1px',overflow:'hidden',clip:'rect(0,0,0,0)',whiteSpace:'nowrap',border:'0'}}>Dwarf Entertainment &amp; Talent Booking Agency</span>
           <img
             src="assets/OnlyDwarfsLOGOText.svg"
-            alt="OnlyDwarfs — Dwarf Entertainment & Talent Booking Agency"
+            alt="OnlyDwarfs Dwarf Entertainment and Talent Booking Agency"
             className="od-hero-logo-img"
           />
           <span className="od-hero-bottom-text">You'll Ever<br/>Need.</span>
