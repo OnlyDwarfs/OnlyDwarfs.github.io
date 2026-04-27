@@ -9,12 +9,12 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://onlydwarfs.com/" />
-  <meta property="og:title" content="OnlyDwarfs — Dwarf Entertainment & Talent Booking" />
+  <meta property="og:title" content="OnlyDwarfs — Dwarf Entertainment &amp; Talent Booking" />
   <meta property="og:description" content="The world's only dedicated dwarf talent booking agency. Professional performers for bachelor parties, birthdays, corporate events, and Vegas nightlife. Quote in 24 hours." />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="OnlyDwarfs — Dwarf Entertainment & Talent Booking" />
+  <meta name="twitter:title" content="OnlyDwarfs — Dwarf Entertainment &amp; Talent Booking" />
   <meta name="twitter:description" content="The world's only dedicated dwarf talent booking agency. Book professional performers for any event worldwide." />
 
   <!-- Canonical -->
@@ -54,4 +54,59 @@
       "@type": "OfferCatalog",
       "name": "Dwarf Entertainment Services",
       "itemListElement": [
-        {"@type": "Off
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Bachelor Party Entertainment"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Bachelorette Party Entertainment"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Corporate Event Entertainment"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Birthday Party Entertainment"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Las Vegas Nightlife Entertainment"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Private Event Entertainment"}}
+      ]
+    }
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div id="root" data-screen-label="Marketing Home"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="components/Nav.jsx?v=3"></script>
+  <script type="text/babel" src="components/Hero.jsx?v=3"></script>
+  <script type="text/babel" src="components/Marquee.jsx?v=3"></script>
+  <script type="text/babel" src="components/Stats.jsx?v=3"></script>
+  <script type="text/babel" src="components/ServicesGrid.jsx?v=3"></script>
+  <script type="text/babel" src="components/StepsRow.jsx?v=3"></script>
+  <script type="text/babel" src="components/TalentGrid.jsx?v=3"></script>
+  <script type="text/babel" src="components/Showcase.jsx?v=3"></script>
+  <script type="text/babel" src="components/Testimonial.jsx?v=3"></script>
+  <script type="text/babel" src="components/FAQ.jsx?v=3"></script>
+  <script type="text/babel" src="components/FinalCTA.jsx?v=3"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=3"></script>
+
+  <script type="text/babel">
+    const App = () => (
+      <>
+        <Nav />
+        <Hero />
+        <Marquee />
+        <Stats />
+        <ServicesGrid />
+        <StepsRow />
+        <TalentGrid />
+        <Showcase />
+        <Testimonial />
+        <FAQ />
+        <FinalCTA />
+        <Footer />
+      </>
+    );
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
