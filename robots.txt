@@ -1,7 +1,21 @@
 User-agent: *
 Allow: /
+
+# Admin and internal pages — not for indexing
 Disallow: /hub.html
 Disallow: /crm.html
+Disallow: /admin.html
+Disallow: /command.html
+Disallow: /admin-divas.html
+Disallow: /cueboard.html
+Disallow: /roster-mgr.html
+Disallow: /pages-mgr.html
+Disallow: /perf-accounts.html
+Disallow: /performer-dashboard.html
+Disallow: /performer-login.html
+Disallow: /performer-portal.html
+Disallow: /portal-overview.html
+Disallow: /preview.html
 Disallow: /data.json
 Disallow: /CRM_Script.gs
 
