@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quote Generator — OnlyDwarfs</title>
+<title>Get a Quote — OnlyDwarfs | Dwarf Entertainment Booking</title>
+<meta name="description" content="Instantly estimate the cost of booking a dwarf entertainer for your event. Custom pricing for bachelor parties, birthdays, corporate events, and Vegas nightlife." />
+<link rel="canonical" href="https://onlydwarfs.com/quote.html" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://onlydwarfs.com/quote.html" />
+<meta property="og:title" content="Get a Quote — OnlyDwarfs Dwarf Entertainment" />
+<meta property="og:description" content="Estimate your event cost instantly. OnlyDwarfs books professional dwarf entertainers for any occasion worldwide." />
 <style>
 * { box-sizing:border-box; margin:0; padding:0; }
 body { background:#0D0D1A; color:#EFEFEF; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:20px 16px 48px; }
@@ -776,23 +782,3 @@ function generateQuote(){
   document.getElementById('output-pricing').innerHTML=buildPricingHTML(p);
   document.getElementById('email-draft').textContent=email;
   document.getElementById('form-section').style.display='none';
-  document.getElementById('output-section').style.display='block';
-  window.scrollTo(0,0);
-  window._generatedEmail=email;
-}
-
-function copyEmail(){
-  navigator.clipboard.writeText(window._generatedEmail||'').then(()=>{
-    const btn=document.getElementById('copy-btn');
-    btn.textContent='✓ Copied!'; btn.classList.add('copied');
-    setTimeout(()=>{ btn.textContent='Copy Email'; btn.classList.remove('copied'); },2000);
-  });
-}
-function resetForm(){
-  document.getElementById('form-section').style.display='block';
-  document.getElementById('output-section').style.display='none';
-  window.scrollTo(0,0);
-}
-</script>
-</body>
-</html>
