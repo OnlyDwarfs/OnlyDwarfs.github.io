@@ -157,7 +157,7 @@ const TalentApply = () => {
             <div className="od-intake-contact">
               <div className="od-intake-contact-lbl">Questions about the roster?</div>
               <a href="mailto:talent@onlydwarfs.com" className="od-intake-contact-val">talent@onlydwarfs.com</a>
-              <a href="tel:+17028722970" className="od-intake-contact-val">+1 (702) 872-2970</a>
+              <a href="tel:+17026092825" className="od-intake-contact-val">+1 (702) 609-2825</a>
             </div>
           </div>
         </aside>
