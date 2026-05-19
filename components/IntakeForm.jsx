@@ -8,7 +8,6 @@ const IntakeForm = () => {
   const [submitted, setSubmitted] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [focused, setFocused] = React.useState(null);
-  const [smsConsent, setSmsConsent] = React.useState(false);
 
   const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
@@ -146,7 +145,7 @@ const IntakeForm = () => {
             <div className="od-intake-contact">
               <div className="od-intake-contact-lbl">Need to talk to a human?</div>
               <a href="mailto:bookings@onlydwarfs.com" className="od-intake-contact-val">bookings@onlydwarfs.com</a>
-              <a href="tel:+17028722970" className="od-intake-contact-val">+1 (702) 872-2970</a>
+              <a href="tel:+17026092825" className="od-intake-contact-val">+1 (702) 609-2825</a>
             </div>
           </div>
         </aside>
@@ -289,7 +288,7 @@ const IntakeForm = () => {
             <div className="od-intake-submit-row">
               <div className="od-intake-legal">
                 <label className="od-sms-consent">
-                  <input type="checkbox" checked={smsConsent} onChange={(e) => setSmsConsent(e.target.checked)} style={{marginRight:'7px', accentColor:'#9B59F5', flexShrink:0, marginTop:'2px'}} />
+                  <input type="checkbox" defaultChecked style={{marginRight:'7px', accentColor:'#9B59F5', flexShrink:0, marginTop:'2px'}} />
                   <span>I agree to receive text messages from OnlyDwarfs about my booking inquiry. Message &amp; data rates may apply. Reply STOP to opt out.</span>
                 </label>
                 <div style={{marginTop:'8px'}}>By submitting, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>. We'll never share your details.</div>
