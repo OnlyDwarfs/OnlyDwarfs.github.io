@@ -24,7 +24,7 @@ const FinalCTA = () => (
         <span className="od-final-meta-dot" />
         <span>@onlydwarfs</span>
         <span className="od-final-meta-dot" />
-        <span>+1&nbsp;(702)&nbsp;872-2970</span>
+        <span>+1&nbsp;(702)&nbsp;609-2825</span>
       </div>
     </div>
   </section>
