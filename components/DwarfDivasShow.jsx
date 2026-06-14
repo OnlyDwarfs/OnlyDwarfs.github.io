@@ -1,8 +1,8 @@
 // DwarfDivasShow.jsx -- DwarfDivas info page
-const OPENING_NIGHT  = new Date('2026-05-28T20:00:00-07:00');
-const EVENTBRITE_URL = 'https://www.eventbrite.com/e/dwarf-divas-burlesque-show-tickets-1984199650568';
-const EVENT_ID       = '1984199650568';
-const CAPACITY       = 320;
+// Show facts updated 2026-06-14: The Nerd at Neonopolis, four nights July 1-4 2026,
+// 118-seat room, new pricing. Tickets not yet on sale (new Eventbrite event pending).
+const FIRST_NIGHT    = new Date('2026-07-01T23:55:00-07:00');
+const CAPACITY       = 118;
 
 const CD = ({ num, lbl }) => (
   <div className="divas-cd-block">
@@ -13,13 +13,11 @@ const CD = ({ num, lbl }) => (
 
 const DwarfDivasShow = () => {
   const [countdown, setCountdown] = React.useState({ d: 0, h: 0, m: 0, s: 0 });
-  const [ticketData, setTicketData] = React.useState({ sold: null, updated: null });
-  const [widgetReady, setWidgetReady] = React.useState(false);
 
-  // Live countdown
+  // Live countdown to first night
   React.useEffect(() => {
     const tick = () => {
-      const diff = Math.max(0, OPENING_NIGHT - new Date());
+      const diff = Math.max(0, FIRST_NIGHT - new Date());
       setCountdown({
         d: Math.floor(diff / 86400000),
         h: Math.floor((diff % 86400000) / 3600000),
@@ -32,69 +30,20 @@ const DwarfDivasShow = () => {
     return () => clearInterval(id);
   }, []);
 
-  // Fetch live ticket data from data.json (updated every 3hrs by Apps Script)
-  React.useEffect(() => {
-    fetch('https://onlydwarfs.github.io/data.json')
-      .then(r => r.json())
-      .then(d => setTicketData({ sold: d.tickets ?? 0, updated: d.updated || null }))
-      .catch(() => {});
-  }, []);
-
-  // Load Eventbrite checkout widget
-  React.useEffect(() => {
-    const existing = document.getElementById('eb-widget-script');
-    if (existing) {
-      if (window.EBWidgets) initWidget();
-      return;
-    }
-    const script = document.createElement('script');
-    script.id = 'eb-widget-script';
-    script.src = 'https://www.eventbrite.com/static/widgets/eb_widgets.js';
-    script.onload = () => { if (window.EBWidgets) initWidget(); };
-    script.onerror = () => {}; // silently fall back to button
-    document.head.appendChild(script);
-  }, []);
-
-  function initWidget() {
-    try {
-      window.EBWidgets.createWidget({
-        widgetType: 'checkout',
-        eventId: EVENT_ID,
-        iframeContainerId: 'eb-checkout-container',
-        iframeContainerHeight: 435,
-        onOrderComplete: () => {},
-      });
-      setWidgetReady(true);
-    } catch(e) {}
-  }
-
-  // Urgency derived from sold count
-  const pct = ticketData.sold !== null ? Math.min(100, Math.round((ticketData.sold / CAPACITY) * 100)) : null;
-  const remaining = ticketData.sold !== null ? CAPACITY - ticketData.sold : null;
-  const urgencyLabel = pct === null ? null
-    : pct >= 80 ? 'Nearly sold out'
-    : pct >= 60 ? 'Selling fast — limited seats left'
-    : pct >= 25 ? 'Tickets going — grab yours now'
-    : 'Tickets available — two nights only';
-  const urgencyColor = pct === null ? '#22C55E'
-    : pct >= 80 ? '#EF4444'
-    : pct >= 60 ? '#F97316'
-    : pct >= 25 ? '#E8C66B'
-    : '#22C55E';
-
   const acts = [
-    { n: '01', t: 'The Opening',     d: 'Big band entrance. Full cast on stage. Sets the tone in 90 seconds.' },
-    { n: '02', t: 'Solo Cabaret',    d: 'Three signature performers. Burlesque routines you will not see anywhere else in Vegas.' },
-    { n: '03', t: 'Comedy Break',    d: 'The MC roasts the front row. Nobody is safe. Do not sit in row one if you are shy.' },
-    { n: '04', t: 'The Main Number', d: 'The full cast returns for a 14-minute showstopper. Costumes, pyro, the works.' },
-    { n: '05', t: 'Encore',          d: 'Audience-request finale. The band takes bets on which number they have to pull off live.' },
+    { n: '01', t: 'The Opening',     d: 'The full cast hits the stage. Sets the tone in the first 90 seconds.' },
+    { n: '02', t: 'Solo Cabaret',    d: 'Signature performers, one at a time. Burlesque routines you will not see anywhere else in Vegas.' },
+    { n: '03', t: 'Comedy Break',    d: 'The MC works the room and the front row. Nobody is safe. Do not sit up front if you are shy.' },
+    { n: '04', t: 'The Main Number', d: 'The full cast returns for the showstopper. Costumes, choreography, the works.' },
+    { n: '05', t: 'Encore',          d: 'Audience-request finale. You help pick how the night ends.' },
   ];
 
   const tiers = [
-    { name: 'Rail',      price: '$65',  note: 'Standing  -  Main floor  -  21+ bar access' },
-    { name: 'Seated',    price: '$95',  note: 'Reserved seat  -  Cocktail service  -  Priority entry' },
-    { name: 'Premium',   price: '$145', note: 'Front-row booth  -  Bottle service  -  Meet-and-greet' },
-    { name: 'VIP Stage', price: '$295', note: 'Stage-side booth  -  2 bottles  -  Backstage tour  -  Photo with cast' },
+    { name: 'Early Bird',      price: '$40',  note: 'Lowest price in the house  -  limited  -  first come, first served' },
+    { name: 'General',         price: '$60',  note: 'Your seat to the most talked-about late-night show downtown' },
+    { name: 'GA + Photo',      price: '$80',  note: 'General admission  -  plus a post-show photo with the Divas' },
+    { name: 'VIP Seating',     price: '$100', note: 'Best seats in the house  -  photos with the cast after the show' },
+    { name: 'Stage Experience',price: '$300', note: "You're IN the show  -  an up-close, on-stage moment  -  extremely limited" },
   ];
 
   return (
@@ -106,15 +55,15 @@ const DwarfDivasShow = () => {
 
         <div className="divas-hero-inner">
           <div className="divas-hero-poster">
-            <img src="assets/dwarfdivas-hero.jpg" alt="DwarfDivas -- Live at Deja Vu Showgirls, May 28-29" />
+            <img src="assets/dwarfdivas-hero.jpg" alt="DwarfDivas -- Late-night burlesque, The Nerd at Neonopolis, July 1-4 2026" />
           </div>
 
           <div className="divas-hero-tags">
             <span className="divas-tag">(show) Flagship Show</span>
             <span className="divas-tag-sep" />
-            <span className="divas-tag-m">Las Vegas Residency</span>
+            <span className="divas-tag-m">Downtown Las Vegas</span>
             <span className="divas-tag-sep" />
-            <span className="divas-tag-m">Opens May 28, 2026</span>
+            <span className="divas-tag-m">July 1-4, 2026</span>
           </div>
 
           <div className="divas-brand-logo">
@@ -126,36 +75,36 @@ const DwarfDivasShow = () => {
           </div>
 
           <p className="divas-hero-sub">
-            An all-dwarf burlesque &amp; variety show. Five acts. One band. The front row will never recover.{' '}
-            <strong>Las Vegas' most unreasonable night out.</strong>
+            An all-dwarf, late-night burlesque revue. A powerhouse cast, one stage, 118 seats.{' '}
+            <strong>Vegas' most unforgettable night out — July 4th weekend, downtown.</strong>
           </p>
 
           <div className="divas-hero-meta">
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Venue</span>
-              <span className="divas-meta-val">Deja Vu Showgirls</span>
-              <span className="divas-meta-sub">3247 Sammy Davis Jr. Dr., Las Vegas</span>
+              <span className="divas-meta-val">The Nerd at Neonopolis</span>
+              <span className="divas-meta-sub">450 Fremont St #250  -  Downtown LV</span>
             </div>
             <div className="divas-hero-meta-col">
-              <span className="divas-meta-lbl">Opening</span>
-              <span className="divas-meta-val">May 28-29, 2026</span>
-              <span className="divas-meta-sub">Doors 7:30  -  Curtain 8:00</span>
+              <span className="divas-meta-lbl">Dates</span>
+              <span className="divas-meta-val">July 1-4, 2026</span>
+              <span className="divas-meta-sub">Wed-Sat  -  Four nights only</span>
             </div>
             <div className="divas-hero-meta-col">
-              <span className="divas-meta-lbl">Residency</span>
-              <span className="divas-meta-val">Every Thu &amp; Fri</span>
-              <span className="divas-meta-sub">Starting June 4  -  21+ only</span>
+              <span className="divas-meta-lbl">Showtime</span>
+              <span className="divas-meta-val">11:55 PM</span>
+              <span className="divas-meta-sub">Late-night  -  Pacific (Las Vegas)</span>
             </div>
             <div className="divas-hero-meta-col">
-              <span className="divas-meta-lbl">Run Time</span>
-              <span className="divas-meta-val">85 minutes</span>
-              <span className="divas-meta-sub">No intermission  -  One encore</span>
+              <span className="divas-meta-lbl">Ages</span>
+              <span className="divas-meta-val">21+ only</span>
+              <span className="divas-meta-sub">Valid photo ID required</span>
             </div>
           </div>
 
           <div className="divas-hero-actions">
             <a href="#tickets" className="od-btn-primary od-btn-lg">
-              Get tickets from $65 <span className="od-btn-arrow">-></span>
+              Tickets from $40 <span className="od-btn-arrow">-></span>
             </a>
             <a href="#the-show" className="od-btn-outline od-btn-lg">About the show</a>
           </div>
@@ -176,8 +125,8 @@ const DwarfDivasShow = () => {
             <CD num={String(countdown.s).padStart(2,'0')} lbl="Sec" />
           </div>
           <div className="divas-countdown-end">
-            <span className="divas-meta-lbl" style={{opacity:0.8}}>Doors</span>
-            <span className="divas-meta-val" style={{fontSize:16}}>May 28  -  7:30 PM PT</span>
+            <span className="divas-meta-lbl" style={{opacity:0.8}}>First night</span>
+            <span className="divas-meta-val" style={{fontSize:16}}>July 1  -  11:55 PM PT</span>
           </div>
         </div>
       </section>
@@ -190,7 +139,7 @@ const DwarfDivasShow = () => {
             '"The most unique ticket in town." -- Vegas Magazine',
             '"Five acts of perfectly controlled chaos." -- The Strip Review',
             '"You will not see this show anywhere else, because nobody else would book it." -- Destination Las Vegas',
-            '"An instant residency classic." -- Showbiz LV',
+            '"An instant downtown classic." -- Showbiz LV',
             '"Absolutely unhinged. I have not laughed this hard in a Vegas theater in years." -- LV Weekly',
             '"The most unique ticket in town." -- Vegas Magazine',
             '"Five acts of perfectly controlled chaos." -- The Strip Review',
@@ -207,12 +156,12 @@ const DwarfDivasShow = () => {
             <div>
               <div className="od-eyebrow">The show</div>
               <h2 className="divas-sec-title">
-                Five acts. One band.<br/>
+                Five divas. One stage.<br/>
                 <span className="od-accent-blue">Zero apologies.</span>
               </h2>
             </div>
             <p className="divas-sec-sub">
-              85 minutes, no intermission. Book the front row if you want to be part of it.
+              One room, 118 seats, after midnight. Book the front row if you want to be part of it.
               Book the back row if you want to tell your friends about it tomorrow.
             </p>
           </div>
@@ -239,62 +188,18 @@ const DwarfDivasShow = () => {
             <div>
               <div className="od-eyebrow">Tickets</div>
               <h2 className="divas-sec-title">
-                From $65.<br/>
-                <span className="od-accent-blue">Two nights only.</span>
+                From $40.<br/>
+                <span className="od-accent-blue">Four nights only.</span>
               </h2>
             </div>
             <p className="divas-sec-sub">
-              May 28 &amp; 29 are the pilot nights. Residency dates open after the run.
-              Secure checkout, instant mobile delivery.
+              July 1, 2, 3 &amp; 4 — 118 seats a night over July 4th weekend.
+              When it's gone, it's gone.
             </p>
           </div>
 
-          {/* Live urgency bar */}
-          {ticketData.sold !== null && (
-            <div style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 12,
-              padding: '16px 20px',
-              marginBottom: 28,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 10,
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: urgencyColor,
-                    boxShadow: `0 0 8px ${urgencyColor}`,
-                    display: 'inline-block', flexShrink: 0,
-                  }} />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: urgencyColor }}>
-                    {urgencyLabel}
-                  </span>
-                </div>
-                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
-                  {ticketData.sold} sold · {remaining} of {CAPACITY} seats left
-                  {ticketData.updated ? `  ·  Updated ${ticketData.updated}` : ''}
-                </span>
-              </div>
-              {/* Progress bar */}
-              <div style={{
-                background: 'rgba(255,255,255,0.06)',
-                borderRadius: 99, height: 6, overflow: 'hidden',
-              }}>
-                <div style={{
-                  height: '100%', borderRadius: 99,
-                  width: `${Math.max(2, pct)}%`,
-                  background: `linear-gradient(90deg, ${urgencyColor}99, ${urgencyColor})`,
-                  transition: 'width 0.8s ease',
-                }} />
-              </div>
-            </div>
-          )}
-
           {/* Tier info cards */}
-          <div className="divas-tier-info-grid" style={{ marginBottom: 32 }}>
+          <div className="divas-tier-info-grid" style={{ marginBottom: 24 }}>
             {tiers.map((t) => (
               <div key={t.name} className="divas-tier-info-card">
                 <div className="divas-tier-info-top">
@@ -306,7 +211,19 @@ const DwarfDivasShow = () => {
             ))}
           </div>
 
-          {/* Eventbrite checkout embed */}
+          {/* Group bundles note */}
+          <div style={{
+            fontSize: 13,
+            color: 'rgba(255,255,255,0.45)',
+            marginBottom: 32,
+            lineHeight: 1.6,
+          }}>
+            <strong style={{ color: 'rgba(255,255,255,0.7)' }}>Bringing a crew?</strong>{' '}
+            Group bundles seat your whole party together — 5&times; General for <strong>$250</strong> ($50/seat)
+            or 5&times; VIP for <strong>$400</strong> ($80/seat). Built for bachelorettes, birthdays, and bro-trips.
+          </div>
+
+          {/* Tickets-coming-soon placeholder (new Eventbrite event not live yet) */}
           <div style={{
             background: 'rgba(255,255,255,0.02)',
             border: '1px solid rgba(255,255,255,0.07)',
@@ -315,33 +232,34 @@ const DwarfDivasShow = () => {
             marginBottom: 20,
           }}>
             <div style={{
-              padding: '14px 20px',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              textAlign: 'center',
+              minHeight: 220, gap: 14, padding: '40px 32px',
             }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Secure checkout — powered by Eventbrite
-              </span>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>SSL encrypted</span>
-            </div>
-            <div id="eb-checkout-container" style={{ minHeight: 435 }}>
-              {/* Fallback shown while widget loads */}
-              <div style={{
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center',
-                minHeight: 200, gap: 16, padding: 32,
-              }}>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>Loading checkout…</div>
+              <div style={{ fontSize: 32, lineHeight: 1 }} aria-hidden="true">🎟️</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>
+                Tickets on sale soon
               </div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', maxWidth: 420, lineHeight: 1.6 }}>
+                Four nights · July 1–4 · The Nerd at Neonopolis, Downtown Las Vegas.
+                Follow along for the on-sale drop — and don't blink, it's 118 seats a night.
+              </div>
+              <a
+                href="https://instagram.com/OnlyDwarfsOfficial"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="od-btn-primary"
+                style={{ marginTop: 6 }}
+              >
+                Follow @OnlyDwarfsOfficial <span className="od-btn-arrow">-></span>
+              </a>
             </div>
           </div>
 
           <div className="divas-tickets-cta">
-            <a href={EVENTBRITE_URL} target="_blank" rel="noopener noreferrer" className="od-btn-outline">
-              Open on Eventbrite instead <span className="od-btn-arrow">-></span>
-            </a>
             <div className="divas-summary-foot">
-              Secure checkout  -  Instant mobile tickets  -  21+ ID required at door
+              On-sale date coming soon  -  Instant mobile tickets  -  21+ ID required at door
             </div>
           </div>
         </div>
@@ -353,36 +271,28 @@ const DwarfDivasShow = () => {
           <div className="divas-venue">
             <div className="divas-venue-left">
               <div className="od-eyebrow">The venue</div>
-              <h2 className="divas-sec-title">Deja Vu Showgirls.</h2>
+              <h2 className="divas-sec-title">The Nerd at Neonopolis.</h2>
               <p className="divas-venue-desc">
-                One of the most storied cabaret venues in Las Vegas. 320-capacity black-box theater,
-                full bar, floor seating and premium booths. Five minutes from the Strip, ten minutes
-                from Harry Reid International.
+                Downtown Las Vegas, second floor of Neonopolis — right above the Fremont Street Experience.
+                An intimate 118-seat room: every seat close to the stage, full bar, and the boldest
+                late-night ticket downtown. This is a room, not an arena. Everybody's in it.
               </p>
               <div className="divas-venue-list">
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Address</span>
-                  <span className="divas-venue-v">3247 Sammy Davis Jr. Dr., Las Vegas, NV 89109</span>
+                  <span className="divas-venue-v">450 Fremont St #250, Las Vegas, NV 89101</span>
                 </div>
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Capacity</span>
-                  <span className="divas-venue-v">320  -  Standing + seated</span>
+                  <span className="divas-venue-v">118 seats  -  one stage, every seat close</span>
                 </div>
                 <div className="divas-venue-row">
-                  <span className="divas-venue-k">Parking</span>
-                  <span className="divas-venue-v">Complimentary valet after 7 PM</span>
-                </div>
-                <div className="divas-venue-row">
-                  <span className="divas-venue-k">Accessibility</span>
-                  <span className="divas-venue-v">Step-free entry  -  ADA seating available</span>
+                  <span className="divas-venue-k">Getting there</span>
+                  <span className="divas-venue-v">Neonopolis parking garage  -  rideshare recommended</span>
                 </div>
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Ages</span>
                   <span className="divas-venue-v">21+ only  -  Valid photo ID at door</span>
-                </div>
-                <div className="divas-venue-row">
-                  <span className="divas-venue-k">Dress code</span>
-                  <span className="divas-venue-v">Upscale casual  -  No athletic wear</span>
                 </div>
               </div>
             </div>
@@ -398,12 +308,12 @@ const DwarfDivasShow = () => {
                 <div className="divas-map-pin">
                   <div className="divas-map-pin-dot" />
                   <div className="divas-map-pin-label">
-                    <div className="divas-map-pin-name">Deja Vu Showgirls</div>
-                    <div className="divas-map-pin-addr">3247 Sammy Davis Jr. Dr.</div>
+                    <div className="divas-map-pin-name">The Nerd at Neonopolis</div>
+                    <div className="divas-map-pin-addr">450 Fremont St #250</div>
                   </div>
                   <div className="divas-map-pin-pulse" />
                 </div>
-                <div className="divas-map-attr">Las Vegas  -  Industrial District</div>
+                <div className="divas-map-attr">Downtown Las Vegas  -  Fremont St</div>
               </div>
             </div>
           </div>
@@ -414,15 +324,15 @@ const DwarfDivasShow = () => {
       <section className="divas-final" data-screen-label="Final CTA">
         <div className="divas-final-glow" aria-hidden="true"/>
         <div className="divas-inner divas-final-inner">
-          <div className="od-eyebrow">Opening night  -  May 28</div>
+          <div className="od-eyebrow">Opening night  -  July 1</div>
           <h2 className="divas-final-title">
             Don't be the person<br/>
             who <span className="od-accent-blue">missed it.</span>
           </h2>
-          <p className="divas-final-sub">320 seats. Two nights to launch. A year of Vegas talk to follow.</p>
+          <p className="divas-final-sub">118 seats a night. Four nights only — July 1-4. A holiday weekend Vegas won't shut up about.</p>
           <div className="divas-final-actions">
             <a href="#tickets" className="od-btn-primary od-btn-lg">
-              Get tickets now ->
+              See ticket tiers ->
             </a>
             <a href="intake.html" className="od-btn-outline od-btn-lg">Book the show private</a>
           </div>
