@@ -1,6 +1,6 @@
 // Showcase.jsx — DwarfDivas editorial block with countdown, ticket meter
 const Showcase = () => {
-  const showDate = new Date('2026-05-28T20:00:00-07:00');
+  const showDate = new Date('2026-07-01T23:55:00-07:00');
   const [countdown, setCountdown] = React.useState({ d: 0, h: 0, m: 0 });
   React.useEffect(() => {
     const tick = () => {
@@ -24,7 +24,7 @@ const Showcase = () => {
           <div className="od-showcase-left">
             <div className="od-showcase-eyebrow">🎭 Flagship · Live in Las Vegas</div>
             <img src="assets/Dwarfdivalogo.png" alt="DwarfDivas" className="od-showcase-logo" />
-            <p className="od-showcase-tagline">Our house show. Top performers, one stage, two nights only.</p>
+            <p className="od-showcase-tagline">Our house show. Top performers, one stage, four nights only — July 4th weekend.</p>
 
             <div className="od-showcase-countdown">
               <div className="od-cd-block">
@@ -44,11 +44,11 @@ const Showcase = () => {
             </div>
 
             <div className="od-showcase-strip">
-              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Venue</span><span>Deja Vu Showgirls</span></div>
+              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Venue</span><span>The Nerd at Neonopolis</span></div>
               <div className="od-showcase-strip-divider" />
-              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Dates</span><span>May 28 &amp; 29</span></div>
+              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Dates</span><span>July 1&ndash;4</span></div>
               <div className="od-showcase-strip-divider" />
-              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Doors</span><span>7:30 PM</span></div>
+              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Show</span><span>11:55 PM</span></div>
               <div className="od-showcase-strip-divider" />
               <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Ages</span><span>21+</span></div>
             </div>
@@ -69,4 +69,4 @@ const Showcase = () => {
   );
 };
 
-window.Showcase = Showcase;
+wi
