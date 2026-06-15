@@ -1,6 +1,6 @@
 // DwarfDivasShow.jsx -- DwarfDivas info page
 // Show facts updated 2026-06-14: The Nerd at Neonopolis, four nights July 1-4 2026,
-// 118-seat room, new pricing. Tickets not yet on sale (new Eventbrite event pending).
+// 118-seat room, new pricing. Tickets live on Eventbrite (per-night links) as of 2026-06-15.
 const FIRST_NIGHT    = new Date('2026-07-01T23:55:00-07:00');
 const CAPACITY       = 118;
 
@@ -42,8 +42,16 @@ const DwarfDivasShow = () => {
     { name: 'Early Bird',      price: '$40',  note: 'Lowest price in the house  -  limited  -  first come, first served' },
     { name: 'General',         price: '$60',  note: 'Your seat to the most talked-about late-night show downtown' },
     { name: 'GA + Photo',      price: '$80',  note: 'General admission  -  plus a post-show photo with the Divas' },
-    { name: 'VIP Seating',     price: '$100', note: 'Best seats in the house  -  photos with the cast after the show' },
+    { name: 'VIP Seating',     price: '$120', note: 'Best seats in the house  -  photos with the cast after the show' },
     { name: 'Stage Experience',price: '$300', note: "You're IN the show  -  an up-close, on-stage moment  -  extremely limited" },
+  ];
+
+  // Live Eventbrite events — one per night (verified 2026-06-15)
+  const dates = [
+    { day: 'Wed', date: 'July 1', url: 'https://www.eventbrite.com/e/dwarf-divas-burlesque-downtown-las-vegas-tickets-1991904315428' },
+    { day: 'Thu', date: 'July 2', url: 'https://www.eventbrite.com/e/dwarf-divas-burlesque-downtown-las-vegas-tickets-1991906322431' },
+    { day: 'Fri', date: 'July 3', url: 'https://www.eventbrite.com/e/dwarf-divas-burlesque-downtown-las-vegas-tickets-1991906538076' },
+    { day: 'Sat', date: 'July 4', url: 'https://www.eventbrite.com/e/dwarf-divas-burlesque-downtown-las-vegas-tickets-1991906627343' },
   ];
 
   return (
@@ -220,46 +228,56 @@ const DwarfDivasShow = () => {
           }}>
             <strong style={{ color: 'rgba(255,255,255,0.7)' }}>Bringing a crew?</strong>{' '}
             Group bundles seat your whole party together — 5&times; General for <strong>$250</strong> ($50/seat)
-            or 5&times; VIP for <strong>$400</strong> ($80/seat). Built for bachelorettes, birthdays, and bro-trips.
+            or the VIP Group Experience for the best seats in the house. Built for bachelorettes, birthdays, and bro-trips.
           </div>
 
-          {/* Tickets-coming-soon placeholder (new Eventbrite event not live yet) */}
+          {/* Pick your night — live Eventbrite links */}
           <div style={{
             background: 'rgba(255,255,255,0.02)',
             border: '1px solid rgba(255,255,255,0.07)',
             borderRadius: 16,
-            overflow: 'hidden',
+            padding: '28px 24px',
             marginBottom: 20,
           }}>
             <div style={{
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-              textAlign: 'center',
-              minHeight: 220, gap: 14, padding: '40px 32px',
+              fontSize: 13, fontWeight: 800, letterSpacing: '0.08em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)',
+              marginBottom: 18, textAlign: 'center',
             }}>
-              <div style={{ fontSize: 32, lineHeight: 1 }} aria-hidden="true">🎟️</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>
-                Tickets on sale soon
-              </div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', maxWidth: 420, lineHeight: 1.6 }}>
-                Four nights · July 1–4 · The Nerd at Neonopolis, Downtown Las Vegas.
-                Follow along for the on-sale drop — and don't blink, it's 118 seats a night.
-              </div>
-              <a
-                href="https://instagram.com/OnlyDwarfsOfficial"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="od-btn-primary"
-                style={{ marginTop: 6 }}
-              >
-                Follow @OnlyDwarfsOfficial <span className="od-btn-arrow">-></span>
-              </a>
+              Pick your night — secure checkout on Eventbrite
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+              gap: 12,
+            }}>
+              {dates.map((d) => (
+                <a
+                  key={d.date}
+                  href={d.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="od-btn-primary"
+                  style={{
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', gap: 3,
+                    padding: '16px 12px', textAlign: 'center',
+                  }}
+                >
+                  <span style={{ fontSize: 12, fontWeight: 700, opacity: 0.85 }}>{d.day}</span>
+                  <span style={{ fontSize: 19, fontWeight: 900, lineHeight: 1.1 }}>{d.date}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>Get tickets -></span>
+                </a>
+              ))}
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: 16 }}>
+              All four shows 11:55 PM · The Nerd at Neonopolis · 21+ · ID required
             </div>
           </div>
 
           <div className="divas-tickets-cta">
             <div className="divas-summary-foot">
-              On-sale date coming soon  -  Instant mobile tickets  -  21+ ID required at door
+              Secure checkout via Eventbrite  -  Instant mobile tickets  -  21+ ID required at door
             </div>
           </div>
         </div>
@@ -332,7 +350,7 @@ const DwarfDivasShow = () => {
           <p className="divas-final-sub">118 seats a night. Four nights only — July 1-4. A holiday weekend Vegas won't shut up about.</p>
           <div className="divas-final-actions">
             <a href="#tickets" className="od-btn-primary od-btn-lg">
-              See ticket tiers ->
+              Get tickets ->
             </a>
             <a href="intake.html" className="od-btn-outline od-btn-lg">Book the show private</a>
           </div>
