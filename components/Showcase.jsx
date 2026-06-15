@@ -69,4 +69,4 @@ const Showcase = () => {
   );
 };
 
-wi
+window.Showcase = Showcase;
