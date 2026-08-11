@@ -24,7 +24,7 @@ const Showcase = () => {
           <div className="od-showcase-left">
             <div className="od-showcase-eyebrow">🎭 Flagship · Live in Las Vegas</div>
             <img src="assets/Dwarfdivalogo.png" alt="DwarfDivas" className="od-showcase-logo" />
-            <p className="od-showcase-tagline">Our house show. Top performers, one stage, four nights only — July 4th weekend.</p>
+            <p className="od-showcase-tagline">Our house show. Top performers, one stage, three nights only — September 4-6.</p>
 
             <div className="od-showcase-countdown">
               <div className="od-cd-block">
@@ -46,9 +46,9 @@ const Showcase = () => {
             <div className="od-showcase-strip">
               <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Venue</span><span>The Nerd at Neonopolis</span></div>
               <div className="od-showcase-strip-divider" />
-              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Dates</span><span>July 1&ndash;4</span></div>
+              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Dates</span><span>Sept 4&ndash;6</span></div>
               <div className="od-showcase-strip-divider" />
-              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Show</span><span>11:55 PM</span></div>
+              <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Show</span><span>8:00 PM</span></div>
               <div className="od-showcase-strip-divider" />
               <div className="od-showcase-strip-item"><span className="od-showcase-strip-lbl">Ages</span><span>21+</span></div>
             </div>

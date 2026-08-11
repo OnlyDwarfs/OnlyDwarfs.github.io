@@ -1,8 +1,9 @@
 // DwarfDivasShow.jsx -- DwarfDivas info page
-// Show facts updated 2026-06-14: The Nerd at Neonopolis, four nights July 1-4 2026,
-// 118-seat room, new pricing. Tickets live on Eventbrite (per-night links) as of 2026-06-15.
-const FIRST_NIGHT    = new Date('2026-07-01T23:55:00-07:00');
-const CAPACITY       = 118;
+// Show facts updated 2026-08-08: The Nerd, Downtown Las Vegas. Three nights, Sept 4-6 2026.
+// Moved from a late-night 11:55 PM slot to a 8:00 PM prime-time show (doors 7:30).
+// Pricing synced to the live Eventbrite listing (event 1997511870777).
+const FIRST_NIGHT = new Date('2026-09-04T20:00:00-07:00');
+const TICKETS_URL = 'https://www.eventbrite.com/e/dwarf-divas-midget-burlesque-show-downtown-las-vegas-21-tickets-1997511870777?aff=Dwarfdivaswebsite';
 
 const CD = ({ num, lbl }) => (
   <div className="divas-cd-block">
@@ -14,7 +15,7 @@ const CD = ({ num, lbl }) => (
 const DwarfDivasShow = () => {
   const [countdown, setCountdown] = React.useState({ d: 0, h: 0, m: 0, s: 0 });
 
-  // Live countdown to first night
+  // Live countdown to opening night
   React.useEffect(() => {
     const tick = () => {
       const diff = Math.max(0, FIRST_NIGHT - new Date());
@@ -38,20 +39,20 @@ const DwarfDivasShow = () => {
     { n: '05', t: 'Encore',          d: 'Audience-request finale. You help pick how the night ends.' },
   ];
 
+  // Synced to the live Eventbrite listing 2026-08-08
   const tiers = [
-    { name: 'Early Bird',      price: '$40',  note: 'Lowest price in the house  -  limited  -  first come, first served' },
-    { name: 'General',         price: '$60',  note: 'Your seat to the most talked-about late-night show downtown' },
-    { name: 'GA + Photo',      price: '$80',  note: 'General admission  -  plus a post-show photo with the Divas' },
-    { name: 'VIP Seating',     price: '$120', note: 'Best seats in the house  -  photos with the cast after the show' },
-    { name: 'Stage Experience',price: '$300', note: "You're IN the show  -  an up-close, on-stage moment  -  extremely limited" },
+    { name: 'Early Bird GA',    price: '$40',  note: 'Lowest price in the house  -  limited  -  first come, first served' },
+    { name: 'General Admission',price: '$50',  note: 'Your seat to the boldest show downtown' },
+    { name: 'VIP Seating',      price: '$70',  note: 'Best seats in the house  -  closest to the stage' },
+    { name: 'Stage Experience', price: '$150', note: "You're IN the show  -  an up-close, on-stage moment  -  extremely limited" },
+    { name: 'VIP Booth',        price: '$700', note: 'Your own booth for the night  -  built for a group that wants the best view in the room' },
   ];
 
-  // Live Eventbrite events — one per night (verified 2026-06-15)
+  // Three nights, one Eventbrite listing (pick the date at checkout)
   const dates = [
-    { day: 'Wed', date: 'July 1', url: 'https://www.eventbrite.com/e/dwarf-divas-burlesque-downtown-las-vegas-tickets-1991904315428' },
-    { day: 'Thu', date: 'July 2', url: 'https://www.eventbrite.com/e/dwarf-divas-burlesque-downtown-las-vegas-tickets-1991906322431' },
-    { day: 'Fri', date: 'July 3', url: 'https://www.eventbrite.com/e/dwarf-divas-burlesque-downtown-las-vegas-tickets-1991906538076' },
-    { day: 'Sat', date: 'July 4', url: 'https://www.eventbrite.com/e/dwarf-divas-burlesque-downtown-las-vegas-tickets-1991906627343' },
+    { day: 'Fri', date: 'Sept 4', url: TICKETS_URL },
+    { day: 'Sat', date: 'Sept 5', url: TICKETS_URL },
+    { day: 'Sun', date: 'Sept 6', url: TICKETS_URL },
   ];
 
   return (
@@ -63,7 +64,7 @@ const DwarfDivasShow = () => {
 
         <div className="divas-hero-inner">
           <div className="divas-hero-poster">
-            <img src="assets/dwarfdivas-hero.jpg" alt="DwarfDivas -- Late-night burlesque, The Nerd at Neonopolis, July 1-4 2026" />
+            <img src="assets/dwarfdivas-hero.jpg" alt="DwarfDivas -- Burlesque at The Nerd, Downtown Las Vegas, September 4-6 2026" />
           </div>
 
           <div className="divas-hero-tags">
@@ -71,7 +72,7 @@ const DwarfDivasShow = () => {
             <span className="divas-tag-sep" />
             <span className="divas-tag-m">Downtown Las Vegas</span>
             <span className="divas-tag-sep" />
-            <span className="divas-tag-m">July 1-4, 2026</span>
+            <span className="divas-tag-m">Sept 4-6, 2026</span>
           </div>
 
           <div className="divas-brand-logo">
@@ -83,25 +84,25 @@ const DwarfDivasShow = () => {
           </div>
 
           <p className="divas-hero-sub">
-            An all-dwarf, late-night burlesque revue. A powerhouse cast, one stage, 118 seats.{' '}
-            <strong>Vegas' most unforgettable night out — July 4th weekend, downtown.</strong>
+            An all-dwarf burlesque revue. A powerhouse cast, one stage, our own room.{' '}
+            <strong>Vegas' most unforgettable night out — three nights only, downtown.</strong>
           </p>
 
           <div className="divas-hero-meta">
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Venue</span>
-              <span className="divas-meta-val">The Nerd at Neonopolis</span>
+              <span className="divas-meta-val">The Nerd</span>
               <span className="divas-meta-sub">450 Fremont St #250  -  Downtown LV</span>
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Dates</span>
-              <span className="divas-meta-val">July 1-4, 2026</span>
-              <span className="divas-meta-sub">Wed-Sat  -  Four nights only</span>
+              <span className="divas-meta-val">Sept 4-6, 2026</span>
+              <span className="divas-meta-sub">Fri-Sun  -  Three nights only</span>
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Showtime</span>
-              <span className="divas-meta-val">11:55 PM</span>
-              <span className="divas-meta-sub">Late-night  -  Pacific (Las Vegas)</span>
+              <span className="divas-meta-val">8:00 PM</span>
+              <span className="divas-meta-sub">Doors 7:30 PM  -  Pacific (Las Vegas)</span>
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Ages</span>
@@ -134,7 +135,7 @@ const DwarfDivasShow = () => {
           </div>
           <div className="divas-countdown-end">
             <span className="divas-meta-lbl" style={{opacity:0.8}}>First night</span>
-            <span className="divas-meta-val" style={{fontSize:16}}>July 1  -  11:55 PM PT</span>
+            <span className="divas-meta-val" style={{fontSize:16}}>Sept 4  -  8:00 PM PT</span>
           </div>
         </div>
       </section>
@@ -169,7 +170,7 @@ const DwarfDivasShow = () => {
               </h2>
             </div>
             <p className="divas-sec-sub">
-              One room, 118 seats, after midnight. Book the front row if you want to be part of it.
+              One room, one stage, every seat close to it. Book the front row if you want to be part of it.
               Book the back row if you want to tell your friends about it tomorrow.
             </p>
           </div>
@@ -197,11 +198,11 @@ const DwarfDivasShow = () => {
               <div className="od-eyebrow">Tickets</div>
               <h2 className="divas-sec-title">
                 From $40.<br/>
-                <span className="od-accent-blue">Four nights only.</span>
+                <span className="od-accent-blue">Three nights only.</span>
               </h2>
             </div>
             <p className="divas-sec-sub">
-              July 1, 2, 3 &amp; 4 — 118 seats a night over July 4th weekend.
+              September 4, 5 &amp; 6 — Friday, Saturday and Sunday at The Nerd.
               When it's gone, it's gone.
             </p>
           </div>
@@ -227,11 +228,11 @@ const DwarfDivasShow = () => {
             lineHeight: 1.6,
           }}>
             <strong style={{ color: 'rgba(255,255,255,0.7)' }}>Bringing a crew?</strong>{' '}
-            Group bundles seat your whole party together — 5&times; General for <strong>$250</strong> ($50/seat)
-            or the VIP Group Experience for the best seats in the house. Built for bachelorettes, birthdays, and bro-trips.
+            Group bundles seat your whole party together — 5&times; General Admission for <strong>$200</strong> ($40/seat)
+            or the 5&times; VIP bundle for <strong>$300</strong> ($60/seat). Built for bachelorettes, birthdays, and bro-trips.
           </div>
 
-          {/* Pick your night — live Eventbrite links */}
+          {/* Pick your night — live Eventbrite listing */}
           <div style={{
             background: 'rgba(255,255,255,0.02)',
             border: '1px solid rgba(255,255,255,0.07)',
@@ -271,7 +272,7 @@ const DwarfDivasShow = () => {
               ))}
             </div>
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: 16 }}>
-              All four shows 11:55 PM · The Nerd at Neonopolis · 21+ · ID required
+              All three shows 8:00 PM · Doors 7:30 PM · The Nerd, Downtown Las Vegas · 21+ · ID required
             </div>
           </div>
 
@@ -289,11 +290,11 @@ const DwarfDivasShow = () => {
           <div className="divas-venue">
             <div className="divas-venue-left">
               <div className="od-eyebrow">The venue</div>
-              <h2 className="divas-sec-title">The Nerd at Neonopolis.</h2>
+              <h2 className="divas-sec-title">The Nerd, Downtown Las Vegas.</h2>
               <p className="divas-venue-desc">
                 Downtown Las Vegas, second floor of Neonopolis — right above the Fremont Street Experience.
-                An intimate 118-seat room: every seat close to the stage, full bar, and the boldest
-                late-night ticket downtown. This is a room, not an arena. Everybody's in it.
+                Our own room and our own stage: every seat close to the action, full bar, and the boldest
+                ticket downtown. This is a room, not an arena. Everybody's in it.
               </p>
               <div className="divas-venue-list">
                 <div className="divas-venue-row">
@@ -301,8 +302,8 @@ const DwarfDivasShow = () => {
                   <span className="divas-venue-v">450 Fremont St #250, Las Vegas, NV 89101</span>
                 </div>
                 <div className="divas-venue-row">
-                  <span className="divas-venue-k">Capacity</span>
-                  <span className="divas-venue-v">118 seats  -  one stage, every seat close</span>
+                  <span className="divas-venue-k">The room</span>
+                  <span className="divas-venue-v">Our own stage  -  every seat close to it</span>
                 </div>
                 <div className="divas-venue-row">
                   <span className="divas-venue-k">Getting there</span>
@@ -342,12 +343,12 @@ const DwarfDivasShow = () => {
       <section className="divas-final" data-screen-label="Final CTA">
         <div className="divas-final-glow" aria-hidden="true"/>
         <div className="divas-inner divas-final-inner">
-          <div className="od-eyebrow">Opening night  -  July 1</div>
+          <div className="od-eyebrow">Opening night  -  Sept 4</div>
           <h2 className="divas-final-title">
             Don't be the person<br/>
             who <span className="od-accent-blue">missed it.</span>
           </h2>
-          <p className="divas-final-sub">118 seats a night. Four nights only — July 1-4. A holiday weekend Vegas won't shut up about.</p>
+          <p className="divas-final-sub">Three nights only — September 4, 5 &amp; 6. A weekend Vegas won't shut up about.</p>
           <div className="divas-final-actions">
             <a href="#tickets" className="od-btn-primary od-btn-lg">
               Get tickets ->
