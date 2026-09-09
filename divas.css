@@ -89,16 +89,15 @@
 }
 
 /* Hero poster image */
+/* Full-bleed hero banner: cancels .divas-hero's 80px/32px padding so the
+   image runs edge to edge across the top of the page. */
 .divas-hero-poster {
-  width: 100%;
-  max-width: 900px;
-  border-radius: 16px;
+  position: relative;
+  z-index: 1;
+  margin: 0 -32px 44px;
+  border-radius: 0;
   overflow: hidden;
-  margin: 0 auto 40px;
-  box-shadow:
-    0 0 0 1px rgba(232,25,122,0.3),
-    0 24px 80px rgba(232,25,122,0.25),
-    0 8px 32px rgba(0,0,0,0.6);
+  box-shadow: none;
 }
 .divas-hero-poster img {
   width: 100%;
@@ -147,23 +146,6 @@
   font-style: italic;
   letter-spacing: -0.06em;
 }
-
-.divas-hero-stars {
-  display: flex; justify-content: center; gap: 32px;
-  margin: 0 0 24px;
-  color: var(--dd-pink);
-  font-size: 14px;
-  opacity: 0.5;
-}
-
-.divas-hero-sub {
-  font-size: clamp(16px, 1.4vw, 19px);
-  line-height: 1.6;
-  color: var(--od-fg-2);
-  max-width: 620px;
-  margin: 0 auto 36px;
-}
-.divas-hero-sub strong { color: var(--od-fg); font-weight: 700; }
 
 .divas-hero-meta {
   display: grid;
@@ -265,30 +247,6 @@
   text-align: right;
 }
 
-/* ── CRITICS MARQUEE ── */
-.divas-critics {
-  overflow: hidden;
-  padding: 18px 0;
-  background: var(--dd-bg-2);
-  border-bottom: 1px solid rgba(232,25,122,0.12);
-}
-.divas-critics-track {
-  display: flex; gap: 48px; width: max-content;
-  animation: divas-scroll 60s linear infinite;
-}
-@keyframes divas-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.divas-critic {
-  display: inline-flex; align-items: center; gap: 28px;
-  font-size: 14px; font-weight: 600;
-  color: var(--od-fg-2);
-  white-space: nowrap;
-  letter-spacing: -0.005em;
-}
-.divas-critic-star { color: var(--dd-pink); font-size: 10px; opacity: 0.6; }
-
 /* ── SECTIONS ── */
 .divas-section {
   padding: 112px 32px;
@@ -362,9 +320,11 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 2.5rem;
+  margin-bottom: 28px;
 }
 .divas-tier-info-card {
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   background: var(--dd-bg-3);
   border: 1px solid rgba(232,25,122,0.15);
@@ -391,6 +351,8 @@
 }
 .divas-tier-note {
   font-size: 13px; color: var(--od-fg-3);
+  line-height: 1.55;
+  margin: 0;
 }
 
 /* ── TICKETS CTA ── */
@@ -591,7 +553,7 @@
   .divas-nav { padding: 0 16px; }
   .divas-nav-mid { display: none; }
   .divas-hero { padding: 80px 20px 0; }
-  .divas-hero-poster { border-radius: 10px; }
+  .divas-hero-poster { border-radius: 0; margin: 0 -20px 32px; }
   .divas-section { padding: 72px 20px; }
   .divas-final { padding: 88px 20px; }
   .divas-footer { padding: 32px 20px; }
@@ -604,4 +566,125 @@
   .divas-venue-row { grid-template-columns: 1fr; gap: 4px; }
   .divas-critic { font-size: 13px; }
   .divas-tier-info-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ══ PAGE TITLE ══
+   The hero art carries the wordmark, so this is the page's only real <h1>. */
+.divas-h1 {
+  font-size: clamp(26px, 3.4vw, 42px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  color: var(--od-fg);
+  max-width: 16ch;
+  margin: 4px auto 30px;
+  text-wrap: balance;
+}
+
+/* ══ TICKETS — group note ══ */
+.divas-group-note {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--od-fg-3);
+  max-width: 68ch;
+  margin: 0 0 32px;
+}
+.divas-group-note strong { color: var(--od-fg-2); font-weight: 700; }
+
+/* ══ TICKETS — night picker ══ */
+.divas-picker {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--dd-pink-border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  margin-bottom: 20px;
+}
+.divas-picker-lbl {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--od-fg-3);
+  text-align: center;
+  margin: 0 0 18px;
+}
+.divas-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+}
+.divas-picker-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 16px 12px;
+  text-align: center;
+}
+.divas-picker-day  { font-size: 12px; font-weight: 700; opacity: 0.85; }
+.divas-picker-date { font-size: 19px; font-weight: 900; line-height: 1.1; }
+.divas-picker-cta  { font-size: 12px; font-weight: 700; }
+.divas-picker-foot {
+  font-size: 12px;
+  color: var(--od-fg-3);
+  text-align: center;
+  margin: 16px 0 0;
+}
+.divas-upcoming {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.divas-upcoming-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.divas-upcoming-btn {
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.divas-countdown-endval { font-size: 16px; font-variant-numeric: tabular-nums; }
+.divas-cd-num { font-variant-numeric: tabular-nums; }
+
+/* ══ ACCESSIBILITY ══ */
+.od-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.divas a:focus-visible,
+.divas button:focus-visible {
+  outline: 2px solid var(--dd-pink);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .divas *,
+  .divas *::before,
+  .divas *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .divas-h1 { max-width: 20ch; margin-bottom: 24px; }
+  /* the dot separators orphan onto their own line when the tags wrap */
+  .divas-tag-sep { display: none; }
+  .divas-hero-tags { gap: 10px; }
+  .divas-picker { padding: 22px 16px; }
+  .divas-group-note { font-size: 13.5px; }
 }

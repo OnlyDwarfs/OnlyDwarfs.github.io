@@ -1219,7 +1219,11 @@ img { max-width: 100%; display: block; }
 @media (max-width: 768px) {
   .od-nav { padding: 0 20px; }
   .od-nav-links { gap: 18px; }
-  .od-nav-links li:not(:last-child) { display: none; }
+  /* Collapse the text links on small screens but keep the primary CTA visible --
+     the old rule hid it, so phones had no Book now button anywhere in the nav. */
+  .od-nav-links-left li { display: none; }
+  .od-nav-links-right li { display: none; }
+  .od-nav-links-right li:nth-last-child(2) { display: block; }
   .od-hero-section { padding: 110px 20px 60px; }
   .od-hero-lower { grid-template-columns: 1fr; gap: 24px; }
   .od-hero-actions { justify-self: start; }
