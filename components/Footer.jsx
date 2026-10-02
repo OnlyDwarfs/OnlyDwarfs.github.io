@@ -25,7 +25,6 @@ const Footer = () => (
         </div>
         <div className="od-footer-col">
           <div className="od-footer-heading">Follow</div>
-          <a href="https://www.instagram.com/onlydwarfs" target="_blank" rel="noopener noreferrer">Instagram</a>
           <a href="https://www.tiktok.com/@onlydwarfs" target="_blank" rel="noopener noreferrer">TikTok</a>
           <a href="mailto:bookings@onlydwarfs.com">Contact us</a>
         </div>

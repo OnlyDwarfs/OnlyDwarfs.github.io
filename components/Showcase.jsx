@@ -1,11 +1,36 @@
 // Showcase.jsx — DwarfDivas editorial block with countdown, ticket meter
+// Same nights as the SHOWS list in DwarfDivasShow.jsx -- update both together.
+const SHOWCASE_DATES = [
+  '2026-10-09T20:00:00-07:00',
+  '2026-10-10T20:00:00-07:00',
+  '2026-10-16T20:00:00-07:00',
+  '2026-10-17T20:00:00-07:00',
+  '2026-10-23T20:00:00-07:00',
+  '2026-10-24T20:00:00-07:00',
+  '2026-10-30T20:00:00-07:00',
+  '2026-10-31T20:00:00-07:00',
+  '2026-11-06T20:00:00-08:00',
+  '2026-11-07T20:00:00-08:00',
+  '2026-11-13T20:00:00-08:00',
+  '2026-11-14T20:00:00-08:00',
+  '2026-11-20T20:00:00-08:00',
+  '2026-11-21T20:00:00-08:00',
+  '2026-11-27T20:00:00-08:00',
+  '2026-11-28T20:00:00-08:00',
+  '2026-12-04T20:00:00-08:00',
+  '2026-12-05T20:00:00-08:00',
+  '2026-12-11T20:00:00-08:00',
+  '2026-12-12T20:00:00-08:00',
+].map((d) => new Date(d));
+
 const Showcase = () => {
-  const showDate = new Date('2026-09-25T20:00:00-07:00');
   const [countdown, setCountdown] = React.useState({ d: 0, h: 0, m: 0 });
   React.useEffect(() => {
     const tick = () => {
       const now = new Date();
-      const diff = Math.max(0, showDate - now);
+      // Counts down to the next scheduled night; rolls forward on its own as shows pass.
+      const next = SHOWCASE_DATES.find((x) => x > now);
+      const diff = next ? Math.max(0, next - now) : 0;
       const d = Math.floor(diff / 86400000);
       const h = Math.floor((diff % 86400000) / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
@@ -24,7 +49,7 @@ const Showcase = () => {
           <div className="od-showcase-left">
             <div className="od-showcase-eyebrow">🎭 Flagship · Live in Las Vegas</div>
             <img src="assets/Dwarfdivalogo.png" alt="DwarfDivas" className="od-showcase-logo" />
-            <p className="od-showcase-tagline">Our house show. Top performers, one stage, every Friday &amp; Saturday — opening weekend September 25-27.</p>
+            <p className="od-showcase-tagline">Our house show. Top performers, one stage, every Friday &amp; Saturday — opening weekend October 9-10.</p>
 
             <div className="od-showcase-countdown">
               <div className="od-cd-block">

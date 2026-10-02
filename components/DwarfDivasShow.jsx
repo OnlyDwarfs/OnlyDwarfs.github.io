@@ -1,5 +1,5 @@
 // DwarfDivasShow.jsx -- DwarfDivas info page
-// Show facts updated 2026-09-09: The Nerd, Downtown Las Vegas. Opening weekend Sept 25-27 2026,
+// Show facts updated 2026-10-01: The Nerd, Downtown Las Vegas. Residency opens Oct 9-10 2026,
 // then every Friday and Saturday. 8:00 PM show, doors 7:30.
 // Pricing and per-night ticket links synced to the live Eventbrite series (parent 1997511870777).
 const EB = 'https://www.eventbrite.com/e/dwarf-divas-midget-burlesque-show-downtown-las-vegas-21-tickets-';
@@ -8,15 +8,26 @@ const AFF = '?aff=Dwarfdivaswebsite';
 // Every scheduled night, in order. The countdown and both date lists derive from
 // this, so nothing goes stale when a show passes.
 const SHOWS = [
-  { iso: '2026-09-25T20:00:00-07:00', day: 'Fri', date: 'Sept 25', id: '2000246670637', opening: true },
-  { iso: '2026-09-26T20:00:00-07:00', day: 'Sat', date: 'Sept 26', id: '2000246657598', opening: true },
-  { iso: '2026-09-27T20:00:00-07:00', day: 'Sun', date: 'Sept 27', id: '2000246659604', opening: true },
-  { iso: '2026-10-09T20:00:00-07:00', day: 'Fri', date: 'Oct 9',   id: '1997511907888' },
-  { iso: '2026-10-10T20:00:00-07:00', day: 'Sat', date: 'Oct 10',  id: '1997511908891' },
+  { iso: '2026-10-09T20:00:00-07:00', day: 'Fri', date: 'Oct 9',   id: '1997511907888', opening: true },
+  { iso: '2026-10-10T20:00:00-07:00', day: 'Sat', date: 'Oct 10',  id: '1997511908891', opening: true },
   { iso: '2026-10-16T20:00:00-07:00', day: 'Fri', date: 'Oct 16',  id: '1997511911900' },
   { iso: '2026-10-17T20:00:00-07:00', day: 'Sat', date: 'Oct 17',  id: '1997511912903' },
   { iso: '2026-10-23T20:00:00-07:00', day: 'Fri', date: 'Oct 23',  id: '1997511915912' },
   { iso: '2026-10-24T20:00:00-07:00', day: 'Sat', date: 'Oct 24',  id: '1997511916915' },
+  { iso: '2026-10-30T20:00:00-07:00', day: 'Fri', date: 'Oct 30',  id: '2001712315420' },
+  { iso: '2026-10-31T20:00:00-07:00', day: 'Sat', date: 'Oct 31',  id: '2001712314417' },
+  { iso: '2026-11-06T20:00:00-08:00', day: 'Fri', date: 'Nov 6',   id: '2001712323444' },
+  { iso: '2026-11-07T20:00:00-08:00', day: 'Sat', date: 'Nov 7',   id: '2001712324447' },
+  { iso: '2026-11-13T20:00:00-08:00', day: 'Fri', date: 'Nov 13',  id: '2001712325450' },
+  { iso: '2026-11-14T20:00:00-08:00', day: 'Sat', date: 'Nov 14',  id: '2001712326453' },
+  { iso: '2026-11-20T20:00:00-08:00', day: 'Fri', date: 'Nov 20',  id: '2001712327456' },
+  { iso: '2026-11-21T20:00:00-08:00', day: 'Sat', date: 'Nov 21',  id: '2001712328459' },
+  { iso: '2026-11-27T20:00:00-08:00', day: 'Fri', date: 'Nov 27',  id: '2001712329462' },
+  { iso: '2026-11-28T20:00:00-08:00', day: 'Sat', date: 'Nov 28',  id: '2001712330465' },
+  { iso: '2026-12-04T20:00:00-08:00', day: 'Fri', date: 'Dec 4',   id: '2001712331468' },
+  { iso: '2026-12-05T20:00:00-08:00', day: 'Sat', date: 'Dec 5',   id: '2001712332471' },
+  { iso: '2026-12-11T20:00:00-08:00', day: 'Fri', date: 'Dec 11',  id: '2001712333474' },
+  { iso: '2026-12-12T20:00:00-08:00', day: 'Sat', date: 'Dec 12',  id: '2001712334477' },
 ].map((s) => ({ ...s, when: new Date(s.iso), url: EB + s.id + AFF }));
 
 const TICKETS_URL = SHOWS[0].url;
@@ -51,12 +62,11 @@ const DwarfDivasShow = () => {
     return () => clearInterval(id);
   }, []);
 
-  // Synced to the live Eventbrite listing 2026-09-09
+  // Synced to the live Eventbrite listing 2026-10-01
   const tiers = [
     { name: 'General Admission',price: '$40',  note: 'Your seat to the boldest show downtown' },
     { name: 'VIP Seating',      price: '$70',  note: 'Best seats in the house, closest to the stage' },
-    { name: 'Stage Experience', price: '$90',  note: "You are in the show. An up-close, on-stage moment \u2014 extremely limited" },
-    { name: 'VIP Booth',        price: '$700', note: 'Your own booth for the night, for a group that wants the best view in the room' },
+    { name: 'VIP Booth',        price: '$500', note: 'Your own booth for the night, for a group that wants the best view in the room' },
   ];
 
   const now = new Date();
@@ -103,7 +113,7 @@ const DwarfDivasShow = () => {
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Dates</span>
-              <span className="divas-meta-val">Sept 25-27, 2026</span>
+              <span className="divas-meta-val">Oct 9-10, 2026</span>
               <span className="divas-meta-sub">Opening weekend · then every Fri &amp; Sat</span>
             </div>
             <div className="divas-hero-meta-col">
@@ -164,8 +174,8 @@ const DwarfDivasShow = () => {
               </h2>
             </div>
             <p className="divas-sec-sub">
-              Opening weekend September 25, 26 &amp; 27, then every Friday and Saturday at The Nerd.
-              118 seats. When a night's gone, it's gone.
+              Opening weekend October 9 &amp; 10, then every Friday and Saturday at The Nerd.
+              When a night's gone, it's gone.
             </p>
           </div>
 
@@ -183,7 +193,7 @@ const DwarfDivasShow = () => {
 
           <p className="divas-group-note">
             <strong>Bringing a crew?</strong>{' '}
-            Group bundles seat your whole party together &mdash; 5&times; General Admission for <strong>$175</strong> ($35 a seat)
+            Group bundles seat your whole party together &mdash; 5&times; General Admission for <strong>$150</strong> ($30 a seat)
             or the 5&times; VIP bundle for <strong>$300</strong> ($60 a seat). Built for bachelorettes, birthdays and bro-trips.
           </p>
 
@@ -289,12 +299,12 @@ const DwarfDivasShow = () => {
       <section className="divas-final" data-screen-label="Final CTA">
         <div className="divas-final-glow" aria-hidden="true"/>
         <div className="divas-inner divas-final-inner">
-          <div className="od-eyebrow">Opening night · Sept 25</div>
+          <div className="od-eyebrow">Opening night · Oct 9</div>
           <h2 className="divas-final-title">
             Don't be the person<br/>
             who <span className="od-accent-blue">missed it.</span>
           </h2>
-          <p className="divas-final-sub">Opening weekend September 25, 26 &amp; 27, then every Friday and Saturday. A room Vegas won't shut up about.</p>
+          <p className="divas-final-sub">Opening weekend October 9 &amp; 10, then every Friday and Saturday. A room Vegas won't shut up about.</p>
           <div className="divas-final-actions">
             <a href="#tickets" className="od-btn-primary od-btn-lg">
               Get tickets <span className="od-btn-arrow" aria-hidden="true">→</span>
