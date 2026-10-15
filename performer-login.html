@@ -214,6 +214,8 @@
     const ADMIN_EMAIL = 'ryder@onlydwarfs.com';
     const ADMIN_FULL  = 'ryderwarbrick@onlydwarfs.com';
     const ADMIN_HASH  = 'd7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555';
+    const MANAGER_EMAIL = 'onlydwarfsbookings@gmail.com';
+    const MANAGER_HASH  = 'ceaa49ae4a390d5f131536999ae6ede9b9ecf7868f6051dd274ddc6e4a21d0c5';
 
     const ACT_TYPES = [
       'Oompa Loompa', 'Christmas Elf', 'Leprechaun', 'Mini Elvis',
@@ -239,6 +241,18 @@
         if (!email || !pw) return setErr('Please enter your email and password.');
         setLoad(true); setErr('');
         const hash = await sha256(pw);
+
+        // Manager path: CRM only
+        if (email.trim().toLowerCase() === MANAGER_EMAIL) {
+          if (hash === MANAGER_HASH) {
+            localStorage.setItem('od_mgr', hash);
+            window.location.href = 'crm.html';
+          } else {
+            setLoad(false);
+            setErr('Incorrect password.');
+          }
+          return;
+        }
 
         // Admin path
         if (email.trim().toLowerCase() === ADMIN_EMAIL || email.trim().toLowerCase() === ADMIN_FULL) {
