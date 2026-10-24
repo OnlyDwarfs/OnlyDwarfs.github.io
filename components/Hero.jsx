@@ -32,18 +32,7 @@ const Hero = () => {
 
         <div className="od-hero-eyebrow" style={{justifyContent:'center', marginTop:'24px'}}>
           <span className="od-hero-eyebrow-pill">⚡ The #1 dwarf entertainment agency</span>
-          <span className="od-hero-eyebrow-meta">Est. 2019 · 500+ bookings</span>
-        </div>
-
-        {/* Status strip — moved below title */}
-        <div className="od-hero-strip" style={{position:'relative', margin:'20px auto 0', maxWidth:'520px'}}>
-          <span className="od-hero-strip-item">
-            <span className="od-hero-live-dot" /> Booking agents online
-          </span>
-          <span className="od-hero-strip-divider" />
-          <span className="od-hero-strip-item od-hero-strip-muted">Las Vegas · Worldwide · {clock}</span>
-          <span className="od-hero-strip-divider" />
-          <span className="od-hero-strip-item od-hero-strip-muted">Quote in &lt; 24&nbsp;hrs</span>
+          <span className="od-hero-eyebrow-meta">Est. 2020 · 500+ bookings</span>
         </div>
 
         <div className="od-hero-lower" style={{alignItems:'center'}}>

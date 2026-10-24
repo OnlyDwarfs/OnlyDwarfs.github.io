@@ -20,14 +20,16 @@ const TalentGrid = () => {
       .then(r => r.json())
       .then(d => {
         if (d.talent && d.talent.length > 0) {
+          // Only performers with a real photo appear on the homepage; the full roster page lists everyone.
           setRoster(d.talent.map(t => ({
             name:  t.name,
+            photo: window.odTalentPhoto ? window.odTalentPhoto(t.name) : null,
             spec:  t.performerType || 'Performer',
             tags:  t.gigs ? t.gigs.split(',').map(g => g.trim()).filter(Boolean).slice(0, 3) : [t.location || 'Vegas'],
             avail: 'Open',
             social: t.social || null,
             bio:   t.bio || null,
-          })));
+          })).filter(t => t.photo));
         }
       })
       .catch(() => {})
@@ -60,20 +62,19 @@ const TalentGrid = () => {
               rel={isLive && t.social ? 'noopener noreferrer' : undefined}
             >
               <div className="od-talent-photo">
-                <svg className="od-talent-placeholder" width="40" height="40" viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
-                <div className={`od-talent-avail ${t.avail === 'Booked' ? 'booked' : 'open'}`}>
-                  <span className="od-talent-avail-dot" /> {t.avail}
-                </div>
+                {t.photo ? (
+                  <img className="od-talent-img" src={t.photo} alt={t.name} loading="lazy" decoding="async" />
+                ) : (
+                  <svg className="od-talent-placeholder" width="40" height="40" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                )}
                 {!isLive && <div className="od-talent-label">Portrait coming soon</div>}
-                {isLive && t.social && <div className="od-talent-label">{t.social}</div>}
               </div>
               <div className="od-talent-info">
                 <div className="od-talent-name">{t.name}</div>
-                <div className="od-talent-spec">{t.spec}</div>
                 <div className="od-talent-tags">
                   {t.tags.map(tag => <span key={tag} className="od-talent-tag">{tag}</span>)}
                 </div>

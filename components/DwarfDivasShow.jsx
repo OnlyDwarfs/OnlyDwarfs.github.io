@@ -1,6 +1,6 @@
 // DwarfDivasShow.jsx -- DwarfDivas info page
-// Show facts updated 2026-10-01: The Nerd, Downtown Las Vegas. Residency opens Oct 9-10 2026,
-// then every Friday and Saturday. 8:00 PM show, doors 7:30.
+// Show facts updated 2026-10-24: The Nerd, Downtown Las Vegas. Every Friday and Saturday
+// since Oct 9 2026. 8:00 PM show, doors 7:00.
 // Pricing and per-night ticket links synced to the live Eventbrite series (parent 1997511870777).
 const EB = 'https://www.eventbrite.com/e/dwarf-divas-midget-burlesque-show-downtown-las-vegas-21-tickets-';
 const AFF = '?aff=Dwarfdivaswebsite';
@@ -30,7 +30,9 @@ const SHOWS = [
   { iso: '2026-12-12T20:00:00-08:00', day: 'Sat', date: 'Dec 12',  id: '2001712334477' },
 ].map((s) => ({ ...s, when: new Date(s.iso), url: EB + s.id + AFF }));
 
-const TICKETS_URL = SHOWS[0].url;
+// Always point the main ticket button at the next show that hasn't happened yet.
+const NEXT_SHOW = SHOWS.find((x) => x.when > new Date()) || SHOWS[SHOWS.length - 1];
+const TICKETS_URL = NEXT_SHOW.url;
 
 const CD = ({ num, lbl }) => (
   <div className="divas-cd-block">
@@ -70,8 +72,9 @@ const DwarfDivasShow = () => {
   ];
 
   const now = new Date();
-  const dates = SHOWS.filter((x) => x.opening && x.when > now);
-  const upcoming = SHOWS.filter((x) => !x.opening && x.when > now);
+  const future = SHOWS.filter((x) => x.when > now);
+  const dates = future.slice(0, 2);      // the next weekend
+  const upcoming = future.slice(2);      // everything after it
 
   return (
     <div className="divas">
@@ -113,13 +116,13 @@ const DwarfDivasShow = () => {
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Dates</span>
-              <span className="divas-meta-val">Oct 9-10, 2026</span>
-              <span className="divas-meta-sub">Opening weekend · then every Fri &amp; Sat</span>
+              <span className="divas-meta-val">Every Fri &amp; Sat</span>
+              <span className="divas-meta-sub">Next show {NEXT_SHOW.day} {NEXT_SHOW.date}</span>
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Showtime</span>
               <span className="divas-meta-val">8:00 PM</span>
-              <span className="divas-meta-sub">Doors 7:30 PM · Pacific time</span>
+              <span className="divas-meta-sub">Doors 7:00 PM · Pacific time</span>
             </div>
             <div className="divas-hero-meta-col">
               <span className="divas-meta-lbl">Ages</span>
@@ -174,7 +177,7 @@ const DwarfDivasShow = () => {
               </h2>
             </div>
             <p className="divas-sec-sub">
-              Opening weekend October 9 &amp; 10, then every Friday and Saturday at The Nerd.
+              Every Friday and Saturday at The Nerd, Downtown Las Vegas.
               When a night's gone, it's gone.
             </p>
           </div>
@@ -198,7 +201,7 @@ const DwarfDivasShow = () => {
           </p>
 
           <div className="divas-picker">
-            <h3 className="divas-picker-lbl">Opening weekend &mdash; secure checkout on Eventbrite</h3>
+            <h3 className="divas-picker-lbl">Next up &mdash; secure checkout on Eventbrite</h3>
             <div className="divas-picker-grid">
               {dates.map((d) => (
                 <a
@@ -217,7 +220,7 @@ const DwarfDivasShow = () => {
               ))}
             </div>
             <p className="divas-picker-foot">
-              Every show 8:00 PM · doors 7:30 PM · The Nerd, Downtown Las Vegas · 21+ · ID required
+              Every show 8:00 PM · doors 7:00 PM · The Nerd, Downtown Las Vegas · 21+ · ID required
               <br />
               Secure checkout on Eventbrite · instant mobile tickets
             </p>
@@ -299,12 +302,12 @@ const DwarfDivasShow = () => {
       <section className="divas-final" data-screen-label="Final CTA">
         <div className="divas-final-glow" aria-hidden="true"/>
         <div className="divas-inner divas-final-inner">
-          <div className="od-eyebrow">Opening night · Oct 9</div>
+          <div className="od-eyebrow">Every Fri &amp; Sat · The Nerd</div>
           <h2 className="divas-final-title">
             Don't be the person<br/>
             who <span className="od-accent-blue">missed it.</span>
           </h2>
-          <p className="divas-final-sub">Opening weekend October 9 &amp; 10, then every Friday and Saturday. A room Vegas won't shut up about.</p>
+          <p className="divas-final-sub">Every Friday and Saturday, downtown on Fremont. A room Vegas won't shut up about.</p>
           <div className="divas-final-actions">
             <a href="#tickets" className="od-btn-primary od-btn-lg">
               Get tickets <span className="od-btn-arrow" aria-hidden="true">→</span>

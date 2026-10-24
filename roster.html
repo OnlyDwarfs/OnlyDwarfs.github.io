@@ -237,6 +237,7 @@
   ReactDOM.createRoot(document.getElementById('footer-root')).render(<Footer />);
 </script>
 
+<script src="assets/talent-photos.js?v=1"></script>
 <script>
 const TALENT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec?action=getTalent';
 
@@ -256,7 +257,7 @@ function cardHTML(t) {
   const avail = t.avail || t.availability || 'Open';
   const tags  = Array.isArray(t.tags) ? t.tags : (t.tags || '').split(',').map(s => s.trim()).filter(Boolean);
   const localPhoto = (typeof localStorage !== 'undefined') && localStorage.getItem('od_roster_photo_' + t.id);
-  const photoSrc = localPhoto || t.photo;
+  const photoSrc = localPhoto || t.photo || (window.odTalentPhoto && window.odTalentPhoto(t.name));
   const photo = photoSrc
     ? `<img src="${photoSrc}" alt="${t.name}" loading="lazy">`
     : `<span>🎭</span>`;
@@ -264,7 +265,6 @@ function cardHTML(t) {
     <div class="talent-card" data-tags="${tags.join(',')}">
       <div class="talent-photo">
         ${photo}
-        <span class="talent-avail ${avail === 'Open' ? 'avail-open' : 'avail-booked'}">${avail}</span>
       </div>
       <div class="talent-info">
         <div class="talent-name">${t.name}</div>
@@ -303,6 +303,9 @@ fetch(TALENT_URL)
   .then(r => r.json())
   .then(data => {
     allTalent = (data.talent && data.talent.length) ? data.talent : PLACEHOLDERS;
+    // Performers with a photo first, then the rest in sheet order
+    const hasPhoto = t => !!(t.photo || (window.odTalentPhoto && window.odTalentPhoto(t.name)));
+    allTalent = allTalent.filter(hasPhoto).concat(allTalent.filter(t => !hasPhoto(t)));
     renderGrid(allTalent);
   })
   .catch(() => {

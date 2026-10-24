@@ -49,7 +49,7 @@ const Showcase = () => {
           <div className="od-showcase-left">
             <div className="od-showcase-eyebrow">🎭 Flagship · Live in Las Vegas</div>
             <img src="assets/Dwarfdivalogo.png" alt="DwarfDivas" className="od-showcase-logo" />
-            <p className="od-showcase-tagline">Our house show. Top performers, one stage, every Friday &amp; Saturday — opening weekend October 9-10.</p>
+            <p className="od-showcase-tagline">Our house show. Top performers, one stage, every Friday &amp; Saturday at The Nerd on Fremont.</p>
 
             <div className="od-showcase-countdown">
               <div className="od-cd-block">
