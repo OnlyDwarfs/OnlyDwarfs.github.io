@@ -1,6 +1,6 @@
-// DwarfDivasShow.jsx -- DwarfDivas info page
-// Show facts updated 2026-10-24: The Nerd, Downtown Las Vegas. Every Friday and Saturday
-// since Oct 9 2026. 8:00 PM show, doors 7:00.
+// DwarfDivasShow.jsx -- DwarfDivas show page (redesign 2026-10-25)
+// Show list below drives the countdown, the themed-weekend block and every ticket link,
+// so the page rolls forward on its own as nights pass.
 // Pricing and per-night ticket links synced to the live Eventbrite series (parent 1997511870777).
 const EB = 'https://www.eventbrite.com/e/dwarf-divas-midget-burlesque-show-downtown-las-vegas-21-tickets-';
 const AFF = '?aff=Dwarfdivaswebsite';
@@ -34,289 +34,253 @@ const SHOWS = [
 const NEXT_SHOW = SHOWS.find((x) => x.when > new Date()) || SHOWS[SHOWS.length - 1];
 const TICKETS_URL = NEXT_SHOW.url;
 
-const CD = ({ num, lbl }) => (
-  <div className="divas-cd-block">
-    <span className="divas-cd-num">{num}</span>
-    <span className="divas-cd-lbl">{lbl}</span>
-  </div>
+// Themed weekends. The page features whichever one is next and drops it once its
+// Saturday has passed, so nothing goes stale. Add new ones here.
+const WEEKENDS = [
+  { name: 'Fun Sized', kicker: 'Halloween weekend', img: 'fun-sized', fit: 'poster',
+    blurb: 'Our Halloween weekend. Come in costume. Halloween night always goes first.',
+    nights: [{ date: 'Oct 30', label: 'Friday' }, { date: 'Oct 31', label: 'Saturday · Halloween' }],
+    alt: 'FUN SIZED poster: the Dwarf Divas burst out of candy wrappers, Fri and Sat Oct 30-31 at The Nerd' },
+  { name: 'High Rollers', kicker: 'Vegas weekend', img: 'high-rollers', fit: 'square',
+    blurb: '5ft & under get in free.',
+    nights: [{ date: 'Nov 6', label: 'Friday' }, { date: 'Nov 7', label: 'Saturday' }],
+    alt: 'HIGH ROLLERS poster for the Dwarf Divas, Nov 6-7 at The Nerd' },
+];
+
+const CAST = [
+  { img: 'cast-christy', alt: 'Meet Christy McGinity, 3 foot 11, your host' },
+  { img: 'cast-chika',   alt: 'Meet Chika Chikana, 2 foot 10' },
+  { img: 'cast-firefly', alt: 'Meet Lil Miss Firefly, 3 foot 0' },
+  { img: 'cast-moni',    alt: 'Meet Mini Moni, 4 foot 7' },
+  { img: 'cast-viki',    alt: 'Meet Miss Viki, 3 foot 9' },
+];
+
+const GALLERY = [
+  { img: 'ringmaster', cap: 'The ringmaster runs the night', alt: 'The ringmaster host on stage with the cast' },
+  { img: 'showgirl',   cap: 'Showgirls, feathers and sequins', alt: 'A showgirl in a feathered headdress on the red-curtain stage' },
+  { img: 'pirates',    cap: 'Pirate night', alt: 'Two performers in pirate costumes' },
+  { img: 'front-row',  cap: 'The front row is part of the act', alt: 'A performer working the crowd in the front row' },
+];
+
+const Pic = ({ name, alt, className, eager }) => (
+  <picture>
+    <source srcSet={`assets/divas/${name}.webp`} type="image/webp" />
+    <img src={`assets/divas/${name}.jpg`} alt={alt} className={className}
+      loading={eager ? 'eager' : 'lazy'} decoding="async" {...(eager ? { fetchpriority: "high" } : {})} />
+  </picture>
 );
 
-const DwarfDivasShow = () => {
-  const [countdown, setCountdown] = React.useState({ d: 0, h: 0, m: 0, s: 0 });
-  const [next, setNext] = React.useState(() => SHOWS.find((x) => x.when > new Date()) || null);
+const showFor = (date) => SHOWS.find((s) => s.date === date);
+const pad = (n) => String(n).padStart(2, '0');
 
-  // Counts down to the next scheduled night; rolls forward on its own as shows pass.
+const DwarfDivasShow = () => {
+  const [now, setNow] = React.useState(() => new Date());
   React.useEffect(() => {
-    const tick = () => {
-      const now = new Date();
-      const upcomingShow = SHOWS.find((x) => x.when > now) || null;
-      setNext(upcomingShow);
-      const diff = upcomingShow ? Math.max(0, upcomingShow.when - now) : 0;
-      setCountdown({
-        d: Math.floor(diff / 86400000),
-        h: Math.floor((diff % 86400000) / 3600000),
-        m: Math.floor((diff % 3600000) / 60000),
-        s: Math.floor((diff % 60000) / 1000),
-      });
-    };
-    tick();
-    const id = setInterval(tick, 1000);
+    const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Synced to the live Eventbrite listing 2026-10-01
+  const future = SHOWS.filter((x) => x.when > now);
+  const next = future[0] || null;
+  const diff = next ? Math.max(0, next.when - now) : 0;
+  const cd = {
+    d: Math.floor(diff / 86400000), h: Math.floor((diff % 86400000) / 3600000),
+    m: Math.floor((diff % 3600000) / 60000), s: Math.floor((diff % 60000) / 1000),
+  };
+
+  const liveWeekends = WEEKENDS.filter((w) => {
+    const last = showFor(w.nights[w.nights.length - 1].date);
+    return last && last.when > now;
+  });
+  const wk = liveWeekends[0];
+  const wkNext = liveWeekends[1];
+
   const tiers = [
-    { name: 'General Admission',price: '$40',  note: 'Your seat to the boldest show downtown' },
-    { name: 'VIP Seating',      price: '$70',  note: 'Best seats in the house, closest to the stage' },
-    { name: 'VIP Booth',        price: '$500', note: 'Your own booth for the night, for a group that wants the best view in the room' },
+    { name: 'General Admission', price: '$40',  note: 'Your seat at the loudest show downtown.' },
+    { name: 'VIP Seating',       price: '$70',  note: 'Closest seats to the stage. Expect to be part of the show.', hot: true },
+    { name: 'VIP Booth',         price: '$500', note: 'Your own booth for the night, for the group that wants the best view.' },
   ];
 
-  const now = new Date();
-  const future = SHOWS.filter((x) => x.when > now);
-  const dates = future.slice(0, 2);      // the next weekend
-  const upcoming = future.slice(2);      // everything after it
-
   return (
-    <div className="divas">
+    <div className="dd">
       {/* HERO */}
-      <section className="divas-hero" data-screen-label="Show Hero">
-        <div className="divas-hero-noise" aria-hidden="true" />
-        <div className="divas-hero-glow" aria-hidden="true" />
-
-        <div className="divas-hero-poster">
-          <picture>
-            <source srcSet="assets/dwarfdivas-hero-2026.webp" type="image/webp" />
-            <img
-              src="assets/dwarfdivas-hero-2026.jpg"
-              alt="A Dwarf Divas performer in a pink sequinned costume and feathered headdress blowing a kiss, framed by showgirls, beside the Dwarf Divas Midget Burlesque marquee logo"
-              width="2160" height="1080"
-              fetchPriority="high" decoding="async"
-            />
-          </picture>
+      <section className="dd-hero" aria-label="Dwarf Divas">
+        <div className="dd-hero-img">
+          <Pic name="hero" eager className="dd-parallax"
+            alt="A Dwarf Divas performer in pink sequins and a feathered headdress blowing a kiss, framed by showgirls' legs, beside the Dwarf Divas marquee logo" />
         </div>
+        <div className="dd-hero-card">
+          <span className="dd-kicker dd-kicker-dark">Live in downtown Vegas</span>
+          <span className="dd-hero-card-title">Fridays &amp; Saturdays</span>
+          <span className="dd-hero-card-meta">8 PM · The Nerd Bar · Fremont St</span>
+          <a className="dd-pill dd-pill-pink" href="#tickets">Get tickets</a>
+        </div>
+        <div className="dd-hero-fade" aria-hidden="true" />
+      </section>
 
-        <div className="divas-hero-inner">
-          <div className="divas-hero-tags">
-            <span className="divas-tag">Flagship show</span>
-            <span className="divas-tag-sep" />
-            <span className="divas-tag-m">Downtown Las Vegas</span>
-            <span className="divas-tag-sep" />
-            <span className="divas-tag-m">Fridays &amp; Saturdays</span>
-          </div>
-
-          <h1 className="divas-h1">
-            The only all-dwarf burlesque revue in Las&nbsp;Vegas.
-          </h1>
-
-          <div className="divas-hero-meta">
-            <div className="divas-hero-meta-col">
-              <span className="divas-meta-lbl">Venue</span>
-              <span className="divas-meta-val">The Nerd</span>
-              <span className="divas-meta-sub">450 Fremont St #250 · Downtown LV</span>
-            </div>
-            <div className="divas-hero-meta-col">
-              <span className="divas-meta-lbl">Dates</span>
-              <span className="divas-meta-val">Every Fri &amp; Sat</span>
-              <span className="divas-meta-sub">Next show {NEXT_SHOW.day} {NEXT_SHOW.date}</span>
-            </div>
-            <div className="divas-hero-meta-col">
-              <span className="divas-meta-lbl">Showtime</span>
-              <span className="divas-meta-val">8:00 PM</span>
-              <span className="divas-meta-sub">Doors 7:00 PM · Pacific time</span>
-            </div>
-            <div className="divas-hero-meta-col">
-              <span className="divas-meta-lbl">Ages</span>
-              <span className="divas-meta-val">21+ only</span>
-              <span className="divas-meta-sub">Valid photo ID required</span>
+      {/* ABOUT + REEL */}
+      <section className="dd-about dd-wrap" aria-label="About the show">
+        <div className="dd-about-copy dd-hero-out">
+          <span className="dd-kicker">Comedy burlesque · Downtown Las Vegas</span>
+          <h1 className="dd-h1">The only all-dwarf burlesque show in Vegas.</h1>
+          <p className="dd-gold">Fridays &amp; Saturdays · The Nerd Bar · Fremont Street</p>
+          <p className="dd-lede">Showgirls, a ringmaster host, pirate night and a front row that ends up in the act. 21+, two shows every weekend.</p>
+          <div className="dd-cta-row">
+            <a className="dd-pill" href="#tickets">Get tickets</a>
+            <div className="dd-next">
+              <span className="dd-label">{next ? 'Next show in' : 'Next show'}</span>
+              {next ? (
+                <span className="dd-countdown" aria-hidden="true">
+                  {cd.d}<small>d</small> {pad(cd.h)}<small>h</small> {pad(cd.m)}<small>m</small> {pad(cd.s)}<small>s</small>
+                </span>
+              ) : <span className="dd-countdown">Dates soon</span>}
+              <span className="od-sr-only">{next ? `Next show ${next.day} ${next.date} at 8:00 PM Pacific.` : 'Dates for the next run are announced soon.'}</span>
+              {next && <span className="dd-next-date">{next.day} {next.date} · 8:00 PM</span>}
             </div>
           </div>
-
-          <div className="divas-hero-actions">
-            <a href="#tickets" className="od-btn-primary od-btn-lg">
-              Tickets from $40 <span className="od-btn-arrow" aria-hidden="true">→</span>
-            </a>
-            <a href="#venue" className="od-btn-outline od-btn-lg">The venue</a>
+          <div className="dd-chips">
+            <span>Doors 7 PM · Show 8 PM</span><span>From $40</span><span>21+ · photo ID</span>
           </div>
         </div>
+        <div className="dd-reel dd-rv-r">
+          <div className="dd-bulbs" aria-hidden="true" />
+          <div className="dd-reel-frame">
+            <video src="assets/divas/reel.mp4" poster="assets/divas/reel-poster.jpg" autoPlay muted loop playsInline
+              preload="metadata" aria-label="Clips from a Dwarf Divas show at The Nerd Bar" />
+          </div>
+          <div className="dd-bulbs" aria-hidden="true" />
+        </div>
+      </section>
 
-        {/* Countdown */}
-        <div className="divas-countdown">
-          <p className="od-sr-only">
-            {next ? `Next show ${next.day} ${next.date} at 8:00 PM Pacific.` : 'Dates for the next run are announced soon.'}
-          </p>
-          <div className="divas-countdown-lbl" aria-hidden="true">
-            <span className="od-hero-live-dot" /> {next && next.opening ? 'Opening night in' : 'Next show in'}
+      <div className="dd-bulbs" aria-hidden="true" />
+
+      {/* THEMED WEEKEND */}
+      {wk && (
+        <section className="dd-weekend dd-wrap" aria-labelledby="dd-wk-title">
+          <div className={`dd-weekend-art dd-rv-l dd-fit-${wk.fit}`}>
+            <Pic name={wk.img} alt={wk.alt} className="dd-lift" />
           </div>
-          <div className="divas-countdown-grid" aria-hidden="true">
-            <CD num={countdown.d} lbl="Days" />
-            <span className="divas-cd-colon">:</span>
-            <CD num={String(countdown.h).padStart(2,'0')} lbl="Hrs" />
-            <span className="divas-cd-colon">:</span>
-            <CD num={String(countdown.m).padStart(2,'0')} lbl="Min" />
-            <span className="divas-cd-colon">:</span>
-            <CD num={String(countdown.s).padStart(2,'0')} lbl="Sec" />
+          <div className="dd-weekend-copy dd-rv">
+            <span className="dd-kicker dd-kicker-lg">{wk.kicker}</span>
+            <h2 id="dd-wk-title" className="dd-h2 dd-h2-xl">{wk.name}</h2>
+            <p className="dd-gold">{wk.nights.map((n) => { const s = showFor(n.date); return s ? `${s.day} ${n.date}` : n.date; }).join(' & ')} · 8 PM</p>
+            <p className="dd-lede">{wk.blurb}</p>
+            <div className="dd-nights">
+              {wk.nights.map((n) => {
+                const s = showFor(n.date);
+                return (
+                  <a key={n.date} className="dd-night dd-lift" href={s ? s.url : '#tickets'} target="_blank" rel="noopener noreferrer">
+                    <span className="dd-night-lbl">{n.label}</span>
+                    <span className="dd-night-date">{n.date}</span>
+                    <span className="dd-night-cta">Get tickets →</span>
+                  </a>
+                );
+              })}
+            </div>
+            {wkNext && (
+              <a className="dd-teaser dd-lift" href={showFor(wkNext.nights[0].date) ? showFor(wkNext.nights[0].date).url : '#tickets'} target="_blank" rel="noopener noreferrer">
+                <Pic name={wkNext.img} alt="" />
+                <span className="dd-teaser-copy">
+                  <span className="dd-label">Next themed weekend</span>
+                  <span className="dd-teaser-title">{wkNext.name} · {wkNext.nights.map((n) => n.date).join('–').replace(/–(\w+) /, '–')}</span>
+                  <span className="dd-teaser-sub">{wkNext.blurb}</span>
+                </span>
+              </a>
+            )}
           </div>
-          <div className="divas-countdown-end" aria-hidden="true">
-            <span className="divas-meta-lbl">{next && next.opening ? 'First night' : 'Next night'}</span>
-            <span className="divas-meta-val divas-countdown-endval">
-              {next ? `${next.date} · 8:00 PM PT` : 'Dates soon'}
-            </span>
+        </section>
+      )}
+
+      {/* CAST */}
+      <section className="dd-band" id="cast" aria-labelledby="dd-cast-title">
+        <div className="dd-wrap dd-stack">
+          <div className="dd-head dd-rv">
+            <h2 id="dd-cast-title" className="dd-h2">Meet the Divas</h2>
+            <p className="dd-muted">Hosted by Christy McGinity</p>
+          </div>
+          <div className="dd-cast dd-stagger">
+            {CAST.map((c) => <Pic key={c.img} name={c.img} alt={c.alt} className="dd-lift" />)}
           </div>
         </div>
       </section>
 
       {/* TICKETS */}
-      <section className="divas-section divas-section-dark" id="tickets" data-screen-label="Tickets">
-        <div className="divas-inner">
-          <div className="divas-sec-head">
-            <div>
-              <div className="od-eyebrow">Tickets</div>
-              <h2 className="divas-sec-title">
-                From $40.<br/>
-                <span className="od-accent-blue">Every Fri &amp; Sat.</span>
-              </h2>
-            </div>
-            <p className="divas-sec-sub">
-              Every Friday and Saturday at The Nerd, Downtown Las Vegas.
-              When a night's gone, it's gone.
-            </p>
+      <section className="dd-tickets" id="tickets" aria-labelledby="dd-tk-title">
+        <div className="dd-wrap dd-stack">
+          <div className="dd-head dd-rv">
+            <h2 id="dd-tk-title" className="dd-h2">Tickets from $40</h2>
+            <p className="dd-muted">Secure checkout on Eventbrite · mobile tickets</p>
           </div>
-
-          <div className="divas-tier-info-grid">
+          <div className="dd-tiers dd-stagger">
             {tiers.map((t) => (
-              <div key={t.name} className="divas-tier-info-card">
-                <div className="divas-tier-info-top">
-                  <span className="divas-tier-name">{t.name}</span>
-                  <span className="divas-tier-price">{t.price}</span>
-                </div>
-                <p className="divas-tier-note">{t.note}</p>
+              <div key={t.name} className={`dd-tier dd-lift${t.hot ? ' dd-tier-hot' : ''}`}>
+                <div className="dd-tier-top"><span className="dd-tier-name">{t.name}</span><span className="dd-tier-price">{t.price}</span></div>
+                <p className="dd-muted">{t.note}</p>
               </div>
             ))}
           </div>
-
-          <p className="divas-group-note">
-            <strong>Bringing a crew?</strong>{' '}
-            Group bundles seat your whole party together &mdash; 5&times; General Admission for <strong>$150</strong> ($30 a seat)
-            or the 5&times; VIP bundle for <strong>$300</strong> ($60 a seat). Built for bachelorettes, birthdays and bro-trips.
-          </p>
-
-          <div className="divas-picker">
-            <h3 className="divas-picker-lbl">Next up &mdash; secure checkout on Eventbrite</h3>
-            <div className="divas-picker-grid">
-              {dates.map((d) => (
-                <a
-                  key={d.date}
-                  href={d.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="od-btn-primary divas-picker-btn"
-                >
-                  <span className="divas-picker-day">{d.day}</span>
-                  <span className="divas-picker-date">{d.date}</span>
-                  <span className="divas-picker-cta">
-                    Get tickets<span aria-hidden="true"> →</span>
-                  </span>
-                </a>
+          <p className="dd-crew dd-rv"><strong>Bringing a crew?</strong> <span className="dd-muted">5 general admission for $150, or 5 VIP for $300. Built for bachelorettes, birthdays and bro-trips.</span></p>
+          <div className="dd-rv">
+            <span className="dd-label">Pick your night</span>
+            <div className="dd-dates">
+              {future.map((s) => (
+                <a key={s.iso} className="dd-date" href={s.url} target="_blank" rel="noopener noreferrer">{s.day} {s.date}</a>
               ))}
+              {future.length === 0 && <span className="dd-muted">New dates announced soon.</span>}
             </div>
-            <p className="divas-picker-foot">
-              Every show 8:00 PM · doors 7:00 PM · The Nerd, Downtown Las Vegas · 21+ · ID required
-              <br />
-              Secure checkout on Eventbrite · instant mobile tickets
-            </p>
-
-            {upcoming.length > 0 && (
-              <div className="divas-upcoming">
-                <h3 className="divas-picker-lbl">Coming up &mdash; every Friday &amp; Saturday</h3>
-                <div className="divas-upcoming-row">
-                  {upcoming.map((u) => (
-                    <a
-                      key={u.date}
-                      href={u.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="od-btn-outline divas-upcoming-btn"
-                    >
-                      {u.day} {u.date}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
-
         </div>
       </section>
 
+      {/* GALLERY */}
+      <section className="dd-wrap dd-stack dd-gallery-sec" id="show" aria-labelledby="dd-show-title">
+        <h2 id="dd-show-title" className="dd-h2 dd-rv">What you're in for</h2>
+        <div className="dd-gallery">
+          {GALLERY.map((g) => (
+            <figure key={g.img} className="dd-rv">
+              <div className="dd-zoomwrap"><Pic name={g.img} alt={g.alt} className="dd-zoom" /></div>
+              <figcaption>{g.cap}</figcaption>
+            </figure>
+          ))}
+        </div>
+        <figure className="dd-rv dd-wide">
+          <div className="dd-zoomwrap"><Pic name="after-show" alt="The Divas in feathered headdresses posing with guests after the show" className="dd-zoom" /></div>
+          <figcaption>Stick around after. The Divas take photos.</figcaption>
+        </figure>
+      </section>
+
       {/* VENUE */}
-      <section className="divas-section" id="venue" data-screen-label="Venue">
-        <div className="divas-inner">
-          <div className="divas-venue">
-            <div className="divas-venue-left">
-              <div className="od-eyebrow">The venue</div>
-              <h2 className="divas-sec-title">The Nerd, Downtown Las Vegas.</h2>
-              <div className="divas-venue-list">
-                <div className="divas-venue-row">
-                  <span className="divas-venue-k">Address</span>
-                  <span className="divas-venue-v">450 Fremont St #250, Las Vegas, NV 89101</span>
-                </div>
-                <div className="divas-venue-row">
-                  <span className="divas-venue-k">The room</span>
-                  <span className="divas-venue-v">Our own stage · every seat close to it</span>
-                </div>
-                <div className="divas-venue-row">
-                  <span className="divas-venue-k">Getting there</span>
-                  <span className="divas-venue-v">Neonopolis parking garage · rideshare recommended</span>
-                </div>
-                <div className="divas-venue-row">
-                  <span className="divas-venue-k">Ages</span>
-                  <span className="divas-venue-v">21+ only · valid photo ID at door</span>
-                </div>
-              </div>
+      <section className="dd-band" id="venue" aria-labelledby="dd-venue-title">
+        <div className="dd-wrap dd-venue">
+          <div className="dd-venue-copy dd-rv-l">
+            <img src="assets/divas/nerd-logo.png" alt="The Nerd" className="dd-nerd" loading="lazy" />
+            <h2 id="dd-venue-title" className="dd-h2">Upstairs at The Nerd Bar</h2>
+            <p className="dd-gold">450 Fremont St #250 · Neonopolis · Downtown Las Vegas</p>
+            <div className="dd-venue-grid">
+              <div><span className="dd-label">Getting there</span><p>Inside Neonopolis on Fremont. Take the escalator up; park in the Neonopolis garage or rideshare.</p></div>
+              <div><span className="dd-label">Before the show</span><p>Bowling, arcade and skee-ball in the same venue</p></div>
+              <div><span className="dd-label">Ages</span><p>21+ only, valid photo ID at the door</p></div>
+              <div><span className="dd-label">Times</span><p>Doors 7 PM · show 8 PM, Fridays &amp; Saturdays</p></div>
             </div>
-            <div className="divas-venue-right">
-              <div className="divas-map" aria-hidden="true">
-                <div className="divas-map-grid" />
-                <div className="divas-map-streets">
-                  <div className="divas-map-street h" style={{top:'28%'}} />
-                  <div className="divas-map-street h" style={{top:'62%'}} />
-                  <div className="divas-map-street v" style={{left:'38%'}} />
-                  <div className="divas-map-street v" style={{left:'72%'}} />
-                </div>
-                <div className="divas-map-pin">
-                  <div className="divas-map-pin-dot" />
-                  <div className="divas-map-pin-label">
-                    <div className="divas-map-pin-name">The Nerd at Neonopolis</div>
-                    <div className="divas-map-pin-addr">450 Fremont St #250</div>
-                  </div>
-                  <div className="divas-map-pin-pulse" />
-                </div>
-                <div className="divas-map-attr">Downtown Las Vegas · Fremont St</div>
-              </div>
-            </div>
+          </div>
+          <div className="dd-venue-pics dd-rv-r">
+            <div className="dd-zoomwrap dd-span2"><Pic name="neonopolis" alt="Inside Neonopolis, the escalator up to The Nerd" className="dd-zoom" /></div>
+            <div className="dd-zoomwrap"><Pic name="lanes" alt="The bowling lanes at The Nerd" className="dd-zoom" /></div>
+            <div className="dd-zoomwrap"><Pic name="arcade" alt="Neon arcade machines at The Nerd" className="dd-zoom" /></div>
           </div>
         </div>
       </section>
 
       {/* FINAL CTA */}
-      <section className="divas-final" data-screen-label="Final CTA">
-        <div className="divas-final-glow" aria-hidden="true"/>
-        <div className="divas-inner divas-final-inner">
-          <div className="od-eyebrow">Every Fri &amp; Sat · The Nerd</div>
-          <h2 className="divas-final-title">
-            Don't be the person<br/>
-            who <span className="od-accent-blue">missed it.</span>
-          </h2>
-          <p className="divas-final-sub">Every Friday and Saturday, downtown on Fremont. A room Vegas won't shut up about.</p>
-          <div className="divas-final-actions">
-            <a href="#tickets" className="od-btn-primary od-btn-lg">
-              Get tickets <span className="od-btn-arrow" aria-hidden="true">→</span>
-            </a>
-            <a href="intake.html" className="od-btn-outline od-btn-lg">Book the show private</a>
-          </div>
+      <section className="dd-burst" aria-labelledby="dd-cta-title">
+        <div className="dd-burst-inner dd-rv">
+          <h2 id="dd-cta-title" className="dd-burst-title">See it before your friends do</h2>
+          <p className="dd-gold dd-gold-lg">Fridays &amp; Saturdays</p>
+          <a className="dd-pill dd-pill-lg" href="#tickets">Get tickets</a>
+          <p className="dd-burst-meta">Doors 7PM · Show 8PM · The Nerd · Fremont Street</p>
+          <p className="dd-burst-private">Want the Divas at your event? <a href="intake.html">Book a private show</a></p>
         </div>
       </section>
-
     </div>
   );
 };
