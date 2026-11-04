@@ -8,7 +8,7 @@
   // Don't inject inside an iframe
   if (window.self !== window.top) return;
 
-  const isAdmin = localStorage.getItem('od_auth') === 'd7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555';
+  const isAdmin = localStorage.getItem('od_admin_role') === 'admin'; // display only; the backend checks the password
 
   // ── STYLES ──────────────────────────────────────────────────
   const style = document.createElement('style');
@@ -121,7 +121,7 @@
     <div class="un-right">
       <a href="/intake.html" class="un-cta">Book now</a>
       ${isAdmin
-        ? `<button class="un-signout-btn" onclick="(function(){localStorage.removeItem('od_auth');sessionStorage.removeItem('od_performer');window.location.href='/index.html';})()">Sign Out</button>`
+        ? `<button class="un-signout-btn" onclick="(function(){localStorage.removeItem('od_admin_key');localStorage.removeItem('od_admin_role');sessionStorage.removeItem('od_performer');window.location.href='/index.html';})()">Sign Out</button>`
         : `<a href="/performer-login.html" class="un-login">Login</a>`
       }
     </div>

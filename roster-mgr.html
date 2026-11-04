@@ -171,6 +171,7 @@
   ::-webkit-scrollbar-track{background:#0d0d0d}
   ::-webkit-scrollbar-thumb{background:#222;border-radius:2px}
 </style>
+<script src="/od-admin.js"></script>
 </head>
 <body>
 <div class="page">
@@ -363,7 +364,6 @@
 </div>
 
 <script>
-if (!localStorage.getItem('od_auth')) { window.top.location.href = 'login.html'; }
 
 const CRM = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec';
 let all = [], activeId = null, sortCol = 'name', sortDir = 1, editMode = false;

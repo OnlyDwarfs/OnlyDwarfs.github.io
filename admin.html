@@ -40,15 +40,9 @@
   #content-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
   #content-frame { flex: 1; border: none; width: 100%; height: 100%; display: block; }
 </style>
+<script src="/od-admin.js"></script>
 </head>
 <body>
-<script>
-(function(){
-  if (localStorage.getItem('od_auth') !== 'd7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555') {
-    window.location.replace('login.html');
-  }
-})();
-</script>
 <div id="shell">
   <nav id="sidebar">
     <div class="sb-logo">
@@ -128,9 +122,8 @@ function getHashTool() {
   return TOOLS[h] ? h : null;
 }
 function signOut() {
-  localStorage.removeItem('od_auth');
   sessionStorage.removeItem('od_performer');
-  window.location.href = 'index.html';
+  ODAdmin.signOut('index.html');
 }
 navigate(getHashTool() || 'command', false);
 </script>

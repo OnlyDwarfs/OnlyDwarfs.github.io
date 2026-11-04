@@ -265,8 +265,9 @@
 <script>if(window.self!==window.top)document.write('<style>#od-nav{display:none!important}</style>')</script>
 </head>
 <body>
+<script src="/od-admin.js" data-allow="manager"></script>
 <script>
-(function(){var adm=localStorage.getItem('od_auth')==='d7e135b4594b61ba3b6d0c242e3124b1d2603862535a903631b98ee60945f555';var mgr=localStorage.getItem('od_mgr')==='e48a85c94af721d0b607890f9ae219058c4343ff2f078bec2985d0b01e949e36';if(!adm&&!mgr){window.location.replace('/login.html');}if(!adm){document.documentElement.classList.add('od-mgr');}
+(function(){if(window.ODAdmin&&ODAdmin.role!=='admin'){document.documentElement.classList.add('od-mgr');}
 })();
 </script>
 <div id="od-nav" style="position:fixed;top:0;left:0;right:0;z-index:9999;height:42px;background:rgba(6,10,20,0.97);border-bottom:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:space-between;padding:0 20px;backdrop-filter:blur(10px);font-family:'Inter',sans-serif;">
@@ -275,7 +276,7 @@
     <a class="od-admin-only" href="/command.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#9889; Command</a>
     <a href="/crm.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#128203; CRM</a>
     <a class="od-admin-only" href="/hub.html" style="font-size:11px;color:#94A3B8;text-decoration:none;padding:5px 12px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#94A3B8'">&#129504; Hub</a>
-    <button onclick="localStorage.removeItem('od_auth');localStorage.removeItem('od_mgr');window.location.href='/login.html';" style="font-size:11px;color:#64748B;background:none;border:1px solid rgba(100,116,139,0.3);padding:4px 10px;border-radius:6px;cursor:pointer;margin-left:8px;" onmouseover="this.style.color='#EF4444';this.style.borderColor='rgba(239,68,68,0.4)'" onmouseout="this.style.color='#64748B';this.style.borderColor='rgba(100,116,139,0.3)'">Logout</button>
+    <button onclick="ODAdmin.signOut();" style="font-size:11px;color:#64748B;background:none;border:1px solid rgba(100,116,139,0.3);padding:4px 10px;border-radius:6px;cursor:pointer;margin-left:8px;" onmouseover="this.style.color='#EF4444';this.style.borderColor='rgba(239,68,68,0.4)'" onmouseout="this.style.color='#64748B';this.style.borderColor='rgba(100,116,139,0.3)'">Logout</button>
   </div>
 </div>
 
@@ -456,9 +457,7 @@
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────
-const SHEET_ID   = '1SbchSzeThe_PTSju7WQyPe8_0d54xaCfpnCVWZIwBV0';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEo1SmfVmXy8WCopvrbmgh3Rmea-2jVTE4VRxfLoj58PuwW3nsaVEroIZuCNJzmC0Jdw/exec'; // ← paste your deployed Apps Script URL here
-const GVIZ_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
 
 // ── STATE ──────────────────────────────────────────────────────────
 let allLeads = [];
@@ -470,30 +469,28 @@ const STAGE_LABELS = { New:'New', Contacted:'Contacted', Quoted:'Quoted', Booked
 // ── LOAD DATA ──────────────────────────────────────────────────────
 async function loadLeads() {
   try {
-    const resp = await fetch(GVIZ_URL + '&cb=' + Date.now());
-    const text = await resp.text();
-    // gviz returns: /*O_o*/\ngoogle.visualization.Query.setResponse({...});
-    const json = JSON.parse(text.replace(/^[^{]+/, '').replace(/\);?\s*$/, ''));
-    const rows = json.table.rows;
-    allLeads = rows.map(r => {
-      const c = r.c;
-      const v = (i) => (c[i] && c[i].v !== null && c[i].v !== undefined) ? String(c[i].v).trim() : '';
+    // Leads come from the backend (admin or manager password), not straight from the sheet
+    const resp = await fetch(SCRIPT_URL + '?action=getLeads&cb=' + Date.now());
+    const json = await resp.json();
+    if (!json.leads) throw new Error(json.error || 'No leads returned');
+    allLeads = json.leads.map(r => {
+      const v = (k) => (r[k] !== null && r[k] !== undefined) ? String(r[k]).trim() : '';
       return {
-        id:        v(0),
-        name:      v(1),
-        email:     v(2),
-        phone:     v(3),
-        eventType: v(4),
-        eventDate: v(5),
-        location:  v(6),
-        headcount: v(7),
-        details:   v(8),
-        source:    v(9),
-        submitted: v(10),
-        stage:     v(11) || 'New',
-        notes:     v(12),
-        updated:   v(13),
-        amount:    v(14),
+        id:        v('LEAD_ID'),
+        name:      v('NAME'),
+        email:     v('EMAIL'),
+        phone:     v('PHONE'),
+        eventType: v('EVENT_TYPE'),
+        eventDate: v('EVENT_DATE'),
+        location:  v('LOCATION'),
+        headcount: v('HEADCOUNT'),
+        details:   v('DETAILS'),
+        source:    v('SOURCE'),
+        submitted: v('SUBMITTED_AT'),
+        stage:     v('STAGE') || 'New',
+        notes:     v('NOTES'),
+        updated:   v('LAST_UPDATED'),
+        amount:    v('AMOUNT'),
       };
     }).filter(l => l.id || l.name); // skip blank rows
 
@@ -502,7 +499,7 @@ async function loadLeads() {
     document.getElementById('last-refresh').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
   } catch(e) {
     console.error('Failed to load leads:', e);
-    document.getElementById('board-wrap').innerHTML = `<div class="loading"><div style="color:var(--red);font-size:14px">⚠ Failed to load data<br><small style="color:var(--muted)">Make sure the sheet is shared publicly (View access)</small></div><button class="btn btn-ghost" style="margin-top:12px" onclick="loadLeads()">Try Again</button></div>`;
+    document.getElementById('board-wrap').innerHTML = `<div class="loading"><div style="color:var(--red);font-size:14px">⚠ Failed to load data<br><small style="color:var(--muted)">Check your connection, or sign out and back in</small></div><button class="btn btn-ghost" style="margin-top:12px" onclick="loadLeads()">Try Again</button></div>`;
     document.getElementById('last-refresh').textContent = 'Error loading';
   }
 }

@@ -1,7 +1,7 @@
 // site-nav.js — shared vanilla nav for admin pages (command.html, performer-dashboard.html)
 // Injects the same nav as the public site. No React/Babel required.
 (function () {
-  const isAdmin = !!localStorage.getItem('od_auth');
+  const isAdmin = localStorage.getItem('od_admin_role') === 'admin'; // display only; the backend checks the password
 
   // ── CSS ─────────────────────────────────────────────────────────
   const style = document.createElement('style');
@@ -116,7 +116,7 @@
       if (!e.target.closest('.sn-admin-wrap')) dropdown.classList.remove('open');
     });
     signout.addEventListener('click', () => {
-      localStorage.removeItem('od_auth');
+      localStorage.removeItem('od_admin_key'); localStorage.removeItem('od_admin_role');
       sessionStorage.removeItem('od_performer');
       window.location.href = 'index.html';
     });
