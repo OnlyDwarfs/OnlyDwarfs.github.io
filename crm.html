@@ -467,7 +467,7 @@ const STAGES = ['New','Contacted','Quoted','Booked','Completed','Lost'];
 const STAGE_LABELS = { New:'New', Contacted:'Contacted', Quoted:'Quoted', Booked:'Booked', Completed:'Completed' };
 
 // ── LOAD DATA ──────────────────────────────────────────────────────
-async function loadLeads() {
+async function loadLeads(silent) {
   try {
     // Leads come from the backend (admin or manager password), not straight from the sheet
     const resp = await fetch(SCRIPT_URL + '?action=getLeads&cb=' + Date.now());
@@ -499,6 +499,7 @@ async function loadLeads() {
     document.getElementById('last-refresh').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
   } catch(e) {
     console.error('Failed to load leads:', e);
+    if (silent === true) { document.getElementById('last-refresh').textContent = 'Auto-refresh missed, retrying'; return; }
     document.getElementById('board-wrap').innerHTML = `<div class="loading"><div style="color:var(--red);font-size:14px">⚠ Failed to load data<br><small style="color:var(--muted)">Check your connection, or sign out and back in</small></div><button class="btn btn-ghost" style="margin-top:12px" onclick="loadLeads()">Try Again</button></div>`;
     document.getElementById('last-refresh').textContent = 'Error loading';
   }
@@ -976,6 +977,26 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
   }
 });
+
+// ── AUTO-REFRESH ──────────────────────────────────────────────────
+// Pulls the latest leads from the sheet every minute. Skips while a lead
+// or the delete box is open, while the tab is hidden, and for 20 s after
+// you change a lead, so your edit has time to save first.
+let lastLocalEdit = 0;
+const _crmFetch = window.fetch;
+window.fetch = function(url, opts) {
+  if (opts && String(opts.method || '').toUpperCase() === 'POST' && String(url).indexOf(SCRIPT_URL) === 0) lastLocalEdit = Date.now();
+  return _crmFetch.apply(this, arguments);
+};
+function autoRefresh() {
+  if (document.hidden) return;
+  if (!document.getElementById('modal-backdrop').classList.contains('hidden')) return;
+  if (!document.getElementById('confirm-overlay').classList.contains('hidden')) return;
+  if (Date.now() - lastLocalEdit < 20000) return;
+  loadLeads(true);
+}
+setInterval(autoRefresh, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) autoRefresh(); });
 
 loadLeads();
 </script>
