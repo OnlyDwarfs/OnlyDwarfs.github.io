@@ -339,13 +339,6 @@
   <div id="pay-list"></div>
 </div>
 
-<!-- FOLLOW-UP BANNER -->
-<div class="followup-banner hidden" id="followup-banner">
-  <span class="followup-count" id="followup-count">0 leads need follow-up</span>
-  <div class="followup-list" id="followup-list"></div>
-  <span class="followup-dismiss" onclick="dismissFollowup()">Dismiss ✕</span>
-</div>
-
 <!-- FILTER BAR -->
 <div id="tab-pipeline" class="tab-pane active"><div class="filterbar">
   <div class="search-wrap">
@@ -656,7 +649,6 @@ function renderStats() {
   document.getElementById('stat-revenue').textContent = totalRevenue > 0 ? '$' + totalRevenue.toLocaleString() : '$0';
   document.getElementById('stat-pipeline').textContent = pipelineValue > 0 ? '$' + pipelineValue.toLocaleString() : '$0';
   renderFinancials();
-  renderFollowup();
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────
