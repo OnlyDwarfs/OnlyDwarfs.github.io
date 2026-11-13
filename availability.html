@@ -257,6 +257,8 @@
   }
   .av-notes::placeholder { color: rgba(255,255,255,0.25); }
   .av-notes:focus { border-color: #9B59F5; }
+  /* 16px stops iPhones zooming in when the notes box is tapped */
+  @media (max-width: 768px) { .av-notes { font-size: 16px; } }
 
   /* ── SUBMIT ── */
   .av-submit-btn {

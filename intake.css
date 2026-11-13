@@ -34,7 +34,9 @@
   max-width: 440px;
 }
 .od-intake-back {
-  display: inline-flex; align-items: center; gap: 10px;
+  /* flex + fit-content keeps the eyebrow below it on its own line
+     (inline-flex let short eyebrows like "Join the roster" sit beside it) */
+  display: flex; width: fit-content; align-items: center; gap: 10px;
   font-size: 13px; font-weight: 600;
   color: var(--od-fg-3);
   letter-spacing: 0.01em;
@@ -471,4 +473,8 @@
   .od-intake-submit-row { grid-template-columns: 1fr; }
   .od-intake-submit { width: 100%; justify-content: center; }
   .od-intake-success-card { padding: 40px 24px; }
+  /* 16px stops iPhones zooming in when a field is tapped */
+  .od-intake-field input,
+  .od-intake-field textarea,
+  .od-intake-field select { font-size: 16px; }
 }

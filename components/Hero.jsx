@@ -20,14 +20,12 @@ const Hero = () => {
 
       {/* Main editorial block */}
       <div className="od-hero-content" style={{textAlign:'center',alignItems:'center'}}>
-        <h1 className="od-hero-title">
-          <span className="od-hero-the">The</span>
+        <h1 className="od-hero-title od-hero-title--lockup">
           <img
-            src="assets/OnlyDwarfsLOGOText.svg"
-            alt="OnlyDwarfs"
-            className="od-hero-logo-img"
+            src="assets/OnlyDwarfsLogoTagline.svg"
+            alt="The OnlyDwarfs You'll Ever Need"
+            className="od-hero-lockup"
           />
-          <span className="od-hero-bottom-text">You'll Ever<br/>Need.</span>
         </h1>
 
         <div className="od-hero-eyebrow" style={{justifyContent:'center', marginTop:'24px'}}>

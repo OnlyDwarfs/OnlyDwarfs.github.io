@@ -31,7 +31,7 @@ const Footer = () => (
       </div>
 
       <div className="od-footer-mega" aria-hidden="true">
-        Only<span>Dwarfs</span>
+        <img src="assets/OnlyDwarfsLOGOText.svg" alt="" className="od-footer-mega-logo" />
       </div>
 
       <div className="od-footer-legal">
