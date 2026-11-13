@@ -56,10 +56,8 @@ const TalentGrid = () => {
         <div className="od-talent-grid">
           {cards.map((t, i) => (
             <a key={i}
-              href={isLive && t.social ? `https://instagram.com/${t.social.replace('@','')}` : 'roster.html'}
+              href="intake.html"
               className="od-talent-card"
-              target={isLive && t.social ? '_blank' : undefined}
-              rel={isLive && t.social ? 'noopener noreferrer' : undefined}
             >
               <div className="od-talent-photo">
                 {t.photo ? (

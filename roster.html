@@ -70,6 +70,7 @@
       margin: 0 auto;
     }
     .talent-card {
+      display: block; color: inherit; text-decoration: none; /* whole card links to the booking form */
       background: var(--od-bg-2);
       border: 1px solid var(--od-border);
       border-radius: 16px;
@@ -265,7 +266,7 @@ function cardHTML(t) {
     ? `<img src="${photoSrc}" alt="${t.name}" loading="lazy">`
     : `<span>🎭</span>`;
   return `
-    <div class="talent-card" data-tags="${tags.join(',')}">
+    <a href="intake.html" class="talent-card" data-tags="${tags.join(',')}">
       <div class="talent-photo">
         ${photo}
       </div>
@@ -273,9 +274,9 @@ function cardHTML(t) {
         <div class="talent-name">${t.name}</div>
         <div class="talent-spec">${t.spec || t.specialty || ''}</div>
         <div class="talent-tags">${tags.map(tag => `<span class="talent-tag">${tag}</span>`).join('')}</div>
-        <a href="intake.html" class="talent-book-btn ${avail !== 'Open' ? 'booked' : ''}">${avail === 'Open' ? 'Book this performer →' : 'Currently booked'}</a>
+        <span class="talent-book-btn ${avail !== 'Open' ? 'booked' : ''}">${avail === 'Open' ? 'Book this performer →' : 'Currently booked'}</span>
       </div>
-    </div>`;
+    </a>`;
 }
 
 function renderGrid(talent) {
